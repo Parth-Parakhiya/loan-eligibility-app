@@ -1,0 +1,50 @@
+/* eligibility-results.component.scss */
+.eligibility-results-container {
+    padding: 20px;
+  }
+  
+  .results-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .results-header h2 {
+    color: #27ae60;
+  }
+  
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .results-table th, .results-table td {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    text-align: left;
+  }
+  
+  .results-table th {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .decision-factors {
+    margin-bottom: 20px;
+  }
+  
+  .factor {
+    margin-bottom: 10px;
+  }
+  
+  .factor.positive {
+    color: #27ae60;
+  }
+  
+  .factor.negative {
+    color: #e74c3c;
+  }
+  
+  .actions {
+    text-align: center;
+  }

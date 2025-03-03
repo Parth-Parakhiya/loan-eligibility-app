@@ -1,0 +1,12 @@
+<div class="product-catalog-container">
+    <h2>Product Catalog</h2>
+    <div class="products">
+      <div *ngFor="let product of products" class="product-card">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
+        <p>Interest Rate: {{ product.interestRate }}%</p>
+        <p>Maximum Amount: {{ product.maximumAmount | currency }}</p>
+        <button (click)="applyForProduct(product.type)">Apply Now</button>
+      </div>
+    </div>
+  </div>

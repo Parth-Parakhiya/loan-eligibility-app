@@ -1,0 +1,24 @@
+<div class="eligibility-results-container">
+    <h2>Eligibility Results</h2>
+    <div *ngIf="eligibilityResult">
+      <p>Eligibility: {{ eligibilityResult.isEligible ? 'Eligible' : 'Not Eligible' }}</p>
+      <p>Score: {{ eligibilityResult.score }}</p>
+      <p>Maximum Eligible Amount: {{ eligibilityResult.maximumEligibleAmount | currency }}</p>
+      <p>Suggested Interest Rate: {{ eligibilityResult.suggestedInterestRate }}%</p>
+      <p>Suggested Term: {{ eligibilityResult.suggestedTermMonths }} months</p>
+      <p>Monthly Payment Estimate: {{ eligibilityResult.monthlyPaymentEstimate | currency }}</p>
+      <h3>Decision Factors</h3>
+      <ul>
+        <li *ngFor="let factor of eligibilityResult.decisionFactors">
+          {{ factor.factor }}: {{ factor.impact }} (Weight: {{ factor.weight }})
+        </li>
+      </ul>
+      <h3>Alternative Products</h3>
+      <ul>
+        <li *ngFor="let product of eligibilityResult.alternativeProducts">
+          {{ product.productName }} ({{ product.productType }})
+        </li>
+      </ul>
+    </div>
+    <button (click)="navigateToDashboard()">Back to Dashboard</button>
+  </div>

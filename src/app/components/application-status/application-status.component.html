@@ -1,0 +1,13 @@
+<div class="application-status-container">
+    <h2>Application Status</h2>
+    <div *ngIf="applications.length > 0">
+      <ul>
+        <li *ngFor="let app of applications" [ngClass]="getStatusClass(app.status)">
+          {{ app.productType }} - {{ getStatusText(app.status) }}
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="applications.length === 0">
+      <p>No applications found.</p>
+    </div>
+  </div>

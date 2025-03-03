@@ -1,0 +1,5 @@
+<div class="home-container">
+    <h1>Welcome to the Home Page!</h1>
+    <p>You are logged in as {{ authService.currentUserValue?.email }}</p>
+    <button (click)="authService.logout()">Logout</button>
+  </div>

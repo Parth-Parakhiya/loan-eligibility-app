@@ -1,0 +1,40 @@
+/* application-status.component.scss */
+.application-status-container {
+    padding: 20px;
+  }
+  
+  .status-card {
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .status-card h3 {
+    margin-top: 0;
+    color: #2c3e50;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    margin-right: 10px;
+  }
+  
+  .status-badge.pending {
+    background-color: #f1c40f;
+    color: #000;
+  }
+  
+  .status-badge.approved {
+    background-color: #27ae60;
+    color: #fff;
+  }
+  
+  .status-badge.rejected {
+    background-color: #e74c3c;
+    color: #fff;
+  }

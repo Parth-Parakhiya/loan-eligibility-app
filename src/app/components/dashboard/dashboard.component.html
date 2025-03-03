@@ -1,0 +1,17 @@
+<div class="dashboard-container">
+    <h2>Welcome, {{ customer?.firstName }} {{ customer?.lastName }}</h2>
+    <div class="financial-summary">
+      <h3>Financial Summary</h3>
+      <p>Monthly Income: {{ financialProfile?.monthlyIncome | currency }}</p>
+      <p>Monthly Expenses: {{ financialProfile?.monthlyExpenses | currency }}</p>
+      <p>Credit Score: {{ financialProfile?.creditScore }}</p>
+    </div>
+    <div class="loan-applications">
+      <h3>Loan Applications</h3>
+      <ul>
+        <li *ngFor="let app of applications" [ngClass]="getStatusClass(app.status)">
+          {{ app.productType }} - {{ app.status }}
+        </li>
+      </ul>
+    </div>
+  </div>

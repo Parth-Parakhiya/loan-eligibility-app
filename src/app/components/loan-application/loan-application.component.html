@@ -1,0 +1,222 @@
+<div class="loan-application-container">
+    <h2>Loan Application</h2>
+    <form [formGroup]="applicationForm" (ngSubmit)="submitApplication()">
+      <!-- Step 1: Loan Details -->
+      <div *ngIf="currentStep === 1">
+        <h3>Step 1: Loan Details</h3>
+        <div class="form-group">
+          <label for="productType">Product Type</label>
+          <select id="productType" formControlName="productType" required>
+            <option *ngFor="let type of productTypes" [value]="type.value">{{ type.label }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="requestedAmount">Requested Amount</label>
+          <input type="number" id="requestedAmount" formControlName="requestedAmount" required>
+        </div>
+        <div class="form-group">
+          <label for="purposeDescription">Purpose Description</label>
+          <textarea id="purposeDescription" formControlName="purposeDescription" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="requestedTermMonths">Requested Term (Months)</label>
+          <input type="number" id="requestedTermMonths" formControlName="requestedTermMonths" required>
+        </div>
+      </div>
+  
+      <!-- Step 2: Personal Information -->
+      <div *ngIf="currentStep === 2">
+        <h3>Step 2: Personal Information</h3>
+        <div formGroupName="personalInfo">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" formControlName="firstName" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" formControlName="lastName" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" formControlName="email" required>
+          </div>
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input type="text" id="phoneNumber" formControlName="phoneNumber" required>
+          </div>
+          <div class="form-group">
+            <label for="dateOfBirth">Date of Birth</label>
+            <input type="date" id="dateOfBirth" formControlName="dateOfBirth" required>
+          </div>
+          <div formGroupName="address">
+            <div class="form-group">
+              <label for="street">Street</label>
+              <input type="text" id="street" formControlName="street" required>
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" formControlName="city" required>
+            </div>
+            <div class="form-group">
+              <label for="state">State</label>
+              <input type="text" id="state" formControlName="state" required>
+            </div>
+            <div class="form-group">
+              <label for="zipCode">Zip Code</label>
+              <input type="text" id="zipCode" formControlName="zipCode" required>
+            </div>
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input type="text" id="country" formControlName="country" required>
+            </div>
+            <div class="form-group">
+              <label for="residenceDuration">Residence Duration (Months)</label>
+              <input type="number" id="residenceDuration" formControlName="residenceDuration" required>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Step 3: Financial Information -->
+      <div *ngIf="currentStep === 3">
+        <h3>Step 3: Financial Information</h3>
+        <div formGroupName="financialInfo">
+          <div formGroupName="employmentDetails">
+            <div class="form-group">
+              <label for="employerName">Employer Name</label>
+              <input type="text" id="employerName" formControlName="employerName" required>
+            </div>
+            <div class="form-group">
+              <label for="position">Position</label>
+              <input type="text" id="position" formControlName="position" required>
+            </div>
+            <div class="form-group">
+              <label for="employmentDuration">Employment Duration (Months)</label>
+              <input type="number" id="employmentDuration" formControlName="employmentDuration" required>
+            </div>
+            <div class="form-group">
+              <label for="monthlyIncome">Monthly Income</label>
+              <input type="number" id="monthlyIncome" formControlName="monthlyIncome" required>
+            </div>
+            <div class="form-group">
+              <label for="employmentType">Employment Type</label>
+              <select id="employmentType" formControlName="employmentType" required>
+                <option value="FULL_TIME">Full Time</option>
+                <option value="PART_TIME">Part Time</option>
+                <option value="SELF_EMPLOYED">Self Employed</option>
+                <option value="UNEMPLOYED">Unemployed</option>
+                <option value="RETIRED">Retired</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="monthlyExpenses">Monthly Expenses</label>
+            <input type="number" id="monthlyExpenses" formControlName="monthlyExpenses" required>
+          </div>
+          <div class="form-group">
+            <label>Existing Debts</label>
+            <div formArrayName="existingDebts">
+              <div *ngFor="let debt of debts.controls; let i = index" [formGroupName]="i">
+                <div class="debt-form">
+                  <div class="form-group">
+                    <label for="debtType">Type</label>
+                    <select id="debtType" formControlName="type" required>
+                      <option value="MORTGAGE">Mortgage</option>
+                      <option value="AUTO_LOAN">Auto Loan</option>
+                      <option value="PERSONAL_LOAN">Personal Loan</option>
+                      <option value="STUDENT_LOAN">Student Loan</option>
+                      <option value="OTHER">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="lender">Lender</label>
+                    <input type="text" id="lender" formControlName="lender" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="outstandingAmount">Outstanding Amount</label>
+                    <input type="number" id="outstandingAmount" formControlName="outstandingAmount" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="monthlyPayment">Monthly Payment</label>
+                    <input type="number" id="monthlyPayment" formControlName="monthlyPayment" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="interestRate">Interest Rate</label>
+                    <input type="number" id="interestRate" formControlName="interestRate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="remainingTermMonths">Remaining Term (Months)</label>
+                    <input type="number" id="remainingTermMonths" formControlName="remainingTermMonths" required>
+                  </div>
+                  <button type="button" (click)="removeDebt(i)">Remove Debt</button>
+                </div>
+              </div>
+              <button type="button" (click)="addDebt()">Add Debt</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Assets</label>
+            <div formArrayName="assets">
+              <div *ngFor="let asset of assets.controls; let i = index" [formGroupName]="i">
+                <div class="asset-form">
+                  <div class="form-group">
+                    <label for="assetType">Type</label>
+                    <select id="assetType" formControlName="type" required>
+                      <option value="REAL_ESTATE">Real Estate</option>
+                      <option value="VEHICLE">Vehicle</option>
+                      <option value="INVESTMENTS">Investments</option>
+                      <option value="OTHER">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" formControlName="description" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="estimatedValue">Estimated Value</label>
+                    <input type="number" id="estimatedValue" formControlName="estimatedValue" required>
+                  </div>
+                  <button type="button" (click)="removeAsset(i)">Remove Asset</button>
+                </div>
+              </div>
+              <button type="button" (click)="addAsset()">Add Asset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Step 4: Document Upload -->
+      <div *ngIf="currentStep === 4">
+        <h3>Step 4: Document Upload</h3>
+        <div formArrayName="documents">
+          <div *ngFor="let document of documents.controls; let i = index" [formGroupName]="i">
+            <div class="document-form">
+              <div class="form-group">
+                <label for="documentType">Document Type</label>
+                <select id="documentType" formControlName="type" required>
+                  <option value="ID_PROOF">ID Proof</option>
+                  <option value="ADDRESS_PROOF">Address Proof</option>
+                  <option value="INCOME_PROOF">Income Proof</option>
+                  <option value="BANK_STATEMENT">Bank Statement</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="file">File</label>
+                <input type="file" id="file" (change)="onFileChange($event, i)" required>
+              </div>
+              <button type="button" (click)="removeDocument(i)">Remove Document</button>
+            </div>
+          </div>
+          <button type="button" (click)="addDocument()">Add Document</button>
+        </div>
+      </div>
+  
+      <!-- Navigation Buttons -->
+      <div class="navigation-buttons">
+        <button type="button" (click)="previousStep()" *ngIf="currentStep > 1">Previous</button>
+        <button type="button" (click)="nextStep()" *ngIf="currentStep < totalSteps">Next</button>
+        <button type="submit" *ngIf="currentStep === totalSteps">Submit Application</button>
+      </div>
+    </form>
+  </div>
