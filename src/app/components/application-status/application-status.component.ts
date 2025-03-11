@@ -1,3 +1,4 @@
+// application-status.component.ts
 import { Component, OnInit } from '@angular/core';
 import { LoanApplicationService } from '../../services/loan-application.service';
 import { AuthService } from '../../services/auth.service';
@@ -13,15 +14,37 @@ export class ApplicationStatusComponent implements OnInit {
   loading: boolean = true;
   error: string = '';
   
+  // Static data for demo purposes
+  preApproved: boolean = true;
+  loanDetails = {
+    type: 'Car Loan',
+    eligibilityScore: 85,
+    maxAmount: 25000,
+    interestRate: 4.25,
+    term: 60,
+    monthlyPayment: 462.75
+  };
+  
+  decisionFactors = [
+    { name: 'Excellent Credit Score', status: 'POSITIVE', description: 'Your credit score is above average, which positively impacts your eligibility.' },
+    { name: 'Existing Debt Ratio', status: 'NEGATIVE', description: 'Your existing debt-to-income ratio is slightly higher than optimal.' },
+    { name: 'Stable Employment', status: 'POSITIVE', description: 'You have been with your current employer for over 3 years.' },
+    { name: 'Good Payment History', status: 'POSITIVE', description: 'Your payment history shows consistent on-time payments.' }
+  ];
+  
   constructor(
     private loanService: LoanApplicationService,
     private authService: AuthService
   ) { }
-
+  
   ngOnInit(): void {
-    this.loadApplications();
+    // Keep original method for loading real data
+    // this.loadApplications();
+    
+    // For demo, we're using static data
+    this.loading = false;
   }
-
+  
   loadApplications(): void {
     const currentUser = this.authService.currentUserValue;
     if (!currentUser || !currentUser.customerId) {
@@ -29,7 +52,7 @@ export class ApplicationStatusComponent implements OnInit {
       this.loading = false;
       return;
     }
-
+    
     this.loanService.getCustomerApplications(currentUser.customerId).subscribe(
       applications => {
         this.applications = applications;
@@ -42,7 +65,7 @@ export class ApplicationStatusComponent implements OnInit {
       }
     );
   }
-
+  
   getStatusClass(status: string): string {
     switch(status) {
       case 'APPROVED': return 'status-approved';
@@ -52,7 +75,7 @@ export class ApplicationStatusComponent implements OnInit {
       default: return 'status-draft';
     }
   }
-
+  
   getStatusText(status: string): string {
     switch(status) {
       case 'APPROVED': return 'Approved';
@@ -63,7 +86,7 @@ export class ApplicationStatusComponent implements OnInit {
       default: return status;
     }
   }
-
+  
   getProductTypeDisplay(type: string): string {
     switch(type) {
       case 'CAR_LOAN': return 'Car Loan';
@@ -72,5 +95,9 @@ export class ApplicationStatusComponent implements OnInit {
       case 'LINE_OF_CREDIT': return 'Line of Credit';
       default: return type;
     }
+  }
+  
+  getDecisionFactorClass(status: string): string {
+    return status === 'POSITIVE' ? 'positive-factor' : 'negative-factor';
   }
 }

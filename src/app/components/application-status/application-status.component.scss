@@ -1,40 +1,288 @@
 /* application-status.component.scss */
 .application-status-container {
-    padding: 20px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+h4 {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.pre-approval-message {
+  background-color: #e1f5fe;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
+  .message-header {
+    h3 {
+      color: #0277bd;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      color: #0277bd;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+  }
+}
+
+.eligibility-details {
+  margin-bottom: 30px;
+  
+  .eligibility-content {
+    display: flex;
+    gap: 20px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
   }
   
-  .status-card {
+  .eligibility-score {
     background-color: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    flex: 1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    
+    h4 {
+      text-align: center;
+      color: #555;
+      font-weight: normal;
+    }
+    
+    .score-circle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      
+      .score-value {
+        font-size: 50px;
+        font-weight: bold;
+        color: #4285f4;
+      }
+      
+      .score-max {
+        font-size: 12px;
+        color: #666;
+        position: relative;
+        top: 10px; 
+      }
+    }
   }
   
-  .status-card h3 {
-    margin-top: 0;
-    color: #2c3e50;
+  .approved-terms {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    flex: 2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    
+    .terms-table {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      
+      .terms-row {
+        display: flex;
+        justify-content: space-between;
+        
+        .terms-label {
+          color: #555;
+          font-size: 14px;
+        }
+        
+        .terms-value {
+          font-weight: bold;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+.decision-factors {
+  margin-bottom: 30px;
+  
+  .factors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+    
+    @media (max-width: 850px) {
+      grid-template-columns: 1fr;
+    }
   }
   
-  .status-badge {
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 0.9em;
-    margin-right: 10px;
+  .factor-card {
+    padding: 20px;
+    border-radius: 8px;
+    
+    .factor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      
+      h4 {
+        margin: 0;
+        font-weight: bold;
+      }
+      
+      .factor-status {
+        font-weight: bold;
+      }
+    }
+    
+    .factor-description {
+      margin: 0;
+      font-size: 14px;
+    }
   }
   
-  .status-badge.pending {
-    background-color: #f1c40f;
-    color: #000;
+  .positive-factor {
+    background-color: rgba(46, 204, 113, 0.1);
+    
+    .factor-header {
+      h4, .factor-status {
+        color: #27ae60;
+      }
+    }
   }
   
-  .status-badge.approved {
-    background-color: #27ae60;
-    color: #fff;
+  .negative-factor {
+    background-color: rgba(231, 76, 60, 0.1);
+    
+    .factor-header {
+      h4, .factor-status {
+        color: #e74c3c;
+      }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
   }
   
-  .status-badge.rejected {
-    background-color: #e74c3c;
-    color: #fff;
+  .btn-primary {
+    background-color: #4285f4;
+    color: white;
+    
+    &:hover {
+      background-color: #3367d6;
+    }
   }
+  
+  .btn-secondary {
+    background-color: #f1f3f4;
+    color: #333;
+    
+    &:hover {
+      background-color: #e8eaed;
+    }
+  }
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 50px 0;
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #4285f4;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.no-applications {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+}
+
+// Original styles preserved for compatibility
+.status-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  margin-right: 10px;
+}
+
+.status-badge.pending {
+  background-color: #f1c40f;
+  color: #000;
+}
+
+.status-badge.approved {
+  background-color: #27ae60;
+  color: #fff;
+}
+
+.status-badge.rejected {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.status-approved { color: #27ae60; }
+.status-rejected { color: #e74c3c; }
+.status-review { color: #f39c12; }
+.status-submitted { color: #3498db; }
+.status-draft { color: #7f8c8d; }
