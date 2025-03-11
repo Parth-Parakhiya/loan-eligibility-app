@@ -68,3 +68,78 @@
   .recommendation-card p {
     margin: 5px 0;
   }
+
+
+  // updated one version1
+  .dashboard-container {
+    background-color: #f4f6f9;
+    padding: 20px;
+    padding-bottom: 60px;
+    min-height: 100vh; // Ensure the container takes full height
+    .dashboard-title {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      
+      i {
+        margin-right: 10px;
+        font-size: 1.5rem;
+        color: #3498db;
+      }
+    }
+  
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+  
+      &:hover {
+        transform: translateY(-5px);
+      }
+  
+      .card-header {
+        background-color: #f8f9fa;
+        border-bottom: none;
+        display: flex;
+        align-items: center;
+        
+        i {
+          margin-right: 10px;
+          color: #3498db;
+        }
+      }
+    }
+  
+    .financial-summary-card {
+      .financial-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+  
+        i {
+          margin-right: 10px;
+          font-size: 1.2rem;
+        }
+  
+        span {
+          margin-right: 10px;
+          color: #7f8c8d;
+        }
+      }
+    }
+  
+    .quick-actions-card {
+      .btn {
+        margin: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+  
+        i {
+          margin-right: 5px;
+        }
+      }
+    }
+  }

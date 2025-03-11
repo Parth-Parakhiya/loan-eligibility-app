@@ -15,6 +15,8 @@ import { ApplicationStatusComponent } from './components/application-status/appl
 import { ProductCatalogComponent } from './components/product-catalog/product-catalog.component';
 import { AuthGuard } from './guards/auth.guard';
 import { HomeComponent } from './home/home.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { HomeComponent } from './home/home.component';
     EligibilityResultsComponent,
     ApplicationStatusComponent,
     ProductCatalogComponent,
-    HomeComponent
+    HomeComponent,
+    NavbarComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

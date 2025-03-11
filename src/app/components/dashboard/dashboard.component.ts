@@ -80,4 +80,26 @@ export class DashboardComponent implements OnInit {
       default: return 'status-draft';
     }
   }
+
+  getStatusIcon(status: string): string {
+    const statusIcons = {
+      'APPROVED': 'bi bi-check-circle-fill text-success',
+      'REJECTED': 'bi bi-x-circle-fill text-danger',
+      'UNDER_REVIEW': 'bi bi-clock-fill text-warning',
+      'SUBMITTED': 'bi bi-file-earmark-text text-info',
+      'DRAFT': 'bi bi-pencil-square text-secondary'
+    };
+    return statusIcons[status] || 'bi bi-question-circle';
+  }
+
+  getStatusBadgeClass(status: string): string {
+    const statusBadges = {
+      'APPROVED': 'badge bg-success',
+      'REJECTED': 'badge bg-danger',
+      'UNDER_REVIEW': 'badge bg-warning',
+      'SUBMITTED': 'badge bg-info',
+      'DRAFT': 'badge bg-secondary'
+    };
+    return statusBadges[status] || 'badge bg-light text-dark';
+  }
 }
