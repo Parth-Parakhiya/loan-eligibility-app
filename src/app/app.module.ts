@@ -17,7 +17,10 @@ import { AuthGuard } from './guards/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
-
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { ProductDetailsDialogComponent } from './components/product-catalog/product-details-dialog.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,13 +33,17 @@ import { FooterComponent } from './components/footer/footer.component';
     ProductCatalogComponent,
     HomeComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+    ProductDetailsDialogComponent  
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
-    AppRoutingModule
+    AppRoutingModule ,
+    MatDialogModule,
+    MatButtonModule,
+    NoopAnimationsModule,
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]
