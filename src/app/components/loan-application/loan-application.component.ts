@@ -328,4 +328,8 @@ export class LoanApplicationComponent implements OnInit {
       );
     }
   }
+
+  getFileName(file: File): string {
+    return file ? file.name : '';
+  }
 }
