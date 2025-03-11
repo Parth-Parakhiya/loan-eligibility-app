@@ -33,29 +33,22 @@
     border-radius: 4px;
     transition: all 0.3s ease;
     margin: 0 0.2rem;
+    text-decoration: none; /* Ensure no underline on any link */
     
     &:hover {
       color: white;
       background-color: rgba(255, 255, 255, 0.1);
       transform: translateY(-2px);
+      text-decoration: none; /* No underline on hover */
     }
     
     &.active {
       color: white;
       background-color: rgba(255, 255, 255, 0.15);
       position: relative;
+      text-decoration: none; /* No underline on active state */
       
-      &:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 20px;
-        height: 3px;
-        background-color: white;
-        border-radius: 3px;
-      }
+      /* Removed the :after pseudo-element that created the underline */
     }
   }
   
@@ -63,11 +56,13 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
     padding: 0.4rem 1.2rem;
     border-radius: 20px;
+    text-decoration: none; /* No underline */
     
     &:hover {
       background-color: white;
       color: #1a2980;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-decoration: none; /* No underline on hover */
     }
   }
   
@@ -82,15 +77,16 @@
   }
 }
 
+/* This will override any default underline styling from Bootstrap or Angular */
+a, a:hover, a:focus, a:active, .nav-link, .nav-link:hover, .nav-link:focus, .nav-link:active {
+  text-decoration: none !important;
+}
+
 @media (max-width: 992px) {
   .navbar {
     .nav-link {
       padding: 0.7rem 1rem;
       margin: 0.2rem 0;
-      
-      &.active:after {
-        display: none;
-      }
     }
     
     .login-btn, .logout-btn {
