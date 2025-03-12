@@ -14,7 +14,7 @@
   h2 {
     font-size: 28px;
     font-weight: 600;
-    color: #333;
+    color: #1e4620;
     margin-bottom: 8px;
   }
 }
@@ -66,20 +66,25 @@
     
     &.active {
       .step-number {
-        background-color: #3f87f5;
+        background-color: #2e7d32; // Dark green for active step
         color: white;
       }
       
       .step-label {
-        color: #3f87f5;
+        color: #2e7d32;
         font-weight: 600;
       }
     }
     
     &.completed {
       .step-number {
-        background-color: #4caf50;
+        background-color: #4caf50; // Lighter green for completed steps
         color: white;
+      }
+      
+      .step-label {
+        color: #4caf50;
+        font-weight: 500;
       }
     }
   }
@@ -92,7 +97,7 @@
   h3 {
     font-size: 22px;
     font-weight: 500;
-    color: #333;
+    color: #1e4620;
     margin-bottom: 25px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
@@ -118,9 +123,9 @@
     transition: border-color 0.3s;
     
     &:focus {
-      border-color: #3f87f5;
+      border-color: #4caf50;
       outline: none;
-      box-shadow: 0 0 0 3px rgba(63, 135, 245, 0.15);
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
     }
     
     &:disabled {
@@ -171,6 +176,7 @@
     margin-bottom: 16px;
     font-size: 18px;
     font-weight: 500;
+    color: #2e7d32;
   }
 }
 
@@ -199,8 +205,8 @@
 }
 
 .add-button {
-  background-color: #f0f0f0;
-  border: 1px dashed #aaa;
+  background-color: #f0f7f0;
+  border: 1px dashed #4caf50;
   border-radius: 6px;
   padding: 12px 16px;
   display: flex;
@@ -210,13 +216,14 @@
   width: 100%;
   margin-bottom: 25px;
   transition: all 0.2s;
+  color: #2e7d32;
   
   i {
     margin-right: 8px;
   }
   
   &:hover {
-    background-color: #e6e6e6;
+    background-color: #e8f5e9;
   }
 }
 
@@ -245,21 +252,23 @@
       }
     }
     
-    &.next-button, &.submit-button {
-      background-color: #3f87f5;
+    &.next-button {
+      background-color: #2e7d32; // Dark green
       border: none;
       color: white;
       
       &:hover {
-        background-color: #2a75e8;
+        background-color: #1b5e20; // Darker green on hover
       }
     }
     
     &.submit-button {
-      background-color: #4caf50;
+      background-color: #2e7d32; // Dark green
+      border: none;
+      color: white;
       
       &:hover {
-        background-color: #3d9140;
+        background-color: #1b5e20; // Darker green on hover
       }
     }
     
@@ -270,6 +279,17 @@
   }
 }
 
+// Save as Draft button
+button[type="button"][ng-click="saveAsDraft()"] {
+  background-color: #e8f5e9;
+  border: 1px solid #4caf50;
+  color: #2e7d32;
+  
+  &:hover {
+    background-color: #c8e6c9;
+  }
+}
+
 // File upload
 .file-upload {
   position: relative;
@@ -277,7 +297,7 @@
   .upload-label {
     display: block;
     padding: 30px 20px;
-    border: 2px dashed #ddd;
+    border: 2px dashed #81c784;
     border-radius: 6px;
     text-align: center;
     cursor: pointer;
@@ -285,13 +305,14 @@
     
     i {
       font-size: 24px;
-      color: #aaa;
+      color: #4caf50;
       margin-bottom: 10px;
       display: block;
     }
     
     &:hover {
-      border-color: #3f87f5;
+      border-color: #4caf50;
+      background-color: #f1f8e9;
     }
   }
   
@@ -307,6 +328,7 @@
   .file-name {
     margin-top: 10px;
     font-size: 14px;
+    color: #2e7d32;
   }
 }
 
@@ -326,9 +348,9 @@
   .spinner {
     width: 50px;
     height: 50px;
-    border: 5px solid rgba(63, 135, 245, 0.2);
+    border: 5px solid rgba(76, 175, 80, 0.2);
     border-radius: 50%;
-    border-top-color: #3f87f5;
+    border-top-color: #4caf50;
     animation: spin 1s ease-in-out infinite;
   }
   
