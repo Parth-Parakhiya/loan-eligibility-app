@@ -1,145 +1,234 @@
 /* dashboard.component.scss */
 .dashboard-container {
-    padding: 20px;
-  }
-  
-  .welcome-section {
-    background-color: #3498db;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .welcome-section h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
-  }
-  
-  .credit-score {
-    font-size: 1.2em;
-    font-weight: bold;
-  }
-  
-  .applications-section, .recommendations-section {
+  background-color: #e8f5e9; // Light green background
+  padding: 20px;
+  padding-bottom: 60px;
+  min-height: 100vh;
+
+  .dashboard-title {
+    color: #1b5e20; // Dark green color
     margin-bottom: 30px;
-  }
-  
-  .application-card, .recommendation-card {
-    background-color: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .application-card h3, .recommendation-card h3 {
-    margin-top: 0;
-    color: #2c3e50;
-  }
-  
-  .status-badge {
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 0.9em;
-    margin-right: 10px;
-  }
-  
-  .status-badge.under-review {
-    background-color: #f1c40f;
-    color: #000;
-  }
-  
-  .status-badge.approved {
-    background-color: #27ae60;
-    color: #fff;
-  }
-  
-  .recommendation-card {
-    background-color: #3498db;
-    color: white;
-  }
-  
-  .recommendation-card h3 {
-    color: white;
-  }
-  
-  .recommendation-card p {
-    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    
+    i {
+      margin-right: 10px;
+      font-size: 1.5rem;
+      color: #2e7d32; // Medium green color
+    }
   }
 
+  .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
 
-  // updated one version1
-  .dashboard-container {
-    background-color: #f4f6f9;
-    padding: 20px;
-    padding-bottom: 60px;
-    min-height: 100vh; // Ensure the container takes full height
-    .dashboard-title {
-      color: #2c3e50;
-      margin-bottom: 20px;
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      background-color: #4caf50; // Primary green
+      color: white;
+      border-bottom: none;
+      padding: 15px 20px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       
       i {
         margin-right: 10px;
-        font-size: 1.5rem;
-        color: #3498db;
+        color: #e8f5e9; // Light green
       }
     }
-  
-    .card {
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-      transition: transform 0.3s ease;
-  
-      &:hover {
-        transform: translateY(-5px);
+
+    .card-body {
+      padding: 20px;
+    }
+  }
+
+  // Financial Summary Section
+  .financial-summary-card {
+    .financial-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: rgba(76, 175, 80, 0.05);
+      border-radius: 8px;
+
+      i {
+        margin-right: 15px;
+        font-size: 1.4rem;
+        color: #4caf50; // Primary green
+        width: 30px;
+        text-align: center;
       }
-  
-      .card-header {
-        background-color: #f8f9fa;
-        border-bottom: none;
-        display: flex;
-        align-items: center;
-        
-        i {
-          margin-right: 10px;
-          color: #3498db;
-        }
+
+      span {
+        margin-right: 10px;
+        color: #555;
+        font-weight: 500;
+        flex: 1;
+      }
+
+      strong {
+        color: #1b5e20; // Dark green
+        font-size: 1.1rem;
       }
     }
-  
-    .financial-summary-card {
-      .financial-item {
-        display: flex;
-        align-items: center;
+
+    // Credit Score Meter
+    .credit-score-container {
+      margin-top: 25px;
+      margin-bottom: 25px;
+      padding: 15px;
+      background-color: rgba(76, 175, 80, 0.05);
+      border-radius: 8px;
+
+      .credit-score-title {
+        color: #1b5e20;
         margin-bottom: 10px;
-  
-        i {
-          margin-right: 10px;
-          font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .credit-score-meter {
+        height: 16px;
+        background-color: #e0e0e0;
+        border-radius: 8px;
+        position: relative;
+        margin-bottom: 5px;
+        overflow: hidden;
+
+        .credit-score-bar {
+          height: 100%;
+          background: linear-gradient(90deg, #f44336, #ffeb3b, #4caf50);
+          border-radius: 8px;
         }
-  
+
+        .credit-score-indicator {
+          position: absolute;
+          top: -8px;
+          transform: translateX(-50%);
+
+          .indicator-value {
+            background-color: #1b5e20;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            position: relative;
+            
+            &:after {
+              content: '';
+              position: absolute;
+              top: 100%;
+              left: 50%;
+              margin-left: -4px;
+              width: 0;
+              height: 0;
+              border-left: 4px solid transparent;
+              border-right: 4px solid transparent;
+              border-top: 6px solid #1b5e20;
+            }
+          }
+        }
+      }
+
+      .credit-score-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        
         span {
-          margin-right: 10px;
-          color: #7f8c8d;
+          font-size: 0.7rem;
+          color: #616161;
         }
       }
     }
-  
-    .quick-actions-card {
-      .btn {
-        margin: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-  
-        i {
-          margin-right: 5px;
-        }
+
+    // Financial Graph
+    .financial-graph {
+      margin-top: 30px;
+      
+      h5 {
+        color: #1b5e20;
+        margin-bottom: 15px;
+        font-weight: 600;
+        text-align: center;
       }
     }
   }
+
+  // Loan Applications Section
+  .loan-applications-card {
+    .no-applications {
+      text-align: center;
+      padding: 30px 20px;
+      color: #757575;
+      
+      i {
+        font-size: 3rem;
+        color: #4caf50;
+        margin-bottom: 15px;
+        display: block;
+      }
+    }
+    
+    .application-list {
+      margin-bottom: 20px;
+      
+      .list-group-item {
+        border: none;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        background-color: rgba(76, 175, 80, 0.05);
+        padding: 15px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        .app-info {
+          display: flex;
+          align-items: center;
+          
+          i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+          }
+          
+          .app-details {
+            display: flex;
+            flex-direction: column;
+            
+            .app-type {
+              font-weight: 600;
+              color: #333;
+            }
+            
+            .app-date {
+              color: #757575;
+            }
+          }
+        }
+      }
+    }
+    
+    .application-stats {
+      margin-top: 30px;
+      
+      h5 {
+        color: #1b5e20;
+        margin-bottom: 15px;
+        font-weight: 600;
+        text-align: center;
+      }
+    }
+  }
+}

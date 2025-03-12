@@ -1,3 +1,4 @@
+<!-- dashboard.component.html -->
 <div class="dashboard-container container-fluid">
   <div class="row">
     <div class="col-12">
@@ -9,7 +10,7 @@
   </div>
 
   <div class="row">
-    <!-- Financial Summary Card -->
+    <!-- Financial Summary Card with Graph -->
     <div class="col-md-6">
       <div class="card financial-summary-card">
         <div class="card-header">
@@ -17,19 +18,38 @@
         </div>
         <div class="card-body">
           <div class="financial-item">
-            <i class="bi bi-cash-coin text-success"></i>
+            <i class="bi bi-cash-coin"></i>
             <span>Monthly Income:</span>
             <strong>{{ financialProfile?.monthlyIncome | currency }}</strong>
           </div>
           <div class="financial-item">
-            <i class="bi bi-credit-card text-danger"></i>
+            <i class="bi bi-credit-card"></i>
             <span>Monthly Expenses:</span>
             <strong>{{ financialProfile?.monthlyExpenses | currency }}</strong>
           </div>
-          <div class="financial-item">
-            <i class="bi bi-speedometer2 text-primary"></i>
-            <span>Credit Score:</span>
-            <strong>{{ financialProfile?.creditScore }}</strong>
+          
+          <!-- Credit Score Meter -->
+          <div class="credit-score-container">
+            <h5 class="credit-score-title">Credit Score: {{ financialProfile?.creditScore }}</h5>
+            <div class="credit-score-meter">
+              <div class="credit-score-bar" [style.width.%]="getCreditScorePercentage()"></div>
+              <div class="credit-score-indicator" [style.left.%]="getCreditScorePercentage()">
+                <div class="indicator-value">{{ financialProfile?.creditScore }}</div>
+              </div>
+            </div>
+            <div class="credit-score-labels">
+              <span>Poor</span>
+              <span>Fair</span>
+              <span>Good</span>
+              <span>Very Good</span>
+              <span>Excellent</span>
+            </div>
+          </div>
+          
+          <!-- Income vs Expenses Graph -->
+          <div class="financial-graph">
+            <h5>Monthly Overview</h5>
+            <canvas id="financialChart"></canvas>
           </div>
         </div>
       </div>
@@ -42,52 +62,31 @@
           <i class="bi bi-file-earmark-text"></i> Loan Applications
         </div>
         <div class="card-body">
-          <ul class="list-group">
+          <div *ngIf="applications.length === 0" class="no-applications">
+            <i class="bi bi-folder-plus"></i>
+            <p>No applications yet. Start your first loan application today!</p>
+          </div>
+          
+          <ul *ngIf="applications.length > 0" class="list-group application-list">
             <li *ngFor="let app of applications" 
                 class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
+              <div class="app-info">
                 <i [ngClass]="getStatusIcon(app.status)"></i>
-                {{ app.productType }}
+                <div class="app-details">
+                  <span class="app-type">{{ app.productType }}</span>
+                  <small class="app-date">Applied: {{ app.applicationDate | date }}</small>
+                </div>
               </div>
               <span [ngClass]="getStatusBadgeClass(app.status)">
                 {{ app.status }}
               </span>
             </li>
           </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Quick Actions -->
-  <div class="row mt-4">
-    <div class="col-12">
-      <div class="card quick-actions-card">
-        <div class="card-header">
-          <i class="bi bi-lightning-charge"></i> Quick Actions
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-3 col-sm-6">
-              <button class="btn btn-outline-primary w-100">
-                <i class="bi bi-plus-circle"></i> New Application
-              </button>
-            </div>
-            <div class="col-md-3 col-sm-6">
-              <button class="btn btn-outline-success w-100">
-                <i class="bi bi-file-earmark-check"></i> Check Status
-              </button>
-            </div>
-            <div class="col-md-3 col-sm-6">
-              <button class="btn btn-outline-info w-100">
-                <i class="bi bi-graph-up"></i> Financial Insights
-              </button>
-            </div>
-            <div class="col-md-3 col-sm-6">
-              <button class="btn btn-outline-warning w-100">
-                <i class="bi bi-gear"></i> Account Settings
-              </button>
-            </div>
+          
+          <!-- Application Status Chart -->
+          <div *ngIf="applications.length > 0" class="application-stats">
+            <h5>Application Status Overview</h5>
+            <canvas id="applicationChart"></canvas>
           </div>
         </div>
       </div>
