@@ -1,0 +1,97 @@
+/* application-status.container.css */
+.dashboard {
+  background: white;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.welcome-text h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: normal;
+  color: #333;
+}
+
+.welcome-text p {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.credit-score {
+  width: 60px;
+  height: 60px;
+  background: #4285f4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.applications {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.application-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.application-card h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: normal;
+  color: #333;
+}
+
+.application-card p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.under-review {
+  background: #fff3dc;
+  color: #b98900;
+}
+
+.approved {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.view-details {
+  background: #4285f4;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}

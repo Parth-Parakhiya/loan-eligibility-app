@@ -1,0 +1,227 @@
+/* dashboard.container.css */
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Page layout */
+.page-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: center;
+}
+
+.content-container {
+  background: white;
+  width: 100%;
+  max-width: 1200px;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* Welcome Section */
+.welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.welcome-text h2 {
+  font-size: 24px;
+  margin: 0;
+  color: #333;
+  font-weight: normal;
+}
+
+.welcome-text p {
+  margin: 8px 0 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.credit-score-circle {
+  background: #4285f4;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+/* Section Headers */
+h2 {
+  font-size: 18px;
+  color: #333;
+  margin: 0 0 16px 0;
+  font-weight: normal;
+}
+
+/* Applications Section */
+.applications {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.loan-item {
+  flex: 1;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+}
+
+.loan-item h3 {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 12px 0;
+  font-weight: normal;
+}
+
+.loan-item p {
+  margin: 0 0 8px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.loan-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+/* Status Tags */
+.review-tag {
+  background: #fff3dc;
+  color: #b98900;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.approved-tag {
+  background: #e6f4ea;
+  color: #137333;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* Buttons */
+button {
+  background: #4285f4;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #3b78e7;
+}
+
+/* View Details Button */
+.view-details {
+  background: #4285f4;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Recommendations Section */
+.recommendations {
+  display: flex;
+  gap: 16px;
+}
+
+.recommendation-item {
+  flex: 1;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+}
+
+.recommendation-item h3 {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 8px 0;
+  font-weight: normal;
+}
+
+.recommendation-item p {
+  margin: 0 0 4px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.apply-now {
+  width: 100%;
+  background: #4285f4;
+  color: white;
+  border: none;
+  padding: 8px 0;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.apply-now:hover {
+  background: #3b78e7;
+}
+
+/* Status Colors */
+.under-review {
+  background: #fff3dc;
+  color: #b98900;
+}
+
+.approved {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content-container {
+    padding: 16px;
+  }
+
+  .applications,
+  .recommendations {
+    flex-direction: column;
+  }
+  
+  .loan-item,
+  .recommendation-item {
+    margin-bottom: 16px;
+  }
+  
+  .loan-item:last-child,
+  .recommendation-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .welcome-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+}

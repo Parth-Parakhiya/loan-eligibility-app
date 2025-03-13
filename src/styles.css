@@ -1,0 +1,197 @@
+/* styles.css */
+:root {
+  --primary-blue: #4285f4;
+  --success-green: #137333;
+  --warning-yellow: #b98900;
+  --error-red: #d93025;
+  --border-gray: #eee;
+  --background-gray: #f4f4f9;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: var(--background-gray);
+  color: #333;
+  margin: 0;
+  padding: 0;
+  line-height: 1.4;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Dashboard Styles */
+.dashboard-card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 24px;
+}
+
+.welcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.credit-score-circle {
+  background: var(--primary-blue);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+/* Application Cards */
+.applications-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.status-review {
+  background: #fff3dc;
+  color: var(--warning-yellow);
+}
+
+.status-approved {
+  background: #e6f4ea;
+  color: var(--success-green);
+}
+
+/* Buttons */
+.button {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-gray);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Progress Steps */
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-blue);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Results Section */
+.eligibility-score {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 8px solid var(--primary-blue);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.decision-factor {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.positive {
+  color: var(--success-green);
+}
+
+.negative {
+  color: var(--error-red);
+}
+
+/* Success Message */
+.success-message {
+  background: #e8f0fe;
+  border: 1px solid var(--primary-blue);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 24px;
+  color: var(--primary-blue);
+}
+
+/* Recommended Products */
+.recommended-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.product-card {
+  padding: 16px;
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+}
