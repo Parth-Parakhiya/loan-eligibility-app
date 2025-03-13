@@ -83,152 +83,178 @@
     }
 
     // Credit Score Meter
-    .credit-score-container {
-      margin-top: 25px;
-      margin-bottom: 25px;
-      padding: 15px;
-      background-color: rgba(76, 175, 80, 0.05);
-      border-radius: 8px;
-
-      .credit-score-title {
-        color: #1b5e20;
-        margin-bottom: 10px;
-        font-weight: 600;
-      }
-
-      .credit-score-meter {
-        height: 16px;
-        background-color: #e0e0e0;
-        border-radius: 8px;
-        position: relative;
-        margin-bottom: 5px;
-        overflow: hidden;
-
-        .credit-score-bar {
-          height: 100%;
-          background: linear-gradient(90deg, #f44336, #ffeb3b, #4caf50);
-          border-radius: 8px;
-        }
-
-        .credit-score-indicator {
-          position: absolute;
-          top: -8px;
-          transform: translateX(-50%);
-
-          .indicator-value {
-            background-color: #1b5e20;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            position: relative;
-            
-            &:after {
-              content: '';
-              position: absolute;
-              top: 100%;
-              left: 50%;
-              margin-left: -4px;
-              width: 0;
-              height: 0;
-              border-left: 4px solid transparent;
-              border-right: 4px solid transparent;
-              border-top: 6px solid #1b5e20;
-            }
-          }
-        }
-      }
-
-      .credit-score-labels {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 5px;
+   /* Credit Score Meter - Refined Design Styles */
+.credit-score-container {
+  margin: 15px 0 25px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  
+  .credit-score-title {
+    color: #1b5e20;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    
+    i {
+      color: #4caf50;
+      margin-right: 8px;
+    }
+  }
+  
+  .credit-score-meter-container {
+    margin-bottom: 15px;
+  }
+  
+  .credit-score-meter {
+    height: 8px;
+    position: relative;
+    margin: 25px 0 5px;
+    
+    .credit-score-segments {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      
+      .segment {
+        height: 100%;
+        flex: 1;
         
-        span {
-          font-size: 0.7rem;
-          color: #616161;
+        &.poor {
+          background-color: #f44336;
+        }
+        
+        &.fair {
+          background-color: #ff9800;
+        }
+        
+        &.good {
+          background-color: #4caf50;
+        }
+        
+        &.very-good {
+          background-color: #2196f3;
+        }
+        
+        &.excellent {
+          background-color: #673ab7;
         }
       }
     }
-
-    // Financial Graph
-    .financial-graph {
-      margin-top: 30px;
+    
+    .score-marker {
+      position: absolute;
+      bottom: 100%;
+      transform: translateX(-50%);
+      margin-bottom: 5px;
       
-      h5 {
-        color: #1b5e20;
-        margin-bottom: 15px;
-        font-weight: 600;
+      .marker-arrow {
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #1b5e20;
+        margin: 0 auto;
+      }
+      
+      .marker-value {
+        background-color: #1b5e20;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+        padding: 3px 8px;
+        border-radius: 15px;
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 3px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        min-width: 40px;
         text-align: center;
       }
     }
   }
-
-  // Loan Applications Section
-  .loan-applications-card {
-    .no-applications {
+  
+  .credit-score-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 0 2px;
+    
+    .range-label {
+      flex: 1;
       text-align: center;
-      padding: 30px 20px;
-      color: #757575;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      span {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      
+      small {
+        font-size: 0.65rem;
+        color: #757575;
+      }
+      
+      &:nth-child(1) span { color: #f44336; }
+      &:nth-child(2) span { color: #ff9800; }
+      &:nth-child(3) span { color: #4caf50; }
+      &:nth-child(4) span { color: #2196f3; }
+      &:nth-child(5) span { color: #673ab7; }
+    }
+  }
+  
+  .score-details {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    
+    .score-status {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
       
       i {
-        font-size: 3rem;
-        color: #4caf50;
-        margin-bottom: 15px;
-        display: block;
+        margin-right: 10px;
+        font-size: 1.1rem;
       }
-    }
-    
-    .application-list {
-      margin-bottom: 20px;
       
-      .list-group-item {
-        border: none;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        background-color: rgba(76, 175, 80, 0.05);
-        padding: 15px;
+      div {
+        font-size: 0.9rem;
         
-        &:last-child {
-          margin-bottom: 0;
-        }
-        
-        .app-info {
-          display: flex;
-          align-items: center;
-          
-          i {
-            font-size: 1.2rem;
-            margin-right: 15px;
-          }
-          
-          .app-details {
-            display: flex;
-            flex-direction: column;
-            
-            .app-type {
-              font-weight: 600;
-              color: #333;
-            }
-            
-            .app-date {
-              color: #757575;
-            }
-          }
+        strong {
+          color: #4caf50;
         }
       }
     }
     
-    .application-stats {
-      margin-top: 30px;
+    .score-percentile {
+      padding-left: 25px;
+      font-size: 0.85rem;
+      color: #616161;
+      margin-bottom: 12px;
+    }
+    
+    .score-update {
+      display: flex;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #616161;
       
-      h5 {
-        color: #1b5e20;
-        margin-bottom: 15px;
-        font-weight: 600;
-        text-align: center;
+      i {
+        margin-right: 10px;
+        color: #2196f3;
       }
     }
   }
+}}
 }

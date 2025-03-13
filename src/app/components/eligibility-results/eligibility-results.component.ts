@@ -106,4 +106,35 @@ export class EligibilityResultsComponent implements OnInit {
       } 
     });
   }
+
+  /**
+ * Calculate the percentage position of the credit score marker
+ * @param score The current credit score
+ * @returns Percentage position (0-100)
+ */
+getScoreMarkerPosition(score: number = 720): number {
+  // Credit score range constants
+  const MIN_SCORE = 300;
+  const MAX_SCORE = 850;
+  const RANGE = MAX_SCORE - MIN_SCORE;
+  
+  // Calculate position as percentage
+  const position = ((score - MIN_SCORE) / RANGE) * 100;
+  
+  // Ensure position is within bounds
+  return Math.max(0, Math.min(100, position));
+}
+
+/**
+ * Get credit score range classification
+ * @param score The current credit score
+ * @returns Score classification (Poor, Fair, Good, etc.)
+ */
+getScoreRange(score: number = 720): string {
+  if (score >= 800) return 'Excellent';
+  if (score >= 740) return 'Very Good';
+  if (score >= 670) return 'Good';
+  if (score >= 580) return 'Fair';
+  return 'Poor';
+}
 }

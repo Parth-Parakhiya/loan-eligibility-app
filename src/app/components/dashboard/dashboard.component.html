@@ -29,22 +29,70 @@
           </div>
           
           <!-- Credit Score Meter -->
-          <div class="credit-score-container">
-            <h5 class="credit-score-title">Credit Score: {{ financialProfile?.creditScore }}</h5>
-            <div class="credit-score-meter">
-              <div class="credit-score-bar" [style.width.%]="getCreditScorePercentage()"></div>
-              <div class="credit-score-indicator" [style.left.%]="getCreditScorePercentage()">
-                <div class="indicator-value">{{ financialProfile?.creditScore }}</div>
-              </div>
-            </div>
-            <div class="credit-score-labels">
-              <span>Poor</span>
-              <span>Fair</span>
-              <span>Good</span>
-              <span>Very Good</span>
-              <span>Excellent</span>
-            </div>
-          </div>
+         <!-- Credit Score Meter - Refined Design -->
+<div class="credit-score-container">
+  <h5 class="credit-score-title">
+    <i class="bi bi-graph-up"></i> Credit Score: 720
+  </h5>
+  
+  <div class="credit-score-meter-container">
+    <!-- Main Score Bar -->
+    <div class="credit-score-meter">
+      <div class="credit-score-segments">
+        <div class="segment poor"></div>
+        <div class="segment fair"></div>
+        <div class="segment good"></div>
+        <div class="segment very-good"></div>
+        <div class="segment excellent"></div>
+      </div>
+      
+      <!-- Score Marker -->
+      <div class="score-marker" style="left: 73%;">
+        <div class="marker-arrow"></div>
+        <div class="marker-value">720</div>
+      </div>
+    </div>
+    
+    <!-- Score Range Labels -->
+    <div class="credit-score-labels">
+      <div class="range-label">
+        <span>Poor</span>
+        <small>300-579</small>
+      </div>
+      <div class="range-label">
+        <span>Fair</span>
+        <small>580-669</small>
+      </div>
+      <div class="range-label">
+        <span>Good</span>
+        <small>670-739</small>
+      </div>
+      <div class="range-label">
+        <span>Very Good</span>
+        <small>740-799</small>
+      </div>
+      <div class="range-label">
+        <span>Excellent</span>
+        <small>800-850</small>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Score Details -->
+  <div class="score-details">
+    <div class="score-status">
+      <i class="bi bi-check-circle-fill text-success"></i>
+      <div>Your score is in the <strong>Good</strong> range</div>
+    </div>
+    <div class="score-percentile">
+      <span>Better than 65% of Americans</span>
+    </div>
+    <div class="score-update">
+      <i class="bi bi-calendar-check"></i>
+      <span>Last updated on <strong>March 5, 2025</strong></span>
+    </div>
+  </div>
+</div>
           
           <!-- Income vs Expenses Graph -->
           <div class="financial-graph">
