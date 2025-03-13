@@ -1,145 +1,226 @@
-/* dashboard.component.scss */
 .dashboard-container {
-    padding: 20px;
-  }
+  background-color: #e8f5e9; // Light green background
+  padding: 20px;
+  padding-bottom: 60px;
+  min-height: 100vh; // Ensure the container takes full height
   
-  .welcome-section {
-    background-color: #3498db;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
+  .dashboard-title {
+    color: #2e7d32; // Dark green color
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    
+    i {
+      margin-right: 10px;
+      font-size: 1.5rem;
+      color: #43a047; // Medium green
+    }
   }
-  
-  .welcome-section h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
-  }
-  
-  .credit-score {
-    font-size: 1.2em;
-    font-weight: bold;
-  }
-  
-  .applications-section, .recommendations-section {
-    margin-bottom: 30px;
-  }
-  
-  .application-card, .recommendation-card {
-    background-color: white;
-    padding: 15px;
+
+  .card {
     border-radius: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .application-card h3, .recommendation-card h3 {
-    margin-top: 0;
-    color: #2c3e50;
-  }
-  
-  .status-badge {
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 0.9em;
-    margin-right: 10px;
-  }
-  
-  .status-badge.under-review {
-    background-color: #f1c40f;
-    color: #000;
-  }
-  
-  .status-badge.approved {
-    background-color: #27ae60;
-    color: #fff;
-  }
-  
-  .recommendation-card {
-    background-color: #3498db;
-    color: white;
-  }
-  
-  .recommendation-card h3 {
-    color: white;
-  }
-  
-  .recommendation-card p {
-    margin: 5px 0;
-  }
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+    border: 1px solid #c8e6c9; // Light green border
 
+    &:hover {
+      transform: translateY(-5px);
+    }
 
-  // updated one version1
-  .dashboard-container {
-    background-color: #f4f6f9;
-    padding: 20px;
-    padding-bottom: 60px;
-    min-height: 100vh; // Ensure the container takes full height
-    .dashboard-title {
-      color: #2c3e50;
-      margin-bottom: 20px;
+    .card-header {
+      background-color: #c8e6c9; // Light green header
+      border-bottom: none;
       display: flex;
       align-items: center;
+      color: #2e7d32; // Dark green text
       
       i {
         margin-right: 10px;
-        font-size: 1.5rem;
-        color: #3498db;
-      }
-    }
-  
-    .card {
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-      transition: transform 0.3s ease;
-  
-      &:hover {
-        transform: translateY(-5px);
-      }
-  
-      .card-header {
-        background-color: #f8f9fa;
-        border-bottom: none;
-        display: flex;
-        align-items: center;
-        
-        i {
-          margin-right: 10px;
-          color: #3498db;
-        }
-      }
-    }
-  
-    .financial-summary-card {
-      .financial-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-  
-        i {
-          margin-right: 10px;
-          font-size: 1.2rem;
-        }
-  
-        span {
-          margin-right: 10px;
-          color: #7f8c8d;
-        }
-      }
-    }
-  
-    .quick-actions-card {
-      .btn {
-        margin: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-  
-        i {
-          margin-right: 5px;
-        }
+        color: #2e7d32; // Dark green icon
       }
     }
   }
+
+  .financial-summary-card {
+    .financial-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+
+      i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+      }
+
+      span {
+        margin-right: 10px;
+        color: #616161;
+      }
+    }
+  }
+
+  // Credit Score Gauge Styling
+ // Credit Score Gauge Styling
+// Complete Credit Score Gauge Styling with improved arrow
+.credit-score-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  
+  .credit-score-title {
+    color: #555;
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+}
+
+.credit-score-gauge {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.gauge-container {
+  position: relative;
+  width: 100%;
+  height: 150px;
+}
+
+// Semi-circular gauge background
+.gauge-sections {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 100px;
+  border-radius: 100px 100px 0 0;
+  overflow: hidden;
+  display: flex;
+  
+  .gauge-section {
+    height: 100%;
+    flex: 1;
+    
+    &.bad {
+      background: #f44336; // Red
+    }
+    
+    &.fair {
+      background: #ff9800; // Orange
+    }
+    
+    &.good {
+      background: #ffc107; // Yellow
+    }
+    
+    &.excellent {
+      background: #4caf50; // Green
+    }
+  }
+}
+
+// Range labels below the gauge
+.gauge-labels {
+  position: absolute;
+  top: 105px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 210px;
+  display: flex;
+  justify-content: space-between;
+  
+  .gauge-label {
+    font-size: 10px;
+    text-align: center;
+    line-height: 1.2;
+    
+    &.bad {
+      color: #f44336;
+      margin-left: -5px;
+    }
+    
+    &.fair {
+      color: #ff9800;
+      transform: translateX(-5px);
+    }
+    
+    &.good {
+      color: #ffc107;
+      transform: translateX(5px);
+    }
+    
+    &.excellent {
+      color: #4caf50;
+      margin-right: -5px;
+    }
+  }
+}
+
+// Improved pointer needle with arrow tip
+.gauge-pointer {
+  position: absolute;
+  width: 2px;
+  height: 65px;
+  background: #333;
+  top: 35px;
+  left: 50%;
+  transform-origin: bottom center;
+  transform: rotate(30deg); // Will be dynamically calculated
+  z-index: 5;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  
+  &:after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #333;
+    border-radius: 50%;
+    left: -3px;
+    bottom: -4px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  &:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 8px solid #333;
+    top: -8px;
+    left: -3px;
+    transform: rotate(180deg);
+  }
+}
+
+// Center circle with score
+.gauge-center {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: #ffffff;
+  border-radius: 50%;
+  border: 1px solid #e0e0e0;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
+  .score-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4caf50; // Green for the score
+  }
+}
+}

@@ -71,16 +71,6 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  getStatusClass(status: string): string {
-    switch(status) {
-      case 'APPROVED': return 'status-approved';
-      case 'REJECTED': return 'status-rejected';
-      case 'UNDER_REVIEW': return 'status-review';
-      case 'SUBMITTED': return 'status-submitted';
-      default: return 'status-draft';
-    }
-  }
-
   getStatusIcon(status: string): string {
     const statusIcons = {
       'APPROVED': 'bi bi-check-circle-fill text-success',
@@ -102,4 +92,34 @@ export class DashboardComponent implements OnInit {
     };
     return statusBadges[status] || 'badge bg-light text-dark';
   }
+
+  // Add this method to your DashboardComponent class
+calculatePointerRotation(): number {
+  // Get the credit score - replace this with your actual score variable
+  const score = 728; // Or use your dynamic value: this.financialProfile?.creditScore
+  
+  // Define score ranges
+  const minScore = 300;
+  const maxScore = 850;
+  
+  // Define rotation angle range (in degrees)
+  const minAngle = -90; // Far left
+  const maxAngle = 90;  // Far right
+  
+  // Calculate percentage position within the range
+  const percentage = (score - minScore) / (maxScore - minScore);
+  
+  // Calculate the angle
+  const angle = minAngle + (percentage * (maxAngle - minAngle));
+  
+  return angle;
+}
+
+// You should also add this method to dynamically set the color of the score
+getScoreColor(score: number): string {
+  if (score >= 720) return '#4caf50'; // Excellent - Green
+  if (score >= 690) return '#ffc107'; // Good - Yellow
+  if (score >= 630) return '#ff9800'; // Fair - Orange
+  return '#f44336'; // Bad - Red
+}
 }

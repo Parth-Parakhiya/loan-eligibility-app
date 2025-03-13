@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12">
       <h2 class="dashboard-title">
-        <i class="bi bi-person-circle"></i> 
+        <i class="bi bi-person-circle"></i>
         Welcome, {{ customer?.firstName }} {{ customer?.lastName }}
       </h2>
     </div>
@@ -26,10 +26,28 @@
             <span>Monthly Expenses:</span>
             <strong>{{ financialProfile?.monthlyExpenses | currency }}</strong>
           </div>
-          <div class="financial-item">
-            <i class="bi bi-speedometer2 text-primary"></i>
-            <span>Credit Score:</span>
-            <strong>{{ financialProfile?.creditScore }}</strong>
+          <div class="credit-score-container">
+            <h3 class="credit-score-title">Credit Score</h3>
+            <div class="credit-score-gauge">
+              <div class="gauge-container">
+                <div class="gauge-sections">
+                  <div class="gauge-section bad"></div>
+                  <div class="gauge-section fair"></div>
+                  <div class="gauge-section good"></div>
+                  <div class="gauge-section excellent"></div>
+                </div>
+                <div class="gauge-labels">
+                  <div class="gauge-label bad">300-629<br>Bad</div>
+                  <div class="gauge-label fair">630-689<br>Fair</div>
+                  <div class="gauge-label good">690-719<br>Good</div>
+                  <div class="gauge-label excellent">720-850<br>Excellent</div>
+                </div>
+                <div class="gauge-pointer" [style.transform]="'rotate(' + calculatePointerRotation() + 'deg)'"></div>
+                <div class="gauge-center">
+                  <div class="score-value">500</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -43,8 +61,8 @@
         </div>
         <div class="card-body">
           <ul class="list-group">
-            <li *ngFor="let app of applications" 
-                class="list-group-item d-flex justify-content-between align-items-center">
+            <li *ngFor="let app of applications"
+              class="list-group-item d-flex justify-content-between align-items-center">
               <div>
                 <i [ngClass]="getStatusIcon(app.status)"></i>
                 {{ app.productType }}
@@ -54,41 +72,6 @@
               </span>
             </li>
           </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Quick Actions -->
-  <div class="row mt-4">
-    <div class="col-12">
-      <div class="card quick-actions-card">
-        <div class="card-header">
-          <i class="bi bi-lightning-charge"></i> Quick Actions
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-3 col-sm-6">
-              <button class="btn btn-outline-primary w-100">
-                <i class="bi bi-plus-circle"></i> New Application
-              </button>
-            </div>
-            <div class="col-md-3 col-sm-6">
-              <button class="btn btn-outline-success w-100">
-                <i class="bi bi-file-earmark-check"></i> Check Status
-              </button>
-            </div>
-            <div class="col-md-3 col-sm-6">
-              <button class="btn btn-outline-info w-100">
-                <i class="bi bi-graph-up"></i> Financial Insights
-              </button>
-            </div>
-            <div class="col-md-3 col-sm-6">
-              <button class="btn btn-outline-warning w-100">
-                <i class="bi bi-gear"></i> Account Settings
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
