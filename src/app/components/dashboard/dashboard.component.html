@@ -3,8 +3,10 @@
   <div class="row">
     <div class="col-12">
       <h2 class="dashboard-title">
-        <i class="bi bi-person-circle"></i> 
-        Welcome, {{ customer?.firstName }} {{ customer?.lastName }}
+        <i class="bi bi-person-circle"></i>
+        <!-- Welcome, {{ customer?.firstName }} {{ customer?.lastName }} -->
+        Welcome, Jay
+
       </h2>
     </div>
   </div>
@@ -20,85 +22,87 @@
           <div class="financial-item">
             <i class="bi bi-cash-coin"></i>
             <span>Monthly Income:</span>
-            <strong>{{ financialProfile?.monthlyIncome | currency }}</strong>
+            <!-- <strong>{{ financialProfile?.monthlyIncome | currency }}</strong> -->
+            <strong>$1500</strong>
           </div>
           <div class="financial-item">
             <i class="bi bi-credit-card"></i>
             <span>Monthly Expenses:</span>
-            <strong>{{ financialProfile?.monthlyExpenses | currency }}</strong>
+            <!-- <strong>{{ financialProfile?.monthlyExpenses | currency }}</strong> -->
+            <strong>$500</strong>
           </div>
-          
+
           <!-- Credit Score Meter -->
-         <!-- Credit Score Meter - Refined Design -->
-<div class="credit-score-container">
-  <h5 class="credit-score-title">
-    <i class="bi bi-graph-up"></i> Credit Score: 720
-  </h5>
-  
-  <div class="credit-score-meter-container">
-    <!-- Main Score Bar -->
-    <div class="credit-score-meter">
-      <div class="credit-score-segments">
-        <div class="segment poor"></div>
-        <div class="segment fair"></div>
-        <div class="segment good"></div>
-        <div class="segment very-good"></div>
-        <div class="segment excellent"></div>
-      </div>
-      
-      <!-- Score Marker -->
-      <div class="score-marker" style="left: 73%;">
-        <div class="marker-arrow"></div>
-        <div class="marker-value">720</div>
-      </div>
-    </div>
-    
-    <!-- Score Range Labels -->
-    <div class="credit-score-labels">
-      <div class="range-label">
-        <span>Poor</span>
-        <small>300-579</small>
-      </div>
-      <div class="range-label">
-        <span>Fair</span>
-        <small>580-669</small>
-      </div>
-      <div class="range-label">
-        <span>Good</span>
-        <small>670-739</small>
-      </div>
-      <div class="range-label">
-        <span>Very Good</span>
-        <small>740-799</small>
-      </div>
-      <div class="range-label">
-        <span>Excellent</span>
-        <small>800-850</small>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Score Details -->
-  <div class="score-details">
-    <div class="score-status">
-      <i class="bi bi-check-circle-fill text-success"></i>
-      <div>Your score is in the <strong>Good</strong> range</div>
-    </div>
-    <div class="score-percentile">
+          <!-- Credit Score Meter - Refined Design -->
+          <div class="credit-score-container">
+            <h5 class="credit-score-title">
+              <i class="bi bi-graph-up"></i> Credit Score: 720
+            </h5>
+
+            <div class="credit-score-meter-container">
+              <!-- Main Score Bar -->
+              <div class="credit-score-meter">
+                <div class="credit-score-segments">
+                  <div class="segment poor"></div>
+                  <div class="segment fair"></div>
+                  <div class="segment good"></div>
+                  <div class="segment very-good"></div>
+                  <div class="segment excellent"></div>
+                </div>
+
+                <!-- Score Marker -->
+                <div class="score-marker" style="left: 73%;">
+                  <div class="marker-arrow"></div>
+                  <div class="marker-value">720</div>
+                </div>
+              </div>
+
+              <!-- Score Range Labels -->
+              <div class="credit-score-labels">
+                <div class="range-label">
+                  <span>Poor</span>
+                  <small>300-579</small>
+                </div>
+                <div class="range-label">
+                  <span>Fair</span>
+                  <small>580-669</small>
+                </div>
+                <div class="range-label">
+                  <span>Good</span>
+                  <small>670-739</small>
+                </div>
+                <div class="range-label">
+                  <span>Very Good</span>
+                  <small>740-799</small>
+                </div>
+                <div class="range-label">
+                  <span>Excellent</span>
+                  <small>800-850</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Score Details -->
+            <div class="score-details">
+              <div class="score-status">
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <div>Your score is in the <strong>Good</strong> range</div>
+              </div>
+              <!-- <div class="score-percentile">
       <span>Better than 65% of Americans</span>
-    </div>
-    <div class="score-update">
-      <i class="bi bi-calendar-check"></i>
-      <span>Last updated on <strong>March 5, 2025</strong></span>
-    </div>
-  </div>
-</div>
-          
+    </div> -->
+              <div class="score-update">
+                <i class="bi bi-calendar-check"></i>
+                <span>Last updated on <strong>March 14, 2025</strong></span>
+              </div>
+            </div>
+          </div>
+
           <!-- Income vs Expenses Graph -->
-          <div class="financial-graph">
+          <!-- <div class="financial-graph">
             <h5>Monthly Overview</h5>
             <canvas id="financialChart"></canvas>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -114,10 +118,10 @@
             <i class="bi bi-folder-plus"></i>
             <p>No applications yet. Start your first loan application today!</p>
           </div>
-          
+
           <ul *ngIf="applications.length > 0" class="list-group application-list">
-            <li *ngFor="let app of applications" 
-                class="list-group-item d-flex justify-content-between align-items-center">
+            <li *ngFor="let app of applications"
+              class="list-group-item d-flex justify-content-between align-items-center">
               <div class="app-info">
                 <i [ngClass]="getStatusIcon(app.status)"></i>
                 <div class="app-details">
@@ -130,7 +134,7 @@
               </span>
             </li>
           </ul>
-          
+
           <!-- Application Status Chart -->
           <div *ngIf="applications.length > 0" class="application-stats">
             <h5>Application Status Overview</h5>
