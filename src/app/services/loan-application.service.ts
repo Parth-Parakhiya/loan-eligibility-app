@@ -13,7 +13,7 @@ export class LoanApplicationService {
 
   constructor(private http: HttpClient) { }
 
-  createApplication(application: LoanApplication): Observable<LoanApplication> {
+  createLoanApplication(application: LoanApplication): Observable<LoanApplication> {
     return this.http.post<LoanApplication>(this.apiUrl, application);
   }
 
@@ -33,14 +33,16 @@ export class LoanApplicationService {
     return this.http.post<LoanApplication>(`${this.apiUrl}/${id}/submit`, {});
   }
 
-  uploadDocument(applicationId: string, documentType: string, file: File): Observable<any> {
+  uploadDocument(file: File, documentType: string): Promise<string> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', documentType);
-    
-    return this.http.post<any>(`${this.apiUrl}/${applicationId}/documents`, formData);
+
+    return this.http.post<{ id: string }>(`${environment.apiUrl}/documents/upload`, formData)
+      .toPromise()
+      .then(response => response!.id);
   }
-  
+
   checkEligibility(applicationId: string): Observable<EligibilityResult> {
     return this.http.get<EligibilityResult>(`${this.apiUrl}/${applicationId}/eligibility`);
   }

@@ -188,64 +188,74 @@
       <h3>Step 3: Financial Information</h3>
 
       <div formGroupName="financialInfo">
-        <div formGroupName="employmentDetails">
+        <div class="form-section">
           <h4>Employment Details</h4>
+          <div class="employment-container">
+            <div formArrayName="employmentDetails">
+              <div *ngFor="let employment of employments.controls; let i = index" [formGroupName]="i"
+                class="employment-form">
+                <div class="item-header">
+                  <h5>Employment Record {{i+1}}</h5>
+                  <button type="button" class="remove-button" (click)="removeEmployment(i)">Remove</button>
+                </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="employerName">Employer Name</label>
-              <input type="text" id="employerName" formControlName="employerName">
-              <div class="error-message"
-                *ngIf="submitted && applicationForm.get('financialInfo.employmentDetails.employerName')?.errors?.required">
-                Employer name is required
+                <div class="form-row">
+                  <div class="form-group">
+                    <label [for]="'employerName' + i">Employer Name</label>
+                    <input type="text" [id]="'employerName' + i" formControlName="employerName">
+                    <div class="error-message" *ngIf="submitted && employment.get('employerName')?.errors?.required">
+                      Employer name is required
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label [for]="'position' + i">Position</label>
+                    <input type="text" [id]="'position' + i" formControlName="position">
+                    <div class="error-message" *ngIf="submitted && employment.get('position')?.errors?.required">
+                      Position is required
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label [for]="'employmentType' + i">Employment Type</label>
+                    <select [id]="'employmentType' + i" formControlName="employmentType">
+                      <option value="FULL_TIME">Full Time</option>
+                      <option value="PART_TIME">Part Time</option>
+                      <option value="SELF_EMPLOYED">Self Employed</option>
+                      <option value="UNEMPLOYED">Unemployed</option>
+                      <option value="RETIRED">Retired</option>
+                    </select>
+                    <div class="error-message" *ngIf="submitted && employment.get('employmentType')?.errors?.required">
+                      Employment type is required
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label [for]="'employmentDuration' + i">Employment Duration (Months)</label>
+                    <input type="number" [id]="'employmentDuration' + i" formControlName="employmentDuration">
+                    <div class="error-message"
+                      *ngIf="submitted && employment.get('employmentDuration')?.errors?.required">
+                      Employment duration is required
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label [for]="'monthlyIncome' + i">Monthly Income ($)</label>
+                  <div class="currency-input">
+                    <input type="number" [id]="'monthlyIncome' + i" formControlName="monthlyIncome">
+                  </div>
+                  <div class="error-message" *ngIf="submitted && employment.get('monthlyIncome')?.errors?.required">
+                    Monthly income is required
+                  </div>
+                </div>
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="position">Position</label>
-              <input type="text" id="position" formControlName="position">
-              <div class="error-message"
-                *ngIf="submitted && applicationForm.get('financialInfo.employmentDetails.position')?.errors?.required">
-                Position is required
-              </div>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="employmentType">Employment Type</label>
-              <select id="employmentType" formControlName="employmentType">
-                <option value="FULL_TIME">Full Time</option>
-                <option value="PART_TIME">Part Time</option>
-                <option value="SELF_EMPLOYED">Self Employed</option>
-                <option value="UNEMPLOYED">Unemployed</option>
-                <option value="RETIRED">Retired</option>
-              </select>
-              <div class="error-message"
-                *ngIf="submitted && applicationForm.get('financialInfo.employmentDetails.employmentType')?.errors?.required">
-                Employment type is required
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="employmentDuration">Employment Duration (Months)</label>
-              <input type="number" id="employmentDuration" formControlName="employmentDuration">
-              <div class="error-message"
-                *ngIf="submitted && applicationForm.get('financialInfo.employmentDetails.employmentDuration')?.errors?.required">
-                Employment duration is required
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="monthlyIncome">Monthly Income ($)</label>
-            <div class="currency-input">
-              <input type="number" id="monthlyIncome" formControlName="monthlyIncome">
-            </div>
-            <div class="error-message"
-              *ngIf="submitted && applicationForm.get('financialInfo.employmentDetails.monthlyIncome')?.errors?.required">
-              Monthly income is required
-            </div>
+            <button type="button" class="add-button" (click)="addEmployment()">
+              <i class="fas fa-plus-circle"></i> Add Employment
+            </button>
           </div>
         </div>
 
@@ -264,7 +274,10 @@
           <h4>Existing Debts</h4>
           <div formArrayName="existingDebts">
             <div *ngFor="let debt of debts.controls; let i = index" [formGroupName]="i" class="debt-form">
-              <button type="button" class="remove-button" (click)="removeDebt(i)">Remove</button>
+              <div class="item-header">
+                <h5>Debt Record {{i+1}}</h5>
+                <button type="button" class="remove-button" (click)="removeDebt(i)">Remove</button>
+              </div>
 
               <div class="form-row">
                 <div class="form-group">
@@ -323,7 +336,10 @@
           <h4>Assets</h4>
           <div formArrayName="assets">
             <div *ngFor="let asset of assets.controls; let i = index" [formGroupName]="i" class="asset-form">
-              <button type="button" class="remove-button" (click)="removeAsset(i)">Remove</button>
+              <div class="item-header">
+                <h5>Asset Record {{i+1}}</h5>
+                <button type="button" class="remove-button" (click)="removeAsset(i)">Remove</button>
+              </div>
 
               <div class="form-row">
                 <div class="form-group">
@@ -364,7 +380,10 @@
 
       <div formArrayName="documents">
         <div *ngFor="let document of documents.controls; let i = index" [formGroupName]="i" class="document-form">
-          <button type="button" class="remove-button" (click)="removeDocument(i)">Remove</button>
+          <div class="item-header">
+            <h5>Document {{i+1}}</h5>
+            <button type="button" class="remove-button" (click)="removeDocument(i)">Remove</button>
+          </div>
 
           <div class="form-group">
             <label [for]="'documentType' + i">Document Type</label>

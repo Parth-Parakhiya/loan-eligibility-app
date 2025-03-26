@@ -37,7 +37,7 @@ export class LoanApplicationComponent implements OnInit {
     'Financial Information',
     'Document Upload'
   ];
-  
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -63,7 +63,7 @@ export class LoanApplicationComponent implements OnInit {
       requestedAmount: ['', [Validators.required, Validators.min(1000)]],
       purposeDescription: ['', [Validators.required, Validators.maxLength(500)]],
       requestedTermMonths: ['', [Validators.required, Validators.min(6)]],
-      
+
       // Step 2: Personal Information (prefilled from customer data)
       personalInfo: this.fb.group({
         firstName: ['', Validators.required],
@@ -80,21 +80,15 @@ export class LoanApplicationComponent implements OnInit {
           residenceDuration: ['', Validators.required]
         })
       }),
-      
+
       // Step 3: Financial Information
       financialInfo: this.fb.group({
-        employmentDetails: this.fb.group({
-          employerName: ['', Validators.required],
-          position: ['', Validators.required],
-          employmentDuration: ['', Validators.required],
-          monthlyIncome: ['', [Validators.required, Validators.min(0)]],
-          employmentType: ['', Validators.required]
-        }),
+        employmentDetails: this.fb.array([]),
         monthlyExpenses: ['', [Validators.required, Validators.min(0)]],
         existingDebts: this.fb.array([]),
         assets: this.fb.array([])
       }),
-      
+
       // Step 4: Document Upload
       documents: this.fb.array([])
     });
@@ -116,24 +110,26 @@ export class LoanApplicationComponent implements OnInit {
               address: customer.address
             });
           }
-          
+
           // Load financial profile
           this.customerService.getFinancialProfile(this.customerId!).subscribe(
             profile => {
               const financialInfoForm = this.applicationForm.get('financialInfo');
               if (financialInfoForm && profile) {
-                // Set employment details
-                financialInfoForm.get('employmentDetails')?.patchValue({
-                  employerName: customer.employmentDetails.employerName,
-                  position: customer.employmentDetails.position,
-                  employmentDuration: customer.employmentDetails.employmentDuration,
-                  monthlyIncome: customer.employmentDetails.monthlyIncome,
-                  employmentType: customer.employmentDetails.employmentType
-                });
-                
                 // Set monthly expenses
                 financialInfoForm.get('monthlyExpenses')?.setValue(profile.monthlyExpenses);
-                
+
+                // Add employment details
+                const employmentArray = financialInfoForm.get('employmentDetails') as FormArray;
+                if (customer.employmentDetails && customer.employmentDetails.length > 0) {
+                  customer.employmentDetails.forEach(employment => {
+                    employmentArray.push(this.createEmploymentForm(employment));
+                  });
+                } else {
+                  // Add at least one empty employment form
+                  employmentArray.push(this.createEmploymentForm());
+                }
+
                 // Add existing debts
                 const debtsArray = financialInfoForm.get('existingDebts') as FormArray;
                 if (profile.existingDebts && profile.existingDebts.length > 0) {
@@ -141,7 +137,7 @@ export class LoanApplicationComponent implements OnInit {
                     debtsArray.push(this.createDebtForm(debt));
                   });
                 }
-                
+
                 // Add assets
                 const assetsArray = financialInfoForm.get('assets') as FormArray;
                 if (profile.assets && profile.assets.length > 0) {
@@ -161,6 +157,16 @@ export class LoanApplicationComponent implements OnInit {
         }
       );
     }
+  }
+
+  createEmploymentForm(employment?: any): FormGroup {
+    return this.fb.group({
+      employerName: [employment?.employerName || '', Validators.required],
+      position: [employment?.position || '', Validators.required],
+      employmentDuration: [employment?.employmentDuration || '', Validators.required],
+      monthlyIncome: [employment?.monthlyIncome || '', [Validators.required, Validators.min(0)]],
+      employmentType: [employment?.employmentType || '', Validators.required]
+    });
   }
 
   createDebtForm(debt?: any): FormGroup {
@@ -189,6 +195,10 @@ export class LoanApplicationComponent implements OnInit {
     });
   }
 
+  get employments(): FormArray {
+    return this.applicationForm.get('financialInfo.employmentDetails') as FormArray;
+  }
+
   get debts(): FormArray {
     return this.applicationForm.get('financialInfo.existingDebts') as FormArray;
   }
@@ -199,6 +209,27 @@ export class LoanApplicationComponent implements OnInit {
 
   get documents(): FormArray {
     return this.applicationForm.get('documents') as FormArray;
+  }
+
+  addEmployment(): void {
+    this.employments.push(this.createEmploymentForm());
+  }
+
+  removeEmployment(index: number): void {
+    // If this is the last employment record, add a new one first before removing
+    if (this.employments.length === 1) {
+      // Create a new employment record
+      const newEmployment = this.createEmploymentForm();
+
+      // Add it to the array
+      this.employments.push(newEmployment);
+
+      // Then remove the requested one
+      this.employments.removeAt(index);
+    } else {
+      // If there are multiple records, just remove the requested one
+      this.employments.removeAt(index);
+    }
   }
 
   addDebt(): void {
@@ -259,8 +290,8 @@ export class LoanApplicationComponent implements OnInit {
         applicationDate: new Date(),
         status: 'DRAFT'
       };
-      
-      this.loanService.createApplication(application).subscribe(
+
+      this.loanService.createLoanApplication(application).subscribe(
         result => {
           this.router.navigate(['/dashboard']);
         },
@@ -273,60 +304,127 @@ export class LoanApplicationComponent implements OnInit {
 
   submitApplication(): void {
     this.submitted = true;
-    
+
     if (this.applicationForm.invalid) {
+      // Highlight the first tab with errors
+      if (this.applicationForm.get('productType')?.invalid ||
+        this.applicationForm.get('requestedAmount')?.invalid ||
+        this.applicationForm.get('purposeDescription')?.invalid ||
+        this.applicationForm.get('requestedTermMonths')?.invalid) {
+        this.currentStep = 1;
+      } else if (this.applicationForm.get('personalInfo')?.invalid) {
+        this.currentStep = 2;
+      } else if (this.applicationForm.get('financialInfo')?.invalid) {
+        this.currentStep = 3;
+      } else if (this.applicationForm.get('documents')?.invalid) {
+        this.currentStep = 4;
+      }
+
+      window.scrollTo(0, 0);
       return;
     }
-    
-    if (this.customerId) {
-      const formValue = this.applicationForm.value;
-      const application: LoanApplication = {
-        customerId: this.customerId,
-        productType: formValue.productType,
-        requestedAmount: formValue.requestedAmount,
-        purposeDescription: formValue.purposeDescription,
-        requestedTermMonths: formValue.requestedTermMonths,
-        applicationDate: new Date(),
-        status: 'SUBMITTED'
-      };
-      
-      this.loanService.createApplication(application).subscribe(
-        createdApp => {
-          // Upload documents
-          const docs = this.applicationForm.get('documents')?.value;
-          if (docs && docs.length > 0) {
-            this.uploading = true;
-            let uploadedCount = 0;
-            
-            docs.forEach((doc: any, index: number) => {
-              this.loanService.uploadDocument(
-                createdApp.id!,
-                doc.type,
-                doc.file
-              ).subscribe(
-                () => {
-                  uploadedCount++;
-                  if (uploadedCount === docs.length) {
-                    this.uploading = false;
-                    this.router.navigate(['/results', createdApp.id]);
-                  }
-                },
-                error => {
-                  console.error('Error uploading document', error);
-                  this.uploading = false;
-                }
-              );
-            });
-          } else {
-            this.router.navigate(['/results', createdApp.id]);
+
+    const formData = this.applicationForm.value;
+
+    // Format the data as needed for the API
+    const loanApplication: LoanApplication = {
+      customerId: this.customerId!,
+      productType: formData.productType,
+      requestedAmount: formData.requestedAmount,
+      purposeDescription: formData.purposeDescription,
+      requestedTermMonths: formData.requestedTermMonths,
+      applicationDate: new Date(),
+      status: 'SUBMITTED'
+    };
+
+    // Upload documents first (if any)
+    if (this.documents.length > 0) {
+      this.uploading = true;
+
+      // Collect all file upload promises
+      const uploadPromises = [];
+
+      for (let i = 0; i < this.documents.length; i++) {
+        const doc = this.documents.at(i).value;
+        if (doc.file) {
+          uploadPromises.push(this.loanService.uploadDocument(doc.file, doc.type));
+        }
+      }
+
+      // Wait for all uploads to complete
+      Promise.all(uploadPromises)
+        .then(documentIds => {
+          // Attach document IDs to the application
+          loanApplication.supportingDocuments = documentIds.map((id, index) => {
+            const doc = this.documents.at(index).value;
+            return {
+              id,
+              type: doc.type,
+              fileName: doc.file.name,
+              fileSize: doc.file.size,
+              uploadDate: new Date(),
+              status: 'PENDING'
+            };
+          });
+
+          // Send employment details to update customer profile
+          const employmentDetails = this.employments.value;
+
+          // Update customer employment records first, then submit loan application
+          this.customerService.updateEmploymentDetails(this.customerId!, employmentDetails)
+            .subscribe(
+              () => {
+                // Then submit the loan application
+                this.submitLoanApplication(loanApplication);
+              },
+              error => {
+                console.error('Error updating employment details', error);
+                this.uploading = false;
+                // Handle error (show message to user)
+                alert('Error updating employment details. Please try again.');
+              }
+            );
+        })
+        .catch(error => {
+          console.error('Error uploading documents', error);
+          this.uploading = false;
+          // Handle error (show message to user)
+          alert('Error uploading documents. Please try again.');
+        });
+    } else {
+      // Update employment details first
+      const employmentDetails = this.employments.value;
+
+      this.customerService.updateEmploymentDetails(this.customerId!, employmentDetails)
+        .subscribe(
+          () => {
+            // Then submit the loan application directly (no documents to upload)
+            this.submitLoanApplication(loanApplication);
+          },
+          error => {
+            console.error('Error updating employment details', error);
+            // Handle error (show message to user)
+            alert('Error updating employment details. Please try again.');
           }
+        );
+    }
+  }
+
+  private submitLoanApplication(application: LoanApplication): void {
+    this.loanService.createLoanApplication(application)
+      .subscribe(
+        result => {
+          this.uploading = false;
+          // Navigate to success page or application dashboard
+          this.router.navigate(['/applications', result.id, 'success']);
         },
         error => {
           console.error('Error submitting application', error);
-          this.submitted = false;
+          this.uploading = false;
+          // Handle error (show message to user)
+          alert('Error submitting application. Please try again.');
         }
       );
-    }
   }
 
   getFileName(file: File): string {
