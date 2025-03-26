@@ -229,54 +229,54 @@
 
 // Navigation buttons
 .navigation-buttons {
-  display: flex;
-  justify-content: space-between;
   margin-top: 40px;
   padding-top: 20px;
   border-top: 1px solid #eee;
-  
-  button {
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    
-    &.prev-button {
-      background-color: #f5f5f5;
-      border: 1px solid #ddd;
-      color: #555;
-      
-      &:hover {
-        background-color: #eee;
-      }
-    }
-    
-    &.next-button {
-      background-color: #2e7d32; // Dark green
-      border: none;
-      color: white;
-      
-      &:hover {
-        background-color: #1b5e20; // Darker green on hover
-      }
-    }
-    
-    &.submit-button {
-      background-color: #2e7d32; // Dark green
-      border: none;
-      color: white;
-      
-      &:hover {
-        background-color: #1b5e20; // Darker green on hover
-      }
-    }
-    
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  }
+}
+
+.navigation-buttons .button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navigation-buttons .button-spacer {
+  flex-grow: 1;
+}
+
+.navigation-buttons button {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.navigation-buttons .prev-button {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+.navigation-buttons .prev-button:hover {
+  background-color: #eee;
+}
+
+.navigation-buttons .next-button,
+.navigation-buttons .submit-button {
+  background-color: #2e7d32; /* Dark green */
+  border: none;
+  color: white;
+}
+
+.navigation-buttons .next-button:hover,
+.navigation-buttons .submit-button:hover {
+  background-color: #1b5e20; /* Darker green on hover */
+}
+
+.navigation-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 // Save as Draft button
