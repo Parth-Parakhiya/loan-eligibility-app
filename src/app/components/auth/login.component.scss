@@ -164,8 +164,69 @@
 }
 
 //error message
-.login-error {
-  text-align: center;
-  color: #e74c3c;
-  margin-bottom: 15px;
+// Add these styles to your existing SCSS
+
+// Error Banner Styles
+.error-banner {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background-color: #f8d7da;
+  color: #721c24;
+  animation: fadeIn 0.3s ease-in-out;
+  
+  &.credentials {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+  }
+  
+  &.network {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+  }
+  
+  &.unknown {
+    background-color: #e2e3e5;
+    border: 1px solid #d6d8db;
+    color: #383d41;
+  }
+  
+  .error-icon {
+    margin-right: 15px;
+    font-size: 2rem;
+    
+    i {
+      display: block;
+    }
+  }
+  
+  .error-content {
+    flex-grow: 1;
+    
+    h4 {
+      margin: 0 0 5px 0;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Optional: Add some responsiveness
+@media (max-width: 480px) {
+  .error-banner {
+    flex-direction: column;
+    text-align: center;
+    
+    .error-icon {
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  }
 }

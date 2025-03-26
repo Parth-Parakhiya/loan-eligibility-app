@@ -12,7 +12,10 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   showPassword = false;
   isLoading = false;
-  loginError: string | null = null; // Add error handling
+  loginError: string | null = null;
+  
+  // New property to track error type
+  errorType: 'credentials' | 'network' | 'unknown' = 'unknown';
 
   constructor(
     private fb: FormBuilder,
@@ -37,7 +40,8 @@ export class LoginComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.loginError = null; // Reset error
+    this.loginError = null;
+    this.errorType = 'unknown';
 
     const { email, password } = this.loginForm.value;
     this.authService.login(email, password).subscribe(
@@ -47,8 +51,22 @@ export class LoginComponent implements OnInit {
       },
       (error) => {
         this.isLoading = false;
-        // Handle login error
-        this.loginError = error.error?.message || 'Login failed. Please try again.';
+        
+        // Detailed error handling
+        if (error.status === 401) {
+          // Unauthorized - incorrect credentials
+          this.errorType = 'credentials';
+          this.loginError = 'Invalid email or password. Please try again.';
+        } else if (error.status === 0) {
+          // Network error
+          this.errorType = 'network';
+          this.loginError = 'Unable to connect to the server. Please check your internet connection.';
+        } else {
+          // Other unknown errors
+          this.errorType = 'unknown';
+          this.loginError = 'Invalid email or password. Please try again.';
+        }
+        
         console.error('Login failed', error);
       }
     );
