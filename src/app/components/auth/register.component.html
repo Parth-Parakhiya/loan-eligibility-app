@@ -1,23 +1,20 @@
 <div class="register-container">
-    <h2>Register</h2>
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="firstName">First Name</label>
-        <input type="text" id="firstName" formControlName="firstName" required>
-      </div>
-      <div class="form-group">
-        <label for="lastName">Last Name</label>
-        <input type="text" id="lastName" formControlName="lastName" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" formControlName="email" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" formControlName="password" required>
-      </div>
-      <button type="submit" [disabled]="registerForm.invalid">Register</button>
-    </form>
-    <p>Already have an account? <a routerLink="/login">Login here</a></p>
-  </div>
+  <h2>Welcome Back</h2>
+  <p class="subtitle">Sign up to continue to Credwise</p>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <input type="text" id="firstName" formControlName="firstName" placeholder="First Name" required>
+    </div>
+    <div class="form-group">
+      <input type="text" id="lastName" formControlName="lastName" placeholder="Last Name" required>
+    </div>
+    <div class="form-group">
+      <input type="email" id="email" formControlName="email" placeholder="Email Address" required>
+    </div>
+    <div class="form-group">
+      <input type="password" id="password" formControlName="password" placeholder="Password" required>
+    </div>
+    <button type="submit" [disabled]="registerForm.invalid">Register</button>
+  </form>
+  <p class="login-link">Already have an account? <a routerLink="/login">Login here</a></p>
+</div>
