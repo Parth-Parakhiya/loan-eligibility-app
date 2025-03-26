@@ -167,66 +167,105 @@
 // Add these styles to your existing SCSS
 
 // Error Banner Styles
+// Error Banner Styles
 .error-banner {
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  background-color: #f8d7da;
-  color: #721c24;
-  animation: fadeIn 0.3s ease-in-out;
-  
-  &.credentials {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-  }
-  
-  &.network {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    color: #856404;
-  }
-  
-  &.unknown {
-    background-color: #e2e3e5;
-    border: 1px solid #d6d8db;
-    color: #383d41;
-  }
-  
-  .error-icon {
-    margin-right: 15px;
-    font-size: 2rem;
-    
-    i {
-      display: block;
-    }
-  }
-  
-  .error-content {
-    flex-grow: 1;
-    
-    h4 {
-      margin: 0 0 5px 0;
-      font-weight: 600;
-    }
-    
-    p {
-      margin: 0;
-      font-size: 0.9rem;
-    }
-  }
-}
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
 
-// Optional: Add some responsiveness
-@media (max-width: 480px) {
-  .error-banner {
-    flex-direction: column;
-    text-align: center;
-    
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  &.credentials {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  &.network {
+    background-color: #ffc107;
+    color: #000;
+  }
+
+  &.unknown {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .error-banner-content {
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    position: relative;
+
     .error-icon {
-      margin-right: 0;
-      margin-bottom: 10px;
+      margin-right: 15px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .error-content {
+      flex-grow: 1;
+
+      h4 {
+        margin: 0 0 5px 0;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+    }
+
+    .error-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.2rem;
+      transition: color 0.2s ease;
+      padding: 5px;
+      border-radius: 50%;
+
+      &:hover {
+        color: white;
+        background-color: rgba(255,255,255,0.2);
+      }
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .error-banner-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 15px;
+
+      .error-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      .error-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
     }
   }
 }

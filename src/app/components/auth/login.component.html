@@ -1,18 +1,22 @@
 <!-- Enhanced error message display -->
 <div *ngIf="loginError" class="error-banner" [ngClass]="errorType">
-  <div class="error-icon">
-    <!-- Different icons based on error type -->
-    <i *ngIf="errorType === 'credentials'" class="fas fa-times-circle"></i>
-    <i *ngIf="errorType === 'network'" class="fas fa-wifi"></i>
-    <i *ngIf="errorType === 'unknown'" class="fas fa-exclamation-triangle"></i>
-  </div>
-  <div class="error-content">
-    <h4>
-      <ng-container *ngIf="errorType === 'credentials'">Authentication Failed</ng-container>
-      <ng-container *ngIf="errorType === 'network'">Connection Error</ng-container>
-      <ng-container *ngIf="errorType === 'unknown'">Authentication Failed</ng-container>
-    </h4>
-    <p>{{ loginError }}</p>
+  <div class="error-banner-content">
+    <div class="error-icon">
+      <i *ngIf="errorType === 'credentials'" class="fas fa-times-circle"></i>
+      <i *ngIf="errorType === 'network'" class="fas fa-wifi"></i>
+      <i *ngIf="errorType === 'unknown'" class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="error-content">
+      <h4>
+        <ng-container *ngIf="errorType === 'credentials'">Authentication Failed</ng-container>
+        <ng-container *ngIf="errorType === 'network'">Connection Error</ng-container>
+        <ng-container *ngIf="errorType === 'unknown'">Authentication Failed</ng-container>
+      </h4>
+      <p>{{ loginError }}</p>
+    </div>
+    <button class="error-close" (click)="loginError = null">
+      <i class="fas fa-times"></i>
+    </button>
   </div>
 </div>
 <div class="login-wrapper">
