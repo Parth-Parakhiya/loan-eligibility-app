@@ -1,3 +1,7 @@
+<!-- Add error message display -->
+<div *ngIf="loginError" class="error-message login-error">
+  {{ loginError }}
+</div>
 <div class="login-wrapper">
   <div class="login-container">
     <div class="logo-section">
@@ -66,3 +70,5 @@
     </form>
   </div>
 </div>
+
+

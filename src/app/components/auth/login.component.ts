@@ -12,6 +12,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   showPassword = false;
   isLoading = false;
+  loginError: string | null = null; // Add error handling
 
   constructor(
     private fb: FormBuilder,
@@ -36,16 +37,19 @@ export class LoginComponent implements OnInit {
     }
 
     this.isLoading = true;
+    this.loginError = null; // Reset error
+
     const { email, password } = this.loginForm.value;
     this.authService.login(email, password).subscribe(
-      () => {
+      (response) => {
         this.isLoading = false;
         this.router.navigate(['/dashboard']);
       },
-      error => {
+      (error) => {
         this.isLoading = false;
+        // Handle login error
+        this.loginError = error.error?.message || 'Login failed. Please try again.';
         console.error('Login failed', error);
-        // Add error handling (e.g., show error message)
       }
     );
   }
