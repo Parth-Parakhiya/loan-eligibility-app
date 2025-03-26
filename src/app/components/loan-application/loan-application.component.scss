@@ -445,3 +445,38 @@ button[type="button"][ng-click="saveAsDraft()"] {
   flex-direction: column;
   width: 100%;
 }
+
+.form-section {
+  margin-bottom: 30px;
+  
+  h4 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1e4620;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e8f5e9;
+  }
+}
+
+// Credit score field styling
+input[type="number"]#creditScore {
+  max-width: 100%;
+}
+
+// Credit score input styling
+.credit-score-input.currency-input {
+  &::before {
+    content: '';
+  }
+}
+
+// Credit score label styling
+.form-group label[for="creditScore"] {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1e4620;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8f5e9;
+}

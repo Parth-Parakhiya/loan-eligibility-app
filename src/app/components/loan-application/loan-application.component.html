@@ -188,6 +188,19 @@
       <h3>Step 3: Financial Information</h3>
 
       <div formGroupName="financialInfo">
+        <div class="form-group">
+          <label for="creditScore">Credit Score</label>
+          <div class="currency-input credit-score-input">
+            <input type="number" id="creditScore" formControlName="creditScore" min="300" max="2000">
+          </div>
+          <div class="error-message" *ngIf="submitted && applicationForm.get('financialInfo.creditScore')?.errors?.min">
+            Credit score must be at least 300
+          </div>
+          <div class="error-message" *ngIf="submitted && applicationForm.get('financialInfo.creditScore')?.errors?.max">
+            Credit score cannot exceed 2000
+          </div>
+        </div>
+
         <div class="form-section">
           <h4>Employment Details</h4>
           <div class="employment-container">

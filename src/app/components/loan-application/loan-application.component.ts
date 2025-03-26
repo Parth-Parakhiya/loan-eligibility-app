@@ -83,6 +83,7 @@ export class LoanApplicationComponent implements OnInit {
 
       // Step 3: Financial Information
       financialInfo: this.fb.group({
+        creditScore: ['', [Validators.min(300), Validators.max(2000)]],
         employmentDetails: this.fb.array([]),
         monthlyExpenses: ['', [Validators.required, Validators.min(0)]],
         existingDebts: this.fb.array([]),
@@ -116,6 +117,11 @@ export class LoanApplicationComponent implements OnInit {
             profile => {
               const financialInfoForm = this.applicationForm.get('financialInfo');
               if (financialInfoForm && profile) {
+                // Set credit score if available
+                if (profile.creditScore) {
+                  financialInfoForm.get('creditScore')?.setValue(profile.creditScore);
+                }
+
                 // Set monthly expenses
                 financialInfoForm.get('monthlyExpenses')?.setValue(profile.monthlyExpenses);
 
@@ -369,19 +375,26 @@ export class LoanApplicationComponent implements OnInit {
 
           // Send employment details to update customer profile
           const employmentDetails = this.employments.value;
+          const creditScore = this.applicationForm.get('financialInfo.creditScore')?.value;
 
-          // Update customer employment records first, then submit loan application
-          this.customerService.updateEmploymentDetails(this.customerId!, employmentDetails)
+          // Create financial data object with all the financial information
+          const financialData = {
+            employmentDetails,
+            creditScore: creditScore || undefined
+          };
+
+          // Update customer employment and financial records
+          this.customerService.updateFinancialData(this.customerId!, financialData)
             .subscribe(
               () => {
                 // Then submit the loan application
                 this.submitLoanApplication(loanApplication);
               },
               error => {
-                console.error('Error updating employment details', error);
+                console.error('Error updating financial data', error);
                 this.uploading = false;
                 // Handle error (show message to user)
-                alert('Error updating employment details. Please try again.');
+                alert('Error updating financial data. Please try again.');
               }
             );
         })
@@ -394,17 +407,25 @@ export class LoanApplicationComponent implements OnInit {
     } else {
       // Update employment details first
       const employmentDetails = this.employments.value;
+      const creditScore = this.applicationForm.get('financialInfo.creditScore')?.value;
 
-      this.customerService.updateEmploymentDetails(this.customerId!, employmentDetails)
+      // Create financial data object with all the financial information
+      const financialData = {
+        employmentDetails,
+        creditScore: creditScore || undefined
+      };
+
+      // Update customer employment and financial records
+      this.customerService.updateFinancialData(this.customerId!, financialData)
         .subscribe(
           () => {
             // Then submit the loan application directly (no documents to upload)
             this.submitLoanApplication(loanApplication);
           },
           error => {
-            console.error('Error updating employment details', error);
+            console.error('Error updating financial data', error);
             // Handle error (show message to user)
-            alert('Error updating employment details. Please try again.');
+            alert('Error updating financial data. Please try again.');
           }
         );
     }
