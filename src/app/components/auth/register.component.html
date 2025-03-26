@@ -1,5 +1,5 @@
 <div class="register-container">
-  <h2>Welcome Back</h2>
+  <!-- <h2>Welcome Back</h2> -->
   <p class="subtitle">Sign up to continue to Credwise</p>
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
@@ -7,6 +7,9 @@
     </div>
     <div class="form-group">
       <input type="text" id="lastName" formControlName="lastName" placeholder="Last Name" required>
+    </div>
+    <div class="form-group">
+      <input type="tel" id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" required>
     </div>
     <div class="form-group">
       <input type="email" id="email" formControlName="email" placeholder="Email Address" required>
