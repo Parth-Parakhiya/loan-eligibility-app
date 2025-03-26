@@ -232,6 +232,21 @@
 
                 <div class="form-row">
                   <div class="form-group">
+                    <label [for]="'startDate' + i">Start Date</label>
+                    <input type="date" [id]="'startDate' + i" formControlName="startDate">
+                    <div class="error-message" *ngIf="submitted && employment.get('startDate')?.errors?.required">
+                      Start date is required
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label [for]="'endDate' + i">End Date (Leave empty if current)</label>
+                    <input type="date" [id]="'endDate' + i" formControlName="endDate">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
                     <label [for]="'employmentType' + i">Employment Type</label>
                     <select [id]="'employmentType' + i" formControlName="employmentType">
                       <option value="FULL_TIME">Full Time</option>
@@ -252,16 +267,6 @@
                       *ngIf="submitted && employment.get('employmentDuration')?.errors?.required">
                       Employment duration is required
                     </div>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label [for]="'monthlyIncome' + i">Monthly Income ($)</label>
-                  <div class="currency-input">
-                    <input type="number" [id]="'monthlyIncome' + i" formControlName="monthlyIncome">
-                  </div>
-                  <div class="error-message" *ngIf="submitted && employment.get('monthlyIncome')?.errors?.required">
-                    Monthly income is required
                   </div>
                 </div>
               </div>

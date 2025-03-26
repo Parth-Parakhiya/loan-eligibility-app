@@ -480,3 +480,17 @@ input[type="number"]#creditScore {
   padding-bottom: 8px;
   border-bottom: 1px solid #e8f5e9;
 }
+
+// Date input styling
+input[type="date"] {
+  font-family: inherit;
+  
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

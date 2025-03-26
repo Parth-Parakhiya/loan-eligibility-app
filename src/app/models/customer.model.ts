@@ -23,6 +23,7 @@ export interface EmploymentDetails {
   employerName: string;
   position: string;
   employmentDuration: number; // in months
-  monthlyIncome: number;
   employmentType: 'FULL_TIME' | 'PART_TIME' | 'SELF_EMPLOYED' | 'UNEMPLOYED' | 'RETIRED';
+  startDate: string; // in ISO format (e.g., "2020-01-01")
+  endDate?: string; // optional, in ISO format
 }

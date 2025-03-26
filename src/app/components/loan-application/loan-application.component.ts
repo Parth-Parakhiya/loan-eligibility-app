@@ -129,7 +129,13 @@ export class LoanApplicationComponent implements OnInit {
                 const employmentArray = financialInfoForm.get('employmentDetails') as FormArray;
                 if (customer.employmentDetails && customer.employmentDetails.length > 0) {
                   customer.employmentDetails.forEach(employment => {
-                    employmentArray.push(this.createEmploymentForm(employment));
+                    // Format dates for the form
+                    const formattedEmployment = {
+                      ...employment,
+                      startDate: employment.startDate ? new Date(employment.startDate).toISOString().split('T')[0] : '',
+                      endDate: employment.endDate ? new Date(employment.endDate).toISOString().split('T')[0] : ''
+                    };
+                    employmentArray.push(this.createEmploymentForm(formattedEmployment));
                   });
                 } else {
                   // Add at least one empty employment form
@@ -169,9 +175,10 @@ export class LoanApplicationComponent implements OnInit {
     return this.fb.group({
       employerName: [employment?.employerName || '', Validators.required],
       position: [employment?.position || '', Validators.required],
+      employmentType: [employment?.employmentType || '', Validators.required],
       employmentDuration: [employment?.employmentDuration || '', Validators.required],
-      monthlyIncome: [employment?.monthlyIncome || '', [Validators.required, Validators.min(0)]],
-      employmentType: [employment?.employmentType || '', Validators.required]
+      startDate: [employment?.startDate || '', Validators.required],
+      endDate: [employment?.endDate || '']
     });
   }
 
@@ -374,7 +381,15 @@ export class LoanApplicationComponent implements OnInit {
           });
 
           // Send employment details to update customer profile
-          const employmentDetails = this.employments.value;
+          const employmentDetails = this.employments.value.map((employment: any) => {
+            // Format dates for submission
+            return {
+              ...employment,
+              startDate: employment.startDate,
+              endDate: employment.endDate || null
+            };
+          });
+
           const creditScore = this.applicationForm.get('financialInfo.creditScore')?.value;
 
           // Create financial data object with all the financial information
@@ -406,7 +421,15 @@ export class LoanApplicationComponent implements OnInit {
         });
     } else {
       // Update employment details first
-      const employmentDetails = this.employments.value;
+      const employmentDetails = this.employments.value.map((employment: any) => {
+        // Format dates for submission
+        return {
+          ...employment,
+          startDate: employment.startDate,
+          endDate: employment.endDate || null
+        };
+      });
+
       const creditScore = this.applicationForm.get('financialInfo.creditScore')?.value;
 
       // Create financial data object with all the financial information
