@@ -14,7 +14,7 @@ export interface LoanApplication {
 
 export interface Document {
   id: string;
-  type: 'ID_PROOF' | 'ADDRESS_PROOF' | 'INCOME_PROOF' | 'BANK_STATEMENT' | 'OTHER';
+  type: 'ID_PROOF' | 'ADDRESS_PROOF' | 'INCOME_PROOF' | 'BANK_STATEMENT' | 'CREDIT_CARD_STATEMENT' | 'STUDY_PERMIT' | 'PGWP' | 'OTHER';
   fileName: string;
   fileSize: number;
   uploadDate: Date;

@@ -26,6 +26,9 @@ export class LoanApplicationComponent implements OnInit {
     { value: 'ADDRESS_PROOF', label: 'Address Proof' },
     { value: 'INCOME_PROOF', label: 'Income Proof' },
     { value: 'BANK_STATEMENT', label: 'Bank Statement' },
+    { value: 'CREDIT_CARD_STATEMENT', label: 'Credit Card Statement' },
+    { value: 'STUDY_PERMIT', label: 'Study Permit' },
+    { value: 'PGWP', label: 'PGWP' },
     { value: 'OTHER', label: 'Other Document' }
   ];
   uploading = false;
