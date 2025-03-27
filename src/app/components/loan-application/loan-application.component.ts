@@ -85,6 +85,7 @@ export class LoanApplicationComponent implements OnInit {
       financialInfo: this.fb.group({
         creditScore: ['', [Validators.min(300), Validators.max(2000)]],
         employmentDetails: this.fb.array([]),
+        monthlyIncome: ['', [Validators.required, Validators.min(0)]],
         monthlyExpenses: ['', [Validators.required, Validators.min(0)]],
         existingDebts: this.fb.array([]),
         assets: this.fb.array([])
@@ -124,6 +125,9 @@ export class LoanApplicationComponent implements OnInit {
 
                 // Set monthly expenses
                 financialInfoForm.get('monthlyExpenses')?.setValue(profile.monthlyExpenses);
+
+                // Set monthly income
+                financialInfoForm.get('monthlyIncome')?.setValue(profile.monthlyIncome || 0);
 
                 // Add employment details
                 const employmentArray = financialInfoForm.get('employmentDetails') as FormArray;
@@ -382,6 +386,7 @@ export class LoanApplicationComponent implements OnInit {
           // Create financial data object with all the financial information
           const financialData = {
             employmentDetails,
+            monthlyIncome: this.applicationForm.get('financialInfo.monthlyIncome')?.value,
             creditScore: creditScore || undefined
           };
 
@@ -422,6 +427,7 @@ export class LoanApplicationComponent implements OnInit {
       // Create financial data object with all the financial information
       const financialData = {
         employmentDetails,
+        monthlyIncome: this.applicationForm.get('financialInfo.monthlyIncome')?.value,
         creditScore: creditScore || undefined
       };
 

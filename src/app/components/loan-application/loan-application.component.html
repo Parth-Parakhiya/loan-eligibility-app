@@ -278,6 +278,17 @@
         </div>
 
         <div class="form-group">
+          <label for="monthlyIncome">Monthly Income ($)</label>
+          <div class="currency-input">
+            <input type="number" id="monthlyIncome" formControlName="monthlyIncome">
+          </div>
+          <div class="error-message"
+            *ngIf="submitted && applicationForm.get('financialInfo.monthlyIncome')?.errors?.required">
+            Monthly income is required
+          </div>
+        </div>
+
+        <div class="form-group">
           <label for="monthlyExpenses">Monthly Expenses ($)</label>
           <div class="currency-input">
             <input type="number" id="monthlyExpenses" formControlName="monthlyExpenses">
