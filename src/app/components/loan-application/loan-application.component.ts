@@ -229,20 +229,7 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   removeEmployment(index: number): void {
-    // If this is the last employment record, add a new one first before removing
-    if (this.employments.length === 1) {
-      // Create a new employment record
-      const newEmployment = this.createEmploymentForm();
-
-      // Add it to the array
-      this.employments.push(newEmployment);
-
-      // Then remove the requested one
-      this.employments.removeAt(index);
-    } else {
-      // If there are multiple records, just remove the requested one
-      this.employments.removeAt(index);
-    }
+    this.employments.removeAt(index);
   }
 
   addDebt(): void {
