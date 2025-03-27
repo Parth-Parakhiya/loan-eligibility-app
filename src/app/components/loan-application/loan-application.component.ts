@@ -16,6 +16,8 @@ export class LoanApplicationComponent implements OnInit {
   productTypes = [
     { value: 'CAR_LOAN', label: 'Car Loan' },
     { value: 'PERSONAL_LOAN', label: 'Personal Loan' },
+    { value: 'MORTGAGE', label: 'Mortgage' },
+    { value: 'STUDENT_LOAN', label: 'Student Loan' },
     { value: 'CREDIT_CARD', label: 'Premium Credit Card' },
     { value: 'LINE_OF_CREDIT', label: 'Line of Credit' }
   ];

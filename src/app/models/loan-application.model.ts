@@ -1,7 +1,7 @@
 export interface LoanApplication {
   id?: string;
   customerId: string;
-  productType: 'CAR_LOAN' | 'PERSONAL_LOAN' | 'CREDIT_CARD' | 'LINE_OF_CREDIT';
+  productType: 'CAR_LOAN' | 'PERSONAL_LOAN' | 'MORTGAGE' | 'STUDENT_LOAN' | 'CREDIT_CARD' | 'LINE_OF_CREDIT';
   requestedAmount: number;
   purposeDescription: string;
   requestedTermMonths?: number;
