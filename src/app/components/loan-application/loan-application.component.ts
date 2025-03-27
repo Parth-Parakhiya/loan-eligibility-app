@@ -87,6 +87,7 @@ export class LoanApplicationComponent implements OnInit {
         employmentDetails: this.fb.array([]),
         monthlyIncome: ['', [Validators.required, Validators.min(0)]],
         monthlyExpenses: ['', [Validators.required, Validators.min(0)]],
+        estimatedDebts: ['', [Validators.required, Validators.min(0)]],
         existingDebts: this.fb.array([]),
         assets: this.fb.array([])
       }),
@@ -128,6 +129,9 @@ export class LoanApplicationComponent implements OnInit {
 
                 // Set monthly income
                 financialInfoForm.get('monthlyIncome')?.setValue(profile.monthlyIncome || 0);
+
+                // Set estimated debts if available
+                financialInfoForm.get('estimatedDebts')?.setValue(profile.estimatedDebts || 0);
 
                 // Add employment details
                 const employmentArray = financialInfoForm.get('employmentDetails') as FormArray;
@@ -387,6 +391,7 @@ export class LoanApplicationComponent implements OnInit {
           const financialData = {
             employmentDetails,
             monthlyIncome: this.applicationForm.get('financialInfo.monthlyIncome')?.value,
+            estimatedDebts: this.applicationForm.get('financialInfo.estimatedDebts')?.value,
             creditScore: creditScore || undefined
           };
 
@@ -428,6 +433,7 @@ export class LoanApplicationComponent implements OnInit {
       const financialData = {
         employmentDetails,
         monthlyIncome: this.applicationForm.get('financialInfo.monthlyIncome')?.value,
+        estimatedDebts: this.applicationForm.get('financialInfo.estimatedDebts')?.value,
         creditScore: creditScore || undefined
       };
 
