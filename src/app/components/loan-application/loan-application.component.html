@@ -239,6 +239,7 @@
                       <option value="FULL_TIME">Full Time</option>
                       <option value="PART_TIME">Part Time</option>
                       <option value="UNEMPLOYED">Unemployed</option>
+                      <option value="STUDENT">Student</option>
 
                     </select>
                     <div class="error-message" *ngIf="submitted && employment.get('employmentType')?.errors?.required">
@@ -345,9 +346,10 @@
                   <label [for]="'debtType' + i">Debt Type</label>
                   <select [id]="'debtType' + i" formControlName="type">
                     <option value="MORTGAGE">Mortgage</option>
-                    <option value="AUTO_LOAN">Auto Loan</option>
+                    <option value="CAR_LOAN">Car Loan</option>
                     <option value="PERSONAL_LOAN">Personal Loan</option>
                     <option value="STUDENT_LOAN">Student Loan</option>
+                    <option value="CREDIT_CARD">Credit Card</option>
                     <option value="OTHER">Other</option>
                   </select>
                 </div>

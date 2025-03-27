@@ -205,8 +205,14 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   createDebtForm(debt?: any): FormGroup {
+    // Make sure to map old AUTO_LOAN values to CAR_LOAN for backward compatibility
+    let debtType = debt?.type || '';
+    if (debtType === 'AUTO_LOAN') {
+      debtType = 'CAR_LOAN';
+    }
+
     return this.fb.group({
-      type: [debt?.type || '', Validators.required],
+      type: [debtType, Validators.required],
       lender: [debt?.lender || '', Validators.required],
       outstandingAmount: [debt?.outstandingAmount || '', [Validators.required, Validators.min(0)]],
       monthlyPayment: [debt?.monthlyPayment || '', [Validators.required, Validators.min(0)]],

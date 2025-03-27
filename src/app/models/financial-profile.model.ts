@@ -11,7 +11,7 @@ export interface FinancialProfile {
 }
 
 export interface Debt {
-  type: 'MORTGAGE' | 'AUTO_LOAN' | 'PERSONAL_LOAN' | 'STUDENT_LOAN' | 'OTHER';
+  type: 'MORTGAGE' | 'CAR_LOAN' | 'PERSONAL_LOAN' | 'STUDENT_LOAN' | 'CREDIT_CARD' | 'OTHER';
   lender: string;
   outstandingAmount: number;
   monthlyPayment: number;
