@@ -471,8 +471,10 @@ input[type="number"]#creditScore {
   }
 }
 
-// Credit score label styling
-.form-group label[for="creditScore"] {
+// Credit fields styling
+.form-group label[for="creditScore"],
+.form-group label[for="currentCreditLimit"],
+.form-group label[for="creditTotalUsage"] {
   margin-bottom: 8px;
   font-weight: 500;
   color: #333;
