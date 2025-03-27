@@ -31,6 +31,21 @@ export class LoanApplicationComponent implements OnInit {
     { value: 'PGWP', label: 'PGWP' },
     { value: 'OTHER', label: 'Other Document' }
   ];
+  provinces = [
+    { code: 'ON', name: 'Ontario' },
+    { code: 'BC', name: 'British Columbia' },
+    { code: 'AB', name: 'Alberta' },
+    { code: 'QC', name: 'Quebec' },
+    { code: 'MB', name: 'Manitoba' },
+    { code: 'SK', name: 'Saskatchewan' },
+    { code: 'NS', name: 'Nova Scotia' },
+    { code: 'NB', name: 'New Brunswick' },
+    { code: 'NL', name: 'Newfoundland and Labrador' },
+    { code: 'PE', name: 'Prince Edward Island' },
+    { code: 'YT', name: 'Yukon' },
+    { code: 'NT', name: 'Northwest Territories' },
+    { code: 'NU', name: 'Nunavut' }
+  ];
   uploading = false;
   submitted = false;
   customerId: string | null = null;
@@ -120,12 +135,24 @@ export class LoanApplicationComponent implements OnInit {
             // Handle address separately to map old field names to new ones if needed
             const addressForm = personalInfoForm.get('address');
             if (addressForm && customer.address) {
+              // Get province value - might be a full name or code
+              let provinceValue = customer.address.state || customer.address.province || '';
+
+              // If it's a full province name, try to convert to code
+              if (provinceValue.length > 2) {
+                const foundProvince = this.provinces.find(p =>
+                  p.name.toLowerCase() === provinceValue.toLowerCase());
+                if (foundProvince) {
+                  provinceValue = foundProvince.code;
+                }
+              }
+
               addressForm.patchValue({
                 street: customer.address.street,
                 city: customer.address.city,
-                province: customer.address.state || customer.address.province, // Map old state to province
-                postalCode: customer.address.zipCode || customer.address.postalCode, // Map old zipCode to postalCode
-                country: customer.address.country,
+                province: provinceValue,
+                postalCode: customer.address.zipCode || customer.address.postalCode,
+                country: customer.address.country || 'Canada',
                 residenceDuration: customer.address.residenceDuration
               });
             }

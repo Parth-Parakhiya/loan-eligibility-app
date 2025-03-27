@@ -143,7 +143,10 @@
 
             <div class="form-group">
               <label for="province">Province</label>
-              <input type="text" id="province" formControlName="province">
+              <select id="province" formControlName="province">
+                <option value="">Select Province</option>
+                <option *ngFor="let province of provinces" [value]="province.code">{{province.name}}</option>
+              </select>
               <div class="error-message"
                 *ngIf="submitted && applicationForm.get('personalInfo.address.province')?.errors?.required">
                 Province is required
