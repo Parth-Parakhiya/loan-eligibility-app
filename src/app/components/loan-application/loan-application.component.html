@@ -364,6 +364,19 @@
                   <input type="number" [id]="'remainingTermMonths' + i" formControlName="remainingTermMonths">
                 </div>
               </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label [for]="'paymentHistory' + i">Payment History</label>
+                  <select [id]="'paymentHistory' + i" formControlName="paymentHistory">
+                    <option value="">Select Payment History</option>
+                    <option value="ON_TIME">On Time</option>
+                    <option value="LATE_LESS_30">Late &lt;30 Days</option>
+                    <option value="LATE_30_60">Late 30-60 Days</option>
+                    <option value="LATE_GREATER_60">Late &gt;60 Days</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 

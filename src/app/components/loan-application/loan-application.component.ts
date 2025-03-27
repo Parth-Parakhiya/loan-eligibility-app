@@ -197,7 +197,8 @@ export class LoanApplicationComponent implements OnInit {
       outstandingAmount: [debt?.outstandingAmount || '', [Validators.required, Validators.min(0)]],
       monthlyPayment: [debt?.monthlyPayment || '', [Validators.required, Validators.min(0)]],
       interestRate: [debt?.interestRate || '', [Validators.required, Validators.min(0)]],
-      remainingTermMonths: [debt?.remainingTermMonths || '', [Validators.required, Validators.min(0)]]
+      remainingTermMonths: [debt?.remainingTermMonths || '', [Validators.required, Validators.min(0)]],
+      paymentHistory: [debt?.paymentHistory || '']
     });
   }
 
