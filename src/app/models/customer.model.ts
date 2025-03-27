@@ -13,8 +13,10 @@ export interface Customer {
 export interface Address {
   street: string;
   city: string;
-  state: string;
-  zipCode: string;
+  state?: string;
+  province?: string;
+  zipCode?: string;
+  postalCode?: string;
   country: string;
   residenceDuration: number; // in months
 }

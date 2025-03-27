@@ -74,8 +74,8 @@ export class LoanApplicationComponent implements OnInit {
         address: this.fb.group({
           street: ['', Validators.required],
           city: ['', Validators.required],
-          state: ['', Validators.required],
-          zipCode: ['', Validators.required],
+          province: ['', Validators.required],
+          postalCode: ['', Validators.required],
           country: ['', Validators.required],
           residenceDuration: ['', Validators.required]
         })
@@ -109,9 +109,21 @@ export class LoanApplicationComponent implements OnInit {
               lastName: customer.lastName,
               email: customer.email,
               phoneNumber: customer.phoneNumber,
-              dateOfBirth: customer.dateOfBirth,
-              address: customer.address
+              dateOfBirth: customer.dateOfBirth
             });
+
+            // Handle address separately to map old field names to new ones if needed
+            const addressForm = personalInfoForm.get('address');
+            if (addressForm && customer.address) {
+              addressForm.patchValue({
+                street: customer.address.street,
+                city: customer.address.city,
+                province: customer.address.state || customer.address.province, // Map old state to province
+                postalCode: customer.address.zipCode || customer.address.postalCode, // Map old zipCode to postalCode
+                country: customer.address.country,
+                residenceDuration: customer.address.residenceDuration
+              });
+            }
           }
 
           // Load financial profile

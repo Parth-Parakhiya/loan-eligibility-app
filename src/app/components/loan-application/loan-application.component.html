@@ -142,22 +142,22 @@
             </div>
 
             <div class="form-group">
-              <label for="state">State</label>
-              <input type="text" id="state" formControlName="state">
+              <label for="province">Province</label>
+              <input type="text" id="province" formControlName="province">
               <div class="error-message"
-                *ngIf="submitted && applicationForm.get('personalInfo.address.state')?.errors?.required">
-                State is required
+                *ngIf="submitted && applicationForm.get('personalInfo.address.province')?.errors?.required">
+                Province is required
               </div>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="zipCode">Zip Code</label>
-              <input type="text" id="zipCode" formControlName="zipCode">
+              <label for="postalCode">Postal Code</label>
+              <input type="text" id="postalCode" formControlName="postalCode">
               <div class="error-message"
-                *ngIf="submitted && applicationForm.get('personalInfo.address.zipCode')?.errors?.required">
-                Zip code is required
+                *ngIf="submitted && applicationForm.get('personalInfo.address.postalCode')?.errors?.required">
+                Postal code is required
               </div>
             </div>
 
@@ -239,7 +239,7 @@
                       <option value="FULL_TIME">Full Time</option>
                       <option value="PART_TIME">Part Time</option>
                       <option value="UNEMPLOYED">Unemployed</option>
-                
+
                     </select>
                     <div class="error-message" *ngIf="submitted && employment.get('employmentType')?.errors?.required">
                       Employment type is required
