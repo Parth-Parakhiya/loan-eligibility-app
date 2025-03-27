@@ -238,9 +238,8 @@
                     <select [id]="'employmentType' + i" formControlName="employmentType">
                       <option value="FULL_TIME">Full Time</option>
                       <option value="PART_TIME">Part Time</option>
-                      <option value="SELF_EMPLOYED">Self Employed</option>
                       <option value="UNEMPLOYED">Unemployed</option>
-                      <option value="RETIRED">Retired</option>
+                
                     </select>
                     <div class="error-message" *ngIf="submitted && employment.get('employmentType')?.errors?.required">
                       Employment type is required
