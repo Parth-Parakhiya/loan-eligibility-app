@@ -132,12 +132,37 @@ export class RegisterComponent implements OnInit {
   private handleError(error: any): void {
     // Handle error based on its type and properties
     if (error instanceof HttpErrorResponse) {
+      // Check for user already exists error (could be in different formats from the backend)
       if (error.status === 409) {
-        this.errorMessage = 'An account with this email already exists.';
-      } else if (error.status === 400) {
-        this.errorMessage = 'Invalid registration data. Please check your information.';
-      } else if (error.error && error.error.message) {
+        // Check if the backend returned a specific message
+        if (error.error && typeof error.error === 'object' && error.error.message) {
+          this.errorMessage = error.error.message;
+        } else if (error.error && typeof error.error === 'string') {
+          this.errorMessage = error.error;
+        } else {
+          // Use the exact format from the backend log
+          this.errorMessage = `User already exists with email: ${this.registerForm.value.email}`;
+        }
+      }
+      // Check for specific backend error message
+      else if (error.error && error.error.message) {
         this.errorMessage = error.error.message;
+      }
+      // Check if error has error property with message
+      else if (error.error && typeof error.error === 'string') {
+        this.errorMessage = error.error;
+      }
+      // Check if error response text contains useful information
+      else if (error.message && error.message.includes('user already exists')) {
+        this.errorMessage = `User already exists with email: ${this.registerForm.value.email}`;
+      }
+      // Check the error status text
+      else if (error.statusText && error.statusText !== 'Unknown Error') {
+        this.errorMessage = error.statusText;
+      }
+      // Use status code specific messages
+      else if (error.status === 400) {
+        this.errorMessage = 'Invalid registration data. Please check your information.';
       } else {
         this.errorMessage = 'Registration failed. Please try again later.';
       }

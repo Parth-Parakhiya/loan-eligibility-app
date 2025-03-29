@@ -26,6 +26,15 @@ export class ErrorInterceptor implements HttpInterceptor {
                     this.router.navigate(['/login']);
                 }
 
+                // Special handling for user already exists errors
+                if (error.status === 409 && request.url.includes('/register')) {
+                    // Log the error but preserve it in its original form
+                    console.error(`User registration conflict: ${error.status} - ${error.error?.message || error.message}`);
+
+                    // Make sure we don't transform the error so the component gets the original message
+                    return throwError(() => error);
+                }
+
                 // Log a minimal error message for debugging
                 console.error(`API Error: ${error.status} - ${error.message}`);
 

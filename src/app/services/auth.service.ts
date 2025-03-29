@@ -44,14 +44,25 @@ export class AuthService {
   register(user: any): Observable<any> {
     const url = `${this.apiUrl}/register`;
 
-    // Use post method without observe: 'response' for simpler handling
-    return this.http.post(url, user).pipe(
+    // Use post method with the full response to access status code
+    return this.http.post(url, user, { observe: 'response' }).pipe(
+      map(response => {
+        // If we get a successful response, return the body or a success object
+        return response.body || { success: true };
+      }),
       catchError((error: HttpErrorResponse) => {
         // Check if it's actually a success code that's being treated as an error
         if (error.status === 201 || error.status === 200) {
           return of({ success: true });
         }
 
+        // For 409 Conflict - User already exists, preserve the backend message
+        if (error.status === 409) {
+          // Log the actual backend response for debugging
+          console.error('User already exists error:', error.error);
+        }
+
+        // Pass through the error without modifying it, so component can access the original error
         return throwError(() => error);
       })
     );
