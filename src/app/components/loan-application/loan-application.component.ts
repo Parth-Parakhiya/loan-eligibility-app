@@ -234,7 +234,7 @@ export class LoanApplicationComponent implements OnInit {
     return this.fb.group({
       // Step 1: Loan Details
       productType: ['', Validators.required],
-      requestedAmount: ['', [Validators.required, Validators.min(1000)]],
+      requestedAmount: ['', [Validators.required, Validators.min(1000), Validators.max(50000)]],
       purposeDescription: ['', [Validators.required, Validators.maxLength(500)]],
       requestedTermMonths: ['', [Validators.required, Validators.min(6)]],
 
@@ -243,7 +243,7 @@ export class LoanApplicationComponent implements OnInit {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
-        phoneNumber: ['', Validators.required],
+        phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
         dateOfBirth: ['', Validators.required],
         address: this.fb.group({
           street: ['', Validators.required],
@@ -262,6 +262,8 @@ export class LoanApplicationComponent implements OnInit {
         monthlyIncome: ['', [Validators.required, Validators.min(0)]],
         monthlyExpenses: ['', [Validators.required, Validators.min(0)]],
         estimatedDebts: ['', [Validators.required, Validators.min(0)]],
+        currentCreditLimit: ['', [Validators.required, Validators.min(0)]],
+        creditTotalUsage: ['', [Validators.required, Validators.min(0)]],
         existingDebts: this.fb.array([]),
         assets: this.fb.array([])
       }),
@@ -544,6 +546,8 @@ export class LoanApplicationComponent implements OnInit {
           financialInfoGroup.get('monthlyExpenses')?.markAsTouched();
           financialInfoGroup.get('estimatedDebts')?.markAsTouched();
           financialInfoGroup.get('creditScore')?.markAsTouched();
+          financialInfoGroup.get('currentCreditLimit')?.markAsTouched();
+          financialInfoGroup.get('creditTotalUsage')?.markAsTouched();
 
           // Mark all employment details as touched
           const employmentArray = financialInfoGroup.get('employmentDetails') as FormArray;
@@ -707,6 +711,15 @@ export class LoanApplicationComponent implements OnInit {
     this.uploading = true;
 
     const formValue = this.applicationForm.value;
+
+    // Log the form values for debugging - especially credit fields
+    console.log('Form values before submission:', formValue);
+    console.log('Credit fields:', {
+      currentCreditLimit: formValue.financialInfo?.currentCreditLimit,
+      creditTotalUsage: formValue.financialInfo?.creditTotalUsage,
+      creditScore: formValue.financialInfo?.creditScore
+    });
+
     const applicationData = {
       loanDetails: {
         productType: formValue.productType,
@@ -741,7 +754,7 @@ export class LoanApplicationComponent implements OnInit {
         monthlyIncome: parseFloat(formValue.financialInfo.monthlyIncome),
         monthlyExpenses: parseFloat(formValue.financialInfo.monthlyExpenses),
         estimatedDebts: parseFloat(formValue.financialInfo.estimatedDebts),
-        creditScore: parseInt(formValue.financialInfo.creditScore),
+        creditScore: parseInt(formValue.financialInfo.creditScore || 0),
         currentCreditLimit: parseFloat(formValue.financialInfo.currentCreditLimit || 0),
         creditTotalUsage: parseFloat(formValue.financialInfo.creditTotalUsage || 0),
         existingDebts: formValue.financialInfo.existingDebts.map((debt: any) => ({
@@ -817,6 +830,16 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   private sendApplicationToAPI(applicationData: any): void {
+    // Log the application data to verify all fields are included
+    console.log('Sending application data to API:', applicationData);
+
+    // Check for the credit-related fields
+    console.log('Credit values being sent to API:',
+      'Credit Score:', applicationData.financialInformation.creditScore,
+      'Credit Usage:', applicationData.financialInformation.creditTotalUsage,
+      'Credit Limit:', applicationData.financialInformation.currentCreditLimit
+    );
+
     this.loanService.createLoanApplication(applicationData).subscribe(
       response => {
         this.uploading = false;
@@ -852,7 +875,16 @@ export class LoanApplicationComponent implements OnInit {
       case 2:
         return this.applicationForm.get('personalInfo')?.invalid;
       case 3:
-        return this.applicationForm.get('financialInfo')?.invalid;
+        const financialInfo = this.applicationForm.get('financialInfo');
+        // Check specific credit-related fields
+        return (
+          financialInfo?.invalid ||
+          this.applicationForm.get('financialInfo.monthlyIncome')?.invalid ||
+          this.applicationForm.get('financialInfo.monthlyExpenses')?.invalid ||
+          this.applicationForm.get('financialInfo.estimatedDebts')?.invalid ||
+          this.applicationForm.get('financialInfo.currentCreditLimit')?.invalid ||
+          this.applicationForm.get('financialInfo.creditTotalUsage')?.invalid
+        );
       default:
         return false;
     }
@@ -902,10 +934,20 @@ export class LoanApplicationComponent implements OnInit {
             missingFields.push('Last Name');
           }
           if (personalInfo.get('email')?.invalid && personalInfo.get('email')?.touched) {
-            missingFields.push('Email Address');
+            const emailControl = personalInfo.get('email');
+            if (emailControl?.errors?.required) {
+              missingFields.push('Email Address - Required');
+            } else if (emailControl?.errors?.email) {
+              missingFields.push('Email Address - Invalid Format');
+            }
           }
           if (personalInfo.get('phoneNumber')?.invalid && personalInfo.get('phoneNumber')?.touched) {
-            missingFields.push('Phone Number');
+            const phoneControl = personalInfo.get('phoneNumber');
+            if (phoneControl?.errors?.required) {
+              missingFields.push('Phone Number - Required');
+            } else if (phoneControl?.errors?.pattern) {
+              missingFields.push('Phone Number - Must be numeric and not exceed 10 digits');
+            }
           }
           if (personalInfo.get('dateOfBirth')?.invalid && personalInfo.get('dateOfBirth')?.touched) {
             missingFields.push('Date of Birth');
@@ -949,6 +991,12 @@ export class LoanApplicationComponent implements OnInit {
           }
           if (financialInfo.get('creditScore')?.invalid && financialInfo.get('creditScore')?.touched) {
             missingFields.push('Credit Score');
+          }
+          if (financialInfo.get('currentCreditLimit')?.invalid && financialInfo.get('currentCreditLimit')?.touched) {
+            missingFields.push('Current Credit Limit');
+          }
+          if (financialInfo.get('creditTotalUsage')?.invalid && financialInfo.get('creditTotalUsage')?.touched) {
+            missingFields.push('Credit Total Usage');
           }
 
           // Check for required fields in employment details

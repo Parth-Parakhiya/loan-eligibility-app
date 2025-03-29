@@ -99,7 +99,7 @@
         <label for="requestedAmount">Requested Amount ($)</label>
         <div class="currency-input">
           <input type="number" id="requestedAmount" formControlName="requestedAmount"
-            placeholder="Enter amount (minimum $1,000)">
+            placeholder="Enter amount (minimum $1,000, maximum $50,000)">
         </div>
         <div class="error-message"
           *ngIf="applicationForm.get('requestedAmount')?.errors?.required && applicationForm.get('requestedAmount')?.touched">
@@ -108,6 +108,10 @@
         <div class="error-message"
           *ngIf="applicationForm.get('requestedAmount')?.errors?.min && applicationForm.get('requestedAmount')?.touched">
           Amount must be at least $1,000
+        </div>
+        <div class="error-message"
+          *ngIf="applicationForm.get('requestedAmount')?.errors?.max && applicationForm.get('requestedAmount')?.touched">
+          Amount cannot exceed $50,000
         </div>
       </div>
 
@@ -178,10 +182,15 @@
 
           <div class="form-group">
             <label for="phoneNumber">Phone Number</label>
-            <input type="text" id="phoneNumber" formControlName="phoneNumber" placeholder="Enter your phone number">
+            <input type="text" id="phoneNumber" formControlName="phoneNumber"
+              placeholder="Enter your phone number (max 10 digits)">
             <div class="error-message"
               *ngIf="applicationForm.get('personalInfo.phoneNumber')?.errors?.required && applicationForm.get('personalInfo.phoneNumber')?.touched">
               Phone number is required
+            </div>
+            <div class="error-message"
+              *ngIf="applicationForm.get('personalInfo.phoneNumber')?.errors?.pattern && applicationForm.get('personalInfo.phoneNumber')?.touched">
+              Phone number must be numeric and not exceed 10 digits
             </div>
           </div>
         </div>
