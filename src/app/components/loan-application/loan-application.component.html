@@ -49,6 +49,26 @@
     </div>
   </div>
 
+  <!-- Validation Error Modal -->
+  <div *ngIf="showValidationErrorModal" class="validation-error-overlay">
+    <div class="validation-error-modal">
+      <div class="validation-error-content">
+        <div class="validation-error-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h3>Validation Error</h3>
+        <p>Please complete all required fields correctly before proceeding.</p>
+        <div class="missing-fields" *ngIf="missingFieldsList.length > 0">
+          <h4>Required Fields:</h4>
+          <ul>
+            <li *ngFor="let field of missingFieldsList">{{ field }}</li>
+          </ul>
+        </div>
+        <button type="button" class="validation-error-dismiss" (click)="dismissValidationError()">OK</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Progress Stepper -->
   <div class="progress-stepper">
     <div *ngFor="let title of stepTitles; let i = index"
@@ -66,9 +86,11 @@
       <div class="form-group">
         <label for="productType">Product Type</label>
         <select id="productType" formControlName="productType">
+          <option value="" disabled selected>Select a loan product</option>
           <option *ngFor="let type of productTypes" [value]="type.value">{{ type.label }}</option>
         </select>
-        <div class="error-message" *ngIf="submitted && applicationForm.get('productType')?.errors?.required">
+        <div class="error-message"
+          *ngIf="applicationForm.get('productType')?.invalid && applicationForm.get('productType')?.touched">
           Product type is required
         </div>
       </div>
@@ -76,12 +98,15 @@
       <div class="form-group">
         <label for="requestedAmount">Requested Amount ($)</label>
         <div class="currency-input">
-          <input type="number" id="requestedAmount" formControlName="requestedAmount">
+          <input type="number" id="requestedAmount" formControlName="requestedAmount"
+            placeholder="Enter amount (minimum $1,000)">
         </div>
-        <div class="error-message" *ngIf="submitted && applicationForm.get('requestedAmount')?.errors?.required">
+        <div class="error-message"
+          *ngIf="applicationForm.get('requestedAmount')?.errors?.required && applicationForm.get('requestedAmount')?.touched">
           Amount is required
         </div>
-        <div class="error-message" *ngIf="submitted && applicationForm.get('requestedAmount')?.errors?.min">
+        <div class="error-message"
+          *ngIf="applicationForm.get('requestedAmount')?.errors?.min && applicationForm.get('requestedAmount')?.touched">
           Amount must be at least $1,000
         </div>
       </div>
@@ -89,20 +114,24 @@
       <div class="form-group">
         <label for="purposeDescription">Purpose Description</label>
         <textarea id="purposeDescription" formControlName="purposeDescription"
-          placeholder="Briefly describe the purpose of this loan..."></textarea>
-        <div class="error-message" *ngIf="submitted && applicationForm.get('purposeDescription')?.errors?.required">
+          placeholder="Briefly describe the purpose of this loan (e.g., home renovation, debt consolidation, education)"></textarea>
+        <div class="error-message"
+          *ngIf="applicationForm.get('purposeDescription')?.errors?.required && applicationForm.get('purposeDescription')?.touched">
           Purpose description is required
         </div>
       </div>
 
       <div class="form-group">
         <label for="requestedTermMonths">Requested Term (Months)</label>
-        <input type="number" id="requestedTermMonths" formControlName="requestedTermMonths">
+        <input type="number" id="requestedTermMonths" formControlName="requestedTermMonths"
+          placeholder="Enter term in months (minimum 6 months)">
         <div class="hint-text">Minimum term is 6 months</div>
-        <div class="error-message" *ngIf="submitted && applicationForm.get('requestedTermMonths')?.errors?.required">
+        <div class="error-message"
+          *ngIf="applicationForm.get('requestedTermMonths')?.errors?.required && applicationForm.get('requestedTermMonths')?.touched">
           Term is required
         </div>
-        <div class="error-message" *ngIf="submitted && applicationForm.get('requestedTermMonths')?.errors?.min">
+        <div class="error-message"
+          *ngIf="applicationForm.get('requestedTermMonths')?.errors?.min && applicationForm.get('requestedTermMonths')?.touched">
           Term must be at least 6 months
         </div>
       </div>
@@ -116,18 +145,18 @@
         <div class="form-row">
           <div class="form-group">
             <label for="firstName">First Name</label>
-            <input type="text" id="firstName" formControlName="firstName">
+            <input type="text" id="firstName" formControlName="firstName" placeholder="Enter your first name">
             <div class="error-message"
-              *ngIf="submitted && applicationForm.get('personalInfo.firstName')?.errors?.required">
+              *ngIf="applicationForm.get('personalInfo.firstName')?.errors?.required && applicationForm.get('personalInfo.firstName')?.touched">
               First name is required
             </div>
           </div>
 
           <div class="form-group">
             <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" formControlName="lastName">
+            <input type="text" id="lastName" formControlName="lastName" placeholder="Enter your last name">
             <div class="error-message"
-              *ngIf="submitted && applicationForm.get('personalInfo.lastName')?.errors?.required">
+              *ngIf="applicationForm.get('personalInfo.lastName')?.errors?.required && applicationForm.get('personalInfo.lastName')?.touched">
               Last name is required
             </div>
           </div>
@@ -136,20 +165,22 @@
         <div class="form-row">
           <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" formControlName="email">
-            <div class="error-message" *ngIf="submitted && applicationForm.get('personalInfo.email')?.errors?.required">
+            <input type="email" id="email" formControlName="email" placeholder="Enter your email address">
+            <div class="error-message"
+              *ngIf="applicationForm.get('personalInfo.email')?.errors?.required && applicationForm.get('personalInfo.email')?.touched">
               Email is required
             </div>
-            <div class="error-message" *ngIf="submitted && applicationForm.get('personalInfo.email')?.errors?.email">
-              Please enter a valid email
+            <div class="error-message"
+              *ngIf="applicationForm.get('personalInfo.email')?.errors?.email && applicationForm.get('personalInfo.email')?.touched">
+              Please enter a valid email address
             </div>
           </div>
 
           <div class="form-group">
             <label for="phoneNumber">Phone Number</label>
-            <input type="text" id="phoneNumber" formControlName="phoneNumber">
+            <input type="text" id="phoneNumber" formControlName="phoneNumber" placeholder="Enter your phone number">
             <div class="error-message"
-              *ngIf="submitted && applicationForm.get('personalInfo.phoneNumber')?.errors?.required">
+              *ngIf="applicationForm.get('personalInfo.phoneNumber')?.errors?.required && applicationForm.get('personalInfo.phoneNumber')?.touched">
               Phone number is required
             </div>
           </div>
@@ -157,9 +188,9 @@
 
         <div class="form-group">
           <label for="dateOfBirth">Date of Birth</label>
-          <input type="date" id="dateOfBirth" formControlName="dateOfBirth">
+          <input type="date" id="dateOfBirth" formControlName="dateOfBirth" placeholder="YYYY-MM-DD">
           <div class="error-message"
-            *ngIf="submitted && applicationForm.get('personalInfo.dateOfBirth')?.errors?.required">
+            *ngIf="applicationForm.get('personalInfo.dateOfBirth')?.errors?.required && applicationForm.get('personalInfo.dateOfBirth')?.touched">
             Date of birth is required
           </div>
         </div>
@@ -169,9 +200,9 @@
 
           <div class="form-group">
             <label for="street">Street Address</label>
-            <input type="text" id="street" formControlName="street">
+            <input type="text" id="street" formControlName="street" placeholder="Enter your street address">
             <div class="error-message"
-              *ngIf="submitted && applicationForm.get('personalInfo.address.street')?.errors?.required">
+              *ngIf="applicationForm.get('personalInfo.address.street')?.errors?.required && applicationForm.get('personalInfo.address.street')?.touched">
               Street address is required
             </div>
           </div>
@@ -179,9 +210,9 @@
           <div class="form-row">
             <div class="form-group">
               <label for="city">City</label>
-              <input type="text" id="city" formControlName="city">
+              <input type="text" id="city" formControlName="city" placeholder="Enter your city">
               <div class="error-message"
-                *ngIf="submitted && applicationForm.get('personalInfo.address.city')?.errors?.required">
+                *ngIf="applicationForm.get('personalInfo.address.city')?.errors?.required && applicationForm.get('personalInfo.address.city')?.touched">
                 City is required
               </div>
             </div>
@@ -193,7 +224,7 @@
                 <option *ngFor="let province of provinces" [value]="province.code">{{province.name}}</option>
               </select>
               <div class="error-message"
-                *ngIf="submitted && applicationForm.get('personalInfo.address.province')?.errors?.required">
+                *ngIf="applicationForm.get('personalInfo.address.province')?.errors?.required && applicationForm.get('personalInfo.address.province')?.touched">
                 Province is required
               </div>
             </div>
@@ -202,18 +233,19 @@
           <div class="form-row">
             <div class="form-group">
               <label for="postalCode">Postal Code</label>
-              <input type="text" id="postalCode" formControlName="postalCode">
+              <input type="text" id="postalCode" formControlName="postalCode"
+                placeholder="Enter postal code (e.g., A1A 1A1)">
               <div class="error-message"
-                *ngIf="submitted && applicationForm.get('personalInfo.address.postalCode')?.errors?.required">
+                *ngIf="applicationForm.get('personalInfo.address.postalCode')?.errors?.required && applicationForm.get('personalInfo.address.postalCode')?.touched">
                 Postal code is required
               </div>
             </div>
 
             <div class="form-group">
               <label for="country">Country</label>
-              <input type="text" id="country" formControlName="country">
+              <input type="text" id="country" formControlName="country" placeholder="Enter your country">
               <div class="error-message"
-                *ngIf="submitted && applicationForm.get('personalInfo.address.country')?.errors?.required">
+                *ngIf="applicationForm.get('personalInfo.address.country')?.errors?.required && applicationForm.get('personalInfo.address.country')?.touched">
                 Country is required
               </div>
             </div>
@@ -221,9 +253,10 @@
 
           <div class="form-group">
             <label for="residenceDuration">How long have you lived at this address? (Months)</label>
-            <input type="number" id="residenceDuration" formControlName="residenceDuration">
+            <input type="number" id="residenceDuration" formControlName="residenceDuration"
+              placeholder="Enter number of months">
             <div class="error-message"
-              *ngIf="submitted && applicationForm.get('personalInfo.address.residenceDuration')?.errors?.required">
+              *ngIf="applicationForm.get('personalInfo.address.residenceDuration')?.errors?.required && applicationForm.get('personalInfo.address.residenceDuration')?.touched">
               Residence duration is required
             </div>
           </div>
@@ -250,16 +283,20 @@
                 <div class="form-row">
                   <div class="form-group">
                     <label [for]="'employerName' + i">Employer Name</label>
-                    <input type="text" [id]="'employerName' + i" formControlName="employerName">
-                    <div class="error-message" *ngIf="submitted && employment.get('employerName')?.errors?.required">
+                    <input type="text" [id]="'employerName' + i" formControlName="employerName"
+                      placeholder="Enter employer name">
+                    <div class="error-message"
+                      *ngIf="employment.get('employerName')?.errors?.required && employment.get('employerName')?.touched">
                       Employer name is required
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label [for]="'position' + i">Position</label>
-                    <input type="text" [id]="'position' + i" formControlName="position">
-                    <div class="error-message" *ngIf="submitted && employment.get('position')?.errors?.required">
+                    <input type="text" [id]="'position' + i" formControlName="position"
+                      placeholder="Enter your position/title">
+                    <div class="error-message"
+                      *ngIf="employment.get('position')?.errors?.required && employment.get('position')?.touched">
                       Position is required
                     </div>
                   </div>
@@ -269,7 +306,8 @@
                   <div class="form-group">
                     <label [for]="'startDate' + i">Start Date</label>
                     <input type="date" [id]="'startDate' + i" formControlName="startDate">
-                    <div class="error-message" *ngIf="submitted && employment.get('startDate')?.errors?.required">
+                    <div class="error-message"
+                      *ngIf="employment.get('startDate')?.errors?.required && employment.get('startDate')?.touched">
                       Start date is required
                     </div>
                   </div>
@@ -284,22 +322,24 @@
                   <div class="form-group">
                     <label [for]="'employmentType' + i">Employment Type</label>
                     <select [id]="'employmentType' + i" formControlName="employmentType">
+                      <option value="">Select employment type</option>
                       <option value="FULL_TIME">Full Time</option>
                       <option value="PART_TIME">Part Time</option>
                       <option value="UNEMPLOYED">Unemployed</option>
                       <option value="STUDENT">Student</option>
-
                     </select>
-                    <div class="error-message" *ngIf="submitted && employment.get('employmentType')?.errors?.required">
+                    <div class="error-message"
+                      *ngIf="employment.get('employmentType')?.errors?.required && employment.get('employmentType')?.touched">
                       Employment type is required
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label [for]="'employmentDuration' + i">Employment Duration (Months)</label>
-                    <input type="number" [id]="'employmentDuration' + i" formControlName="employmentDuration">
+                    <input type="number" [id]="'employmentDuration' + i" formControlName="employmentDuration"
+                      placeholder="Enter number of months">
                     <div class="error-message"
-                      *ngIf="submitted && employment.get('employmentDuration')?.errors?.required">
+                      *ngIf="employment.get('employmentDuration')?.errors?.required && employment.get('employmentDuration')?.touched">
                       Employment duration is required
                     </div>
                   </div>
@@ -315,10 +355,11 @@
         <div class="form-group">
           <label for="monthlyIncome">Monthly Income ($)</label>
           <div class="currency-input">
-            <input type="number" id="monthlyIncome" formControlName="monthlyIncome">
+            <input type="number" id="monthlyIncome" formControlName="monthlyIncome"
+              placeholder="Enter your monthly income">
           </div>
           <div class="error-message"
-            *ngIf="submitted && applicationForm.get('financialInfo.monthlyIncome')?.errors?.required">
+            *ngIf="applicationForm.get('financialInfo.monthlyIncome')?.errors?.required && applicationForm.get('financialInfo.monthlyIncome')?.touched">
             Monthly income is required
           </div>
         </div>
@@ -326,10 +367,11 @@
         <div class="form-group">
           <label for="monthlyExpenses">Monthly Expenses ($)</label>
           <div class="currency-input">
-            <input type="number" id="monthlyExpenses" formControlName="monthlyExpenses">
+            <input type="number" id="monthlyExpenses" formControlName="monthlyExpenses"
+              placeholder="Enter your monthly expenses">
           </div>
           <div class="error-message"
-            *ngIf="submitted && applicationForm.get('financialInfo.monthlyExpenses')?.errors?.required">
+            *ngIf="applicationForm.get('financialInfo.monthlyExpenses')?.errors?.required && applicationForm.get('financialInfo.monthlyExpenses')?.touched">
             Monthly expenses is required
           </div>
         </div>
@@ -337,23 +379,27 @@
         <div class="form-group">
           <label for="estimatedDebts">Estimated Debts ($)</label>
           <div class="currency-input">
-            <input type="number" id="estimatedDebts" formControlName="estimatedDebts">
+            <input type="number" id="estimatedDebts" formControlName="estimatedDebts"
+              placeholder="Enter your total debt amount">
           </div>
           <div class="error-message"
-            *ngIf="submitted && applicationForm.get('financialInfo.estimatedDebts')?.errors?.required">
+            *ngIf="applicationForm.get('financialInfo.estimatedDebts')?.errors?.required && applicationForm.get('financialInfo.estimatedDebts')?.touched">
             Estimated debts is required
           </div>
         </div>
 
         <div class="form-group">
-          <label for="creditScore">Credit Score ($)</label>
+          <label for="creditScore">Credit Score</label>
           <div class="currency-input">
-            <input type="number" id="creditScore" formControlName="creditScore" min="300" max="2000">
+            <input type="number" id="creditScore" formControlName="creditScore" min="300" max="2000"
+              placeholder="Enter your credit score (300-2000)">
           </div>
-          <div class="error-message" *ngIf="submitted && applicationForm.get('financialInfo.creditScore')?.errors?.min">
+          <div class="error-message"
+            *ngIf="applicationForm.get('financialInfo.creditScore')?.errors?.min && applicationForm.get('financialInfo.creditScore')?.touched">
             Credit score must be at least 300
           </div>
-          <div class="error-message" *ngIf="submitted && applicationForm.get('financialInfo.creditScore')?.errors?.max">
+          <div class="error-message"
+            *ngIf="applicationForm.get('financialInfo.creditScore')?.errors?.max && applicationForm.get('financialInfo.creditScore')?.touched">
             Credit score cannot exceed 2000
           </div>
         </div>
@@ -361,10 +407,11 @@
         <div class="form-group">
           <label for="currentCreditLimit">Current Credit Limit ($)</label>
           <div class="currency-input">
-            <input type="number" id="currentCreditLimit" formControlName="currentCreditLimit">
+            <input type="number" id="currentCreditLimit" formControlName="currentCreditLimit"
+              placeholder="Enter your current total credit limit">
           </div>
           <div class="error-message"
-            *ngIf="submitted && applicationForm.get('financialInfo.currentCreditLimit')?.errors?.required">
+            *ngIf="applicationForm.get('financialInfo.currentCreditLimit')?.errors?.required && applicationForm.get('financialInfo.currentCreditLimit')?.touched">
             Current credit limit is required
           </div>
         </div>
@@ -372,10 +419,11 @@
         <div class="form-group">
           <label for="creditTotalUsage">Credit Total Usage ($)</label>
           <div class="currency-input">
-            <input type="number" id="creditTotalUsage" formControlName="creditTotalUsage">
+            <input type="number" id="creditTotalUsage" formControlName="creditTotalUsage"
+              placeholder="Enter your total credit usage">
           </div>
           <div class="error-message"
-            *ngIf="submitted && applicationForm.get('financialInfo.creditTotalUsage')?.errors?.required">
+            *ngIf="applicationForm.get('financialInfo.creditTotalUsage')?.errors?.required && applicationForm.get('financialInfo.creditTotalUsage')?.touched">
             Credit total usage is required
           </div>
         </div>
@@ -502,6 +550,11 @@
     <div class="step-content" *ngIf="currentStep === 4">
       <h3>Step 4: Document Upload</h3>
 
+      <div class="document-instructions">
+        <p>Please upload all relevant documents to support your loan application. Required documents may include
+          identification, proof of income, and other supporting materials.</p>
+      </div>
+
       <div formArrayName="documents">
         <div *ngFor="let document of documents.controls; let i = index" [formGroupName]="i" class="document-form">
           <div class="item-header">
@@ -512,8 +565,12 @@
           <div class="form-group">
             <label [for]="'documentType' + i">Document Type</label>
             <select [id]="'documentType' + i" formControlName="type">
+              <option value="" selected disabled>Select document type</option>
               <option *ngFor="let type of documentTypes" [value]="type.value">{{ type.label }}</option>
             </select>
+            <div class="error-message" *ngIf="document.get('type')?.errors?.required && document.get('type')?.touched">
+              Document type is required
+            </div>
           </div>
 
           <div class="form-group">
@@ -525,6 +582,10 @@
               <input type="file" [id]="'file' + i" (change)="onFileChange($event, i)">
               <div class="file-name" *ngIf="document.get('file')?.value">
                 {{ getFileName(document.get('file')?.value) }}
+              </div>
+              <div class="error-message"
+                *ngIf="document.get('file')?.errors?.required && document.get('file')?.touched">
+                Please upload a file
               </div>
             </div>
           </div>

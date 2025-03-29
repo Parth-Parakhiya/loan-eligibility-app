@@ -60,6 +60,8 @@ export class LoanApplicationComponent implements OnInit {
   apiResponse: any = null;
   showDraftModal = false;
   showSaveSuccessModal = false;
+  showValidationErrorModal = false;
+  missingFieldsList: string[] = [];
   savedDraft: any = null;
 
   constructor(
@@ -476,9 +478,107 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   nextStep(): void {
-    if (this.currentStep < this.totalSteps) {
+    // Check if the current step is valid before proceeding
+    if (this.isCurrentStepValid()) {
       this.currentStep++;
       window.scrollTo(0, 0);
+    } else {
+      // Mark all fields as touched to trigger validation messages
+      this.markCurrentStepAsTouched();
+
+      // Get list of missing fields
+      this.missingFieldsList = this.getMissingFieldsList();
+
+      // Show custom validation error modal instead of alert
+      this.showValidationErrorModal = true;
+    }
+  }
+
+  // Validate the current step
+  isCurrentStepValid(): boolean {
+    switch (this.currentStep) {
+      case 1: // Loan Details
+        return !this.isStepInvalid(1);
+      case 2: // Personal Information
+        return !this.isStepInvalid(2);
+      case 3: // Financial Information
+        return !this.isStepInvalid(3);
+      default:
+        return true;
+    }
+  }
+
+  // Mark all form controls in the current step as touched to trigger validation displays
+  markCurrentStepAsTouched(): void {
+    switch (this.currentStep) {
+      case 1: // Loan Details
+        this.applicationForm.get('productType')?.markAsTouched();
+        this.applicationForm.get('requestedAmount')?.markAsTouched();
+        this.applicationForm.get('purposeDescription')?.markAsTouched();
+        this.applicationForm.get('requestedTermMonths')?.markAsTouched();
+        break;
+      case 2: // Personal Information
+        const personalInfo = this.applicationForm.get('personalInfo');
+        if (personalInfo) {
+          // Cast to FormGroup to access 'controls' property
+          const personalInfoGroup = personalInfo as FormGroup;
+          Object.keys(personalInfoGroup.controls).forEach(key => {
+            const control = personalInfoGroup.get(key);
+            if (control instanceof FormGroup) {
+              Object.keys(control.controls).forEach(subKey => {
+                control.get(subKey)?.markAsTouched();
+              });
+            } else {
+              control?.markAsTouched();
+            }
+          });
+        }
+        break;
+      case 3: // Financial Information
+        const financialInfo = this.applicationForm.get('financialInfo');
+        if (financialInfo) {
+          // Cast to FormGroup for type safety
+          const financialInfoGroup = financialInfo as FormGroup;
+          // Mark basic fields as touched
+          financialInfoGroup.get('monthlyIncome')?.markAsTouched();
+          financialInfoGroup.get('monthlyExpenses')?.markAsTouched();
+          financialInfoGroup.get('estimatedDebts')?.markAsTouched();
+          financialInfoGroup.get('creditScore')?.markAsTouched();
+
+          // Mark all employment details as touched
+          const employmentArray = financialInfoGroup.get('employmentDetails') as FormArray;
+          if (employmentArray && employmentArray.length > 0) {
+            for (let i = 0; i < employmentArray.length; i++) {
+              const group = employmentArray.at(i) as FormGroup;
+              Object.keys(group.controls).forEach(key => {
+                group.get(key)?.markAsTouched();
+              });
+            }
+          }
+
+          // Mark all debts as touched
+          const debtsArray = financialInfoGroup.get('existingDebts') as FormArray;
+          if (debtsArray && debtsArray.length > 0) {
+            for (let i = 0; i < debtsArray.length; i++) {
+              const group = debtsArray.at(i) as FormGroup;
+              Object.keys(group.controls).forEach(key => {
+                group.get(key)?.markAsTouched();
+              });
+            }
+          }
+
+          // Mark all assets as touched
+          const assetsArray = financialInfoGroup.get('assets') as FormArray;
+          if (assetsArray && assetsArray.length > 0) {
+            for (let i = 0; i < assetsArray.length; i++) {
+              const group = assetsArray.at(i) as FormGroup;
+              Object.keys(group.controls).forEach(key => {
+                group.get(key)?.markAsTouched();
+              });
+            }
+          }
+        }
+        break;
     }
   }
 
@@ -577,15 +677,30 @@ export class LoanApplicationComponent implements OnInit {
 
     if (this.applicationForm.invalid) {
       // Find the first invalid step and navigate to it
+      let invalidStep = 0;
+
       if (this.isStepInvalid(1)) {
         this.currentStep = 1;
+        invalidStep = 1;
       } else if (this.isStepInvalid(2)) {
         this.currentStep = 2;
+        invalidStep = 2;
       } else if (this.isStepInvalid(3)) {
         this.currentStep = 3;
+        invalidStep = 3;
+      } else if (this.isStepInvalid(4)) {
+        this.currentStep = 4;
+        invalidStep = 4;
       }
 
-      alert('Please fill in all required fields correctly.');
+      // Mark all fields as touched to trigger validation messages
+      this.markCurrentStepAsTouched();
+
+      // Get list of missing fields for the current step
+      this.missingFieldsList = this.getMissingFieldsList();
+
+      // Show custom validation error modal instead of alert
+      this.showValidationErrorModal = true;
       return;
     }
 
@@ -750,5 +865,132 @@ export class LoanApplicationComponent implements OnInit {
 
   getFileName(file: File): string {
     return file.name;
+  }
+
+  // New methods for validation error modal
+  dismissValidationError(): void {
+    this.showValidationErrorModal = false;
+  }
+
+  // Get a list of missing fields for the current step
+  getMissingFieldsList(): string[] {
+    const missingFields: string[] = [];
+
+    switch (this.currentStep) {
+      case 1: // Loan Details
+        if (this.applicationForm.get('productType')?.invalid && this.applicationForm.get('productType')?.touched) {
+          missingFields.push('Product Type');
+        }
+        if (this.applicationForm.get('requestedAmount')?.invalid && this.applicationForm.get('requestedAmount')?.touched) {
+          missingFields.push('Requested Amount');
+        }
+        if (this.applicationForm.get('purposeDescription')?.invalid && this.applicationForm.get('purposeDescription')?.touched) {
+          missingFields.push('Purpose Description');
+        }
+        if (this.applicationForm.get('requestedTermMonths')?.invalid && this.applicationForm.get('requestedTermMonths')?.touched) {
+          missingFields.push('Requested Term (Months)');
+        }
+        break;
+
+      case 2: // Personal Information
+        const personalInfo = this.applicationForm.get('personalInfo') as FormGroup;
+        if (personalInfo) {
+          if (personalInfo.get('firstName')?.invalid && personalInfo.get('firstName')?.touched) {
+            missingFields.push('First Name');
+          }
+          if (personalInfo.get('lastName')?.invalid && personalInfo.get('lastName')?.touched) {
+            missingFields.push('Last Name');
+          }
+          if (personalInfo.get('email')?.invalid && personalInfo.get('email')?.touched) {
+            missingFields.push('Email Address');
+          }
+          if (personalInfo.get('phoneNumber')?.invalid && personalInfo.get('phoneNumber')?.touched) {
+            missingFields.push('Phone Number');
+          }
+          if (personalInfo.get('dateOfBirth')?.invalid && personalInfo.get('dateOfBirth')?.touched) {
+            missingFields.push('Date of Birth');
+          }
+
+          const address = personalInfo.get('address') as FormGroup;
+          if (address) {
+            if (address.get('street')?.invalid && address.get('street')?.touched) {
+              missingFields.push('Street Address');
+            }
+            if (address.get('city')?.invalid && address.get('city')?.touched) {
+              missingFields.push('City');
+            }
+            if (address.get('province')?.invalid && address.get('province')?.touched) {
+              missingFields.push('Province');
+            }
+            if (address.get('postalCode')?.invalid && address.get('postalCode')?.touched) {
+              missingFields.push('Postal Code');
+            }
+            if (address.get('country')?.invalid && address.get('country')?.touched) {
+              missingFields.push('Country');
+            }
+            if (address.get('residenceDuration')?.invalid && address.get('residenceDuration')?.touched) {
+              missingFields.push('Residence Duration');
+            }
+          }
+        }
+        break;
+
+      case 3: // Financial Information
+        const financialInfo = this.applicationForm.get('financialInfo') as FormGroup;
+        if (financialInfo) {
+          if (financialInfo.get('monthlyIncome')?.invalid && financialInfo.get('monthlyIncome')?.touched) {
+            missingFields.push('Monthly Income');
+          }
+          if (financialInfo.get('monthlyExpenses')?.invalid && financialInfo.get('monthlyExpenses')?.touched) {
+            missingFields.push('Monthly Expenses');
+          }
+          if (financialInfo.get('estimatedDebts')?.invalid && financialInfo.get('estimatedDebts')?.touched) {
+            missingFields.push('Estimated Debts');
+          }
+          if (financialInfo.get('creditScore')?.invalid && financialInfo.get('creditScore')?.touched) {
+            missingFields.push('Credit Score');
+          }
+
+          // Check for required fields in employment details
+          const employmentArray = financialInfo.get('employmentDetails') as FormArray;
+          if (employmentArray) {
+            for (let i = 0; i < employmentArray.length; i++) {
+              const employment = employmentArray.at(i) as FormGroup;
+              Object.keys(employment.controls).forEach(key => {
+                const control = employment.get(key);
+                if (control?.invalid && control.touched && control.errors?.required) {
+                  missingFields.push(`Employment Record ${i + 1}: ${this.formatFieldName(key)}`);
+                }
+              });
+            }
+          }
+        }
+        break;
+
+      case 4: // Document Upload
+        const documents = this.applicationForm.get('documents') as FormArray;
+        if (documents) {
+          for (let i = 0; i < documents.length; i++) {
+            const doc = documents.at(i) as FormGroup;
+            if (doc.get('type')?.invalid && doc.get('type')?.touched) {
+              missingFields.push(`Document ${i + 1}: Type`);
+            }
+            if (doc.get('file')?.invalid && doc.get('file')?.touched) {
+              missingFields.push(`Document ${i + 1}: File Upload`);
+            }
+          }
+        }
+        break;
+    }
+
+    return missingFields;
+  }
+
+  // Helper method to format field names
+  private formatFieldName(key: string): string {
+    // Convert camelCase to Title Case with spaces
+    return key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (str) => str.toUpperCase());
   }
 }

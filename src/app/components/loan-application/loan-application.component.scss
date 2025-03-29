@@ -726,3 +726,127 @@ input[type="date"] {
     }
   }
 }
+
+// Document instructions
+.document-instructions {
+  background-color: #f1f8e9;
+  border-left: 4px solid #4caf50;
+  padding: 15px;
+  margin-bottom: 25px;
+  border-radius: 4px;
+  
+  p {
+    margin: 0;
+    color: #2e7d32;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+}
+
+// Error message animation
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 5px;
+  animation: fadeIn 0.3s ease-in-out;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+// Validation Error Modal
+.validation-error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.validation-error-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 420px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+.validation-error-content {
+  padding: 25px;
+  text-align: center;
+  
+  h3 {
+    margin: 12px 0;
+    color: #d32f2f;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  .validation-error-icon {
+    margin-bottom: 10px;
+    
+    i {
+      font-size: 48px;
+      color: #d32f2f;
+    }
+  }
+  
+  .missing-fields {
+    text-align: left;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff8f8;
+    border-radius: 6px;
+    
+    h4 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #555;
+    }
+    
+    ul {
+      padding-left: 20px;
+      margin: 0;
+      
+      li {
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #d32f2f;
+      }
+    }
+  }
+  
+  .validation-error-dismiss {
+    padding: 10px 25px;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 120px;
+    
+    &:hover {
+      background-color: #b71c1c;
+    }
+  }
+}
