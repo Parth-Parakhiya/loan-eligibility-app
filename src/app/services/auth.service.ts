@@ -23,6 +23,14 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  public get token(): string {
+    return this.currentUserValue?.token || '';
+  }
+
+  public getAuthorizationHeader(): { Authorization: string } {
+    return { Authorization: `Bearer ${this.token}` };
+  }
+
   login(email: string, password: string): Observable<any> {
     // Replace simulated login with actual API call
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(

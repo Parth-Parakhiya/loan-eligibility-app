@@ -4,6 +4,23 @@
     <h2>New Loan Application</h2>
   </div>
 
+  <!-- API Response Feedback (when available) -->
+  <div *ngIf="apiResponse" class="api-response-feedback" [ngClass]="apiResponse.status.toLowerCase()">
+    <div class="response-content">
+      <h3>Application Status</h3>
+      <div class="response-details">
+        <p><strong>Application ID:</strong> {{apiResponse.applicationId}}</p>
+        <p><strong>Status:</strong> {{apiResponse.status}}</p>
+        <p><strong>Message:</strong> {{apiResponse.message}}</p>
+      </div>
+      <div class="response-actions">
+        <button type="button" (click)="dismissResponse()" class="dismiss-button">Dismiss</button>
+        <button type="button" (click)="router.navigate(['/dashboard'])" class="goto-dashboard-button">Go to
+          Dashboard</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Progress Stepper -->
   <div class="progress-stepper">
     <div *ngFor="let title of stepTitles; let i = index"
@@ -497,13 +514,17 @@
         <button type="button" class="prev-button" (click)="previousStep()" *ngIf="currentStep > 1">
           Previous
         </button>
+
+        <button type="button" class="save-draft-button" (click)="saveAsDraft()">
+          Save as Draft
+        </button>
+
         <div class="button-spacer"></div>
+
         <button type="button" class="next-button" (click)="nextStep()" *ngIf="currentStep < totalSteps">
           Next
         </button>
-        <button type="button" (click)="saveAsDraft()" *ngIf="currentStep === totalSteps">
-          Save as Draft
-        </button>
+
         <button type="submit" class="submit-button" *ngIf="currentStep === totalSteps" [disabled]="uploading">
           Submit Application
         </button>

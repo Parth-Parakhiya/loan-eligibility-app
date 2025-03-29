@@ -57,6 +57,7 @@ export class LoanApplicationComponent implements OnInit {
     'Financial Information',
     'Document Upload'
   ];
+  apiResponse: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -73,6 +74,141 @@ export class LoanApplicationComponent implements OnInit {
     if (currentUser && currentUser.customerId) {
       this.customerId = currentUser.customerId;
       this.loadCustomerData();
+    }
+
+    // Check for saved draft in localStorage
+    this.loadDraftFromLocalStorage();
+  }
+
+  loadDraftFromLocalStorage(): void {
+    try {
+      const savedDraft = this.loanService.getDraftFromLocalStorage();
+      if (savedDraft) {
+        console.log('Found saved draft in localStorage:', savedDraft);
+        // Populate the form with saved values
+        this.populateFormFromDraft(savedDraft);
+        // Notify user
+        alert('Your previously saved draft has been loaded.');
+      }
+    } catch (error) {
+      console.error('Error loading draft from localStorage:', error);
+    }
+  }
+
+  populateFormFromDraft(draft: any): void {
+    // Step 1: Loan Details
+    if (draft.loanDetails) {
+      this.applicationForm.patchValue({
+        productType: draft.loanDetails.productType,
+        requestedAmount: draft.loanDetails.requestedAmount,
+        purposeDescription: draft.loanDetails.purposeDescription,
+        requestedTermMonths: draft.loanDetails.requestedTermMonths
+      });
+    }
+
+    // Step 2: Personal Information
+    if (draft.personalInformation) {
+      const personalInfo = this.applicationForm.get('personalInfo');
+      if (personalInfo) {
+        personalInfo.patchValue({
+          firstName: draft.personalInformation.firstName,
+          lastName: draft.personalInformation.lastName,
+          email: draft.personalInformation.emailAddress,
+          phoneNumber: draft.personalInformation.phoneNumber,
+          dateOfBirth: draft.personalInformation.dateOfBirth
+        });
+
+        // Address
+        if (draft.personalInformation.currentAddress) {
+          const addressForm = personalInfo.get('address');
+          if (addressForm) {
+            addressForm.patchValue({
+              street: draft.personalInformation.currentAddress.streetAddress,
+              city: draft.personalInformation.currentAddress.city,
+              province: draft.personalInformation.currentAddress.province,
+              postalCode: draft.personalInformation.currentAddress.postalCode,
+              country: draft.personalInformation.currentAddress.country,
+              residenceDuration: draft.personalInformation.currentAddress.durationAtAddressMonths
+            });
+          }
+        }
+      }
+    }
+
+    // Step 3: Financial Information
+    if (draft.financialInformation) {
+      const financialInfo = this.applicationForm.get('financialInfo');
+      if (financialInfo) {
+        financialInfo.patchValue({
+          creditScore: draft.financialInformation.creditScore,
+          monthlyIncome: draft.financialInformation.monthlyIncome,
+          monthlyExpenses: draft.financialInformation.monthlyExpenses,
+          estimatedDebts: draft.financialInformation.estimatedDebts,
+          currentCreditLimit: draft.financialInformation.currentCreditLimit,
+          creditTotalUsage: draft.financialInformation.creditTotalUsage
+        });
+
+        // Employment Details
+        if (draft.financialInformation.employmentDetails && draft.financialInformation.employmentDetails.length > 0) {
+          const employmentArray = financialInfo.get('employmentDetails') as FormArray;
+          // Clear existing items
+          while (employmentArray.length) {
+            employmentArray.removeAt(0);
+          }
+
+          // Add employment details from draft
+          draft.financialInformation.employmentDetails.forEach((emp: any) => {
+            employmentArray.push(this.createEmploymentForm({
+              employerName: emp.employerName,
+              position: emp.position,
+              startDate: emp.startDate,
+              endDate: emp.endDate || '',
+              employmentType: emp.employmentType,
+              employmentDuration: emp.employmentDurationMonths
+            }));
+          });
+        }
+
+        // Existing Debts
+        if (draft.financialInformation.existingDebts && draft.financialInformation.existingDebts.length > 0) {
+          const debtsArray = financialInfo.get('existingDebts') as FormArray;
+          // Clear existing items
+          while (debtsArray.length) {
+            debtsArray.removeAt(0);
+          }
+
+          // Add debts from draft
+          draft.financialInformation.existingDebts.forEach((debt: any) => {
+            debtsArray.push(this.createDebtForm({
+              type: debt.debtType,
+              lender: debt.lender,
+              outstandingAmount: debt.outstandingAmount,
+              monthlyPayment: debt.monthlyPayment,
+              interestRate: debt.interestRate,
+              remainingTermMonths: debt.remainingTerm,
+              paymentHistory: debt.paymentHistory
+            }));
+          });
+        }
+
+        // Assets
+        if (draft.financialInformation.assets && draft.financialInformation.assets.length > 0) {
+          const assetsArray = financialInfo.get('assets') as FormArray;
+          // Clear existing items
+          while (assetsArray.length) {
+            assetsArray.removeAt(0);
+          }
+
+          // Add assets from draft
+          draft.financialInformation.assets.forEach((asset: any) => {
+            assetsArray.push(this.createAssetForm({
+              type: asset.assetType,
+              description: asset.description,
+              estimatedValue: asset.estimatedValue
+            }));
+          });
+        }
+      }
     }
   }
 
@@ -338,26 +474,81 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   saveAsDraft(): void {
-    if (this.customerId) {
+    try {
       const formValue = this.applicationForm.value;
-      const application: LoanApplication = {
-        customerId: this.customerId,
-        productType: formValue.productType,
-        requestedAmount: formValue.requestedAmount,
-        purposeDescription: formValue.purposeDescription,
-        requestedTermMonths: formValue.requestedTermMonths,
-        applicationDate: new Date(),
-        status: 'DRAFT'
+      console.log('Saving form data:', formValue);
+
+      // Create draft data structure
+      const draftData = {
+        loanDetails: {
+          productType: formValue.productType || '',
+          requestedAmount: formValue.requestedAmount ? parseFloat(formValue.requestedAmount) : 0,
+          purposeDescription: formValue.purposeDescription || '',
+          requestedTermMonths: formValue.requestedTermMonths ? parseInt(formValue.requestedTermMonths) : 0
+        },
+        personalInformation: {
+          firstName: formValue.personalInfo?.firstName || '',
+          lastName: formValue.personalInfo?.lastName || '',
+          emailAddress: formValue.personalInfo?.email || '',
+          phoneNumber: formValue.personalInfo?.phoneNumber || '',
+          dateOfBirth: formValue.personalInfo?.dateOfBirth || '',
+          currentAddress: {
+            streetAddress: formValue.personalInfo?.address?.street || '',
+            city: formValue.personalInfo?.address?.city || '',
+            province: formValue.personalInfo?.address?.province || '',
+            postalCode: formValue.personalInfo?.address?.postalCode || '',
+            country: formValue.personalInfo?.address?.country || '',
+            durationAtAddressMonths: formValue.personalInfo?.address?.residenceDuration ?
+              parseInt(formValue.personalInfo.address.residenceDuration) : 0
+          }
+        },
+        financialInformation: {
+          employmentDetails: (formValue.financialInfo?.employmentDetails || []).map((emp: any) => ({
+            employerName: emp.employerName || '',
+            position: emp.position || '',
+            startDate: emp.startDate || '',
+            endDate: emp.endDate || '',
+            employmentType: emp.employmentType || '',
+            employmentDurationMonths: emp.employmentDuration ? parseInt(emp.employmentDuration) : 0
+          })),
+          monthlyIncome: formValue.financialInfo?.monthlyIncome ? parseFloat(formValue.financialInfo.monthlyIncome) : 0,
+          monthlyExpenses: formValue.financialInfo?.monthlyExpenses ? parseFloat(formValue.financialInfo.monthlyExpenses) : 0,
+          estimatedDebts: formValue.financialInfo?.estimatedDebts ? parseFloat(formValue.financialInfo.estimatedDebts) : 0,
+          creditScore: formValue.financialInfo?.creditScore ? parseInt(formValue.financialInfo.creditScore) : 0,
+          currentCreditLimit: formValue.financialInfo?.currentCreditLimit ? parseFloat(formValue.financialInfo.currentCreditLimit) : 0,
+          creditTotalUsage: formValue.financialInfo?.creditTotalUsage ? parseFloat(formValue.financialInfo.creditTotalUsage) : 0,
+          existingDebts: (formValue.financialInfo?.existingDebts || []).map((debt: any) => ({
+            debtType: debt.type || '',
+            outstandingAmount: debt.outstandingAmount ? parseFloat(debt.outstandingAmount) : 0,
+            interestRate: debt.interestRate ? parseFloat(debt.interestRate) : 0,
+            monthlyPayment: debt.monthlyPayment ? parseFloat(debt.monthlyPayment) : 0,
+            remainingTerm: debt.remainingTermMonths ? parseInt(debt.remainingTermMonths) : 0,
+            lender: debt.lender || '',
+            paymentHistory: debt.paymentHistory || 'On-time'
+          })),
+          assets: (formValue.financialInfo?.assets || []).map((asset: any) => ({
+            assetType: asset.type || '',
+            description: asset.description || '',
+            estimatedValue: asset.estimatedValue ? parseFloat(asset.estimatedValue) : 0
+          }))
+        },
+        documents: (formValue.documents || []).map((doc: any) => ({
+          documentType: doc.type || '',
+          file: null // We don't save files to localStorage
+        }))
       };
 
-      this.loanService.createLoanApplication(application).subscribe(
-        result => {
-          this.router.navigate(['/dashboard']);
-        },
-        error => {
-          console.error('Error saving application draft', error);
-        }
-      );
+      console.log('Draft data structured:', draftData);
+
+      // Save to localStorage
+      this.loanService.saveDraftToLocalStorage(draftData);
+      console.log('Draft saved to localStorage');
+
+      // Show confirmation to user
+      alert('Application saved as draft in your browser.');
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      alert('There was an error saving your draft. Please try again.');
     }
   }
 
@@ -365,163 +556,179 @@ export class LoanApplicationComponent implements OnInit {
     this.submitted = true;
 
     if (this.applicationForm.invalid) {
-      // Highlight the first tab with errors
-      if (this.applicationForm.get('productType')?.invalid ||
-        this.applicationForm.get('requestedAmount')?.invalid ||
-        this.applicationForm.get('purposeDescription')?.invalid ||
-        this.applicationForm.get('requestedTermMonths')?.invalid) {
+      // Find the first invalid step and navigate to it
+      if (this.isStepInvalid(1)) {
         this.currentStep = 1;
-      } else if (this.applicationForm.get('personalInfo')?.invalid) {
+      } else if (this.isStepInvalid(2)) {
         this.currentStep = 2;
-      } else if (this.applicationForm.get('financialInfo')?.invalid) {
+      } else if (this.isStepInvalid(3)) {
         this.currentStep = 3;
-      } else if (this.applicationForm.get('documents')?.invalid) {
-        this.currentStep = 4;
       }
 
-      window.scrollTo(0, 0);
+      alert('Please fill in all required fields correctly.');
       return;
     }
 
-    const formData = this.applicationForm.value;
+    this.uploading = true;
 
-    // Format the data as needed for the API
-    const loanApplication: LoanApplication = {
-      customerId: this.customerId!,
-      productType: formData.productType,
-      requestedAmount: formData.requestedAmount,
-      purposeDescription: formData.purposeDescription,
-      requestedTermMonths: formData.requestedTermMonths,
-      applicationDate: new Date(),
-      status: 'SUBMITTED'
+    const formValue = this.applicationForm.value;
+    const applicationData = {
+      loanDetails: {
+        productType: formValue.productType,
+        requestedAmount: parseFloat(formValue.requestedAmount),
+        purposeDescription: formValue.purposeDescription,
+        requestedTermMonths: parseInt(formValue.requestedTermMonths)
+      },
+      personalInformation: {
+        firstName: formValue.personalInfo.firstName,
+        lastName: formValue.personalInfo.lastName,
+        emailAddress: formValue.personalInfo.email,
+        phoneNumber: formValue.personalInfo.phoneNumber,
+        dateOfBirth: formValue.personalInfo.dateOfBirth,
+        currentAddress: {
+          streetAddress: formValue.personalInfo.address.street,
+          city: formValue.personalInfo.address.city,
+          province: formValue.personalInfo.address.province,
+          postalCode: formValue.personalInfo.address.postalCode,
+          country: formValue.personalInfo.address.country,
+          durationAtAddressMonths: parseInt(formValue.personalInfo.address.residenceDuration)
+        }
+      },
+      financialInformation: {
+        employmentDetails: formValue.financialInfo.employmentDetails.map((emp: any) => ({
+          employerName: emp.employerName,
+          position: emp.position,
+          startDate: emp.startDate,
+          endDate: emp.endDate || '',
+          employmentType: emp.employmentType,
+          employmentDurationMonths: parseInt(emp.employmentDuration)
+        })),
+        monthlyIncome: parseFloat(formValue.financialInfo.monthlyIncome),
+        monthlyExpenses: parseFloat(formValue.financialInfo.monthlyExpenses),
+        estimatedDebts: parseFloat(formValue.financialInfo.estimatedDebts),
+        creditScore: parseInt(formValue.financialInfo.creditScore),
+        currentCreditLimit: parseFloat(formValue.financialInfo.currentCreditLimit || 0),
+        creditTotalUsage: parseFloat(formValue.financialInfo.creditTotalUsage || 0),
+        existingDebts: formValue.financialInfo.existingDebts.map((debt: any) => ({
+          debtType: debt.type,
+          outstandingAmount: parseFloat(debt.outstandingAmount),
+          interestRate: parseFloat(debt.interestRate),
+          monthlyPayment: parseFloat(debt.monthlyPayment),
+          remainingTerm: parseInt(debt.remainingTermMonths),
+          lender: debt.lender,
+          paymentHistory: debt.paymentHistory || 'On-time'
+        })),
+        assets: formValue.financialInfo.assets.map((asset: any) => ({
+          assetType: asset.type,
+          description: asset.description,
+          estimatedValue: parseFloat(asset.estimatedValue)
+        }))
+      },
+      documents: []
     };
 
-    // Upload documents first (if any)
+    // Process documents if needed (file uploads)
     if (this.documents.length > 0) {
-      this.uploading = true;
-
-      // Collect all file upload promises
-      const uploadPromises = [];
-
-      for (let i = 0; i < this.documents.length; i++) {
-        const doc = this.documents.at(i).value;
-        if (doc.file) {
-          uploadPromises.push(this.loanService.uploadDocument(doc.file, doc.type));
-        }
-      }
-
-      // Wait for all uploads to complete
-      Promise.all(uploadPromises)
-        .then(documentIds => {
-          // Attach document IDs to the application
-          loanApplication.supportingDocuments = documentIds.map((id, index) => {
-            const doc = this.documents.at(index).value;
-            return {
-              id,
-              type: doc.type,
-              fileName: doc.file.name,
-              fileSize: doc.file.size,
-              uploadDate: new Date(),
-              status: 'PENDING'
-            };
-          });
-
-          // Send employment details to update customer profile
-          const employmentDetails = this.employments.value.map((employment: any) => {
-            // Format dates for submission
-            return {
-              ...employment,
-              startDate: employment.startDate,
-              endDate: employment.endDate || null
-            };
-          });
-
-          const creditScore = this.applicationForm.get('financialInfo.creditScore')?.value;
-
-          // Create financial data object with all the financial information
-          const financialData = {
-            employmentDetails,
-            monthlyIncome: this.applicationForm.get('financialInfo.monthlyIncome')?.value,
-            estimatedDebts: this.applicationForm.get('financialInfo.estimatedDebts')?.value,
-            creditScore: creditScore || undefined
-          };
-
-          // Update customer employment and financial records
-          this.customerService.updateFinancialData(this.customerId!, financialData)
-            .subscribe(
-              () => {
-                // Then submit the loan application
-                this.submitLoanApplication(loanApplication);
-              },
-              error => {
-                console.error('Error updating financial data', error);
-                this.uploading = false;
-                // Handle error (show message to user)
-                alert('Error updating financial data. Please try again.');
-              }
-            );
-        })
-        .catch(error => {
-          console.error('Error uploading documents', error);
-          this.uploading = false;
-          // Handle error (show message to user)
-          alert('Error uploading documents. Please try again.');
-        });
+      this.processDocumentsAndSubmit(applicationData);
     } else {
-      // Update employment details first
-      const employmentDetails = this.employments.value.map((employment: any) => {
-        // Format dates for submission
-        return {
-          ...employment,
-          startDate: employment.startDate,
-          endDate: employment.endDate || null
-        };
-      });
-
-      const creditScore = this.applicationForm.get('financialInfo.creditScore')?.value;
-
-      // Create financial data object with all the financial information
-      const financialData = {
-        employmentDetails,
-        monthlyIncome: this.applicationForm.get('financialInfo.monthlyIncome')?.value,
-        estimatedDebts: this.applicationForm.get('financialInfo.estimatedDebts')?.value,
-        creditScore: creditScore || undefined
-      };
-
-      // Update customer employment and financial records
-      this.customerService.updateFinancialData(this.customerId!, financialData)
-        .subscribe(
-          () => {
-            // Then submit the loan application directly (no documents to upload)
-            this.submitLoanApplication(loanApplication);
-          },
-          error => {
-            console.error('Error updating financial data', error);
-            // Handle error (show message to user)
-            alert('Error updating financial data. Please try again.');
-          }
-        );
+      // Submit without documents
+      this.sendApplicationToAPI(applicationData);
     }
   }
 
-  private submitLoanApplication(application: LoanApplication): void {
-    this.loanService.createLoanApplication(application)
-      .subscribe(
-        result => {
-          this.uploading = false;
-          // Navigate to success page or application dashboard
-          this.router.navigate(['/applications', result.id, 'success']);
-        },
-        error => {
-          console.error('Error submitting application', error);
-          this.uploading = false;
-          // Handle error (show message to user)
-          alert('Error submitting application. Please try again.');
+  // Process and encode files before submission
+  private processDocumentsAndSubmit(applicationData: any): void {
+    const documentsToProcess = this.documents.controls.length;
+    let processedCount = 0;
+
+    // Process each document
+    for (let i = 0; i < this.documents.controls.length; i++) {
+      const docControl = this.documents.at(i);
+      const file = docControl.get('file')?.value;
+
+      if (file && file instanceof File) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          // Get base64 string (remove the data:xxx;base64, part)
+          const base64String = e.target.result.split(',')[1];
+
+          // Update the document in the applicationData
+          applicationData.documents.push({
+            documentType: docControl.get('type')?.value,
+            file: base64String
+          });
+
+          processedCount++;
+          if (processedCount === documentsToProcess) {
+            // All documents processed, now submit
+            this.sendApplicationToAPI(applicationData);
+          }
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        // Skip this document as it doesn't have a file
+        processedCount++;
+        if (processedCount === documentsToProcess) {
+          this.sendApplicationToAPI(applicationData);
         }
-      );
+      }
+    }
+
+    // If no documents had files, submit anyway
+    if (documentsToProcess === 0) {
+      this.sendApplicationToAPI(applicationData);
+    }
+  }
+
+  private sendApplicationToAPI(applicationData: any): void {
+    this.loanService.createLoanApplication(applicationData).subscribe(
+      response => {
+        this.uploading = false;
+        this.apiResponse = response;
+
+        // Clear the draft from localStorage on successful submission
+        this.loanService.clearDraftFromLocalStorage();
+
+        // Show success message with the response
+        alert(`Application ${response.applicationId} has been processed. Status: ${response.status}`);
+
+        // Navigate to dashboard or success page
+        this.router.navigate(['/dashboard']);
+      },
+      error => {
+        this.uploading = false;
+        console.error('Error submitting application:', error);
+        alert('Error submitting application. Please try again later.');
+      }
+    );
+  }
+
+  // Check if a specific step has invalid controls
+  isStepInvalid(step: number): boolean {
+    switch (step) {
+      case 1:
+        return (
+          this.applicationForm.get('productType')?.invalid ||
+          this.applicationForm.get('requestedAmount')?.invalid ||
+          this.applicationForm.get('purposeDescription')?.invalid ||
+          this.applicationForm.get('requestedTermMonths')?.invalid
+        );
+      case 2:
+        return this.applicationForm.get('personalInfo')?.invalid;
+      case 3:
+        return this.applicationForm.get('financialInfo')?.invalid;
+      default:
+        return false;
+    }
+  }
+
+  // Dismiss the API response feedback
+  dismissResponse(): void {
+    this.apiResponse = null;
   }
 
   getFileName(file: File): string {
-    return file ? file.name : '';
+    return file.name;
   }
 }
