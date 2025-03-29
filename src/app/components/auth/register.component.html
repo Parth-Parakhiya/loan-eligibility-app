@@ -1,23 +1,70 @@
 <div class="register-container">
-  <!-- <h2>Welcome Back</h2> -->
-  <p class="subtitle">Sign up to continue to Credwise</p>
+  <h2>Sign up to continue to Credwise</h2>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="bi bi-exclamation-circle"></i> {{errorMessage}}
+    <button class="close-btn" (click)="closeErrorMessage()">×</button>
+  </div>
+
+  <div *ngIf="successMessage" class="success-message">
+    <i class="bi bi-check-circle"></i> {{successMessage}}
+    <button class="close-btn" (click)="closeSuccessMessage()">×</button>
+  </div>
+
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
-      <input type="text" id="firstName" formControlName="firstName" placeholder="First Name" required>
+      <input type="text" id="firstName" formControlName="firstName" placeholder="First Name" required
+        [ngClass]="{'is-invalid': submitted && f['firstName'].errors}">
+      <div *ngIf="submitted && f['firstName'].errors" class="validation-error">
+        <div *ngIf="f['firstName'].errors['required']">First name is required</div>
+        <div *ngIf="f['firstName'].errors['minlength']">First name must be at least 2 characters</div>
+      </div>
     </div>
+
     <div class="form-group">
-      <input type="text" id="lastName" formControlName="lastName" placeholder="Last Name" required>
+      <input type="text" id="lastName" formControlName="lastName" placeholder="Last Name" required
+        [ngClass]="{'is-invalid': submitted && f['lastName'].errors}">
+      <div *ngIf="submitted && f['lastName'].errors" class="validation-error">
+        <div *ngIf="f['lastName'].errors['required']">Last name is required</div>
+        <div *ngIf="f['lastName'].errors['minlength']">Last name must be at least 2 characters</div>
+      </div>
     </div>
+
     <div class="form-group">
-      <input type="tel" id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" required>
+      <input type="tel" id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" required
+        [ngClass]="{'is-invalid': submitted && f['phoneNumber'].errors}">
+      <div *ngIf="submitted && f['phoneNumber'].errors" class="validation-error">
+        <div *ngIf="f['phoneNumber'].errors['required']">Phone number is required</div>
+        <div *ngIf="f['phoneNumber'].errors['pattern'] || f['phoneNumber'].errors['invalidFormat']">Please enter a valid
+          phone number</div>
+        <div *ngIf="f['phoneNumber'].errors['invalidLength']">Phone number must be between 10-15 digits</div>
+        <div *ngIf="f['phoneNumber'].errors['invalidPrefix']">Invalid phone number prefix</div>
+      </div>
     </div>
+
     <div class="form-group">
-      <input type="email" id="email" formControlName="email" placeholder="Email Address" required>
+      <input type="email" id="email" formControlName="email" placeholder="Email Address" required
+        [ngClass]="{'is-invalid': submitted && f['email'].errors}">
+      <div *ngIf="submitted && f['email'].errors" class="validation-error">
+        <div *ngIf="f['email'].errors['required']">Email is required</div>
+        <div *ngIf="f['email'].errors['email']">Please enter a valid email address</div>
+      </div>
     </div>
+
     <div class="form-group">
-      <input type="password" id="password" formControlName="password" placeholder="Password" required>
+      <input type="password" id="password" formControlName="password" placeholder="Password" required
+        [ngClass]="{'is-invalid': submitted && f['password'].errors}">
+      <div *ngIf="submitted && f['password'].errors" class="validation-error">
+        <div *ngIf="f['password'].errors['required']">Password is required</div>
+        <div *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters</div>
+      </div>
     </div>
-    <button type="submit" [disabled]="registerForm.invalid">Register</button>
+
+    <button type="submit" [disabled]="loading">
+      <span *ngIf="loading" class="spinner"></span>
+      <span *ngIf="!loading">Register</span>
+    </button>
   </form>
+
   <p class="login-link">Already have an account? <a routerLink="/login">Login here</a></p>
 </div>
