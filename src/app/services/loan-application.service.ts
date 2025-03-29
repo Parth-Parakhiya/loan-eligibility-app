@@ -98,4 +98,13 @@ export class LoanApplicationService {
   clearDraftFromLocalStorage(): void {
     localStorage.removeItem('loanApplicationDraft');
   }
+
+  // Get loan application history
+  getLoanApplicationHistory(): Observable<any[]> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.token}`
+    });
+
+    return this.http.get<any[]>(`${environment.apiUrl}/loan-applications-history`, { headers });
+  }
 }

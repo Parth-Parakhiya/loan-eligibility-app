@@ -4,9 +4,7 @@
     <div class="col-12">
       <h2 class="dashboard-title">
         <i class="bi bi-person-circle"></i>
-        <!-- Welcome, {{ customer?.firstName }} {{ customer?.lastName }} -->
-        Welcome, Jay
-
+        Welcome, {{ getUserName() }}
       </h2>
     </div>
   </div>
@@ -114,31 +112,78 @@
           <i class="bi bi-file-earmark-text"></i> Loan Applications
         </div>
         <div class="card-body">
-          <div *ngIf="applications.length === 0" class="no-applications">
-            <i class="bi bi-folder-plus"></i>
-            <p>No applications yet. Start your first loan application today!</p>
+          <!-- Loading Indicator -->
+          <div *ngIf="historyLoading" class="text-center py-4">
+            <div class="spinner-border text-success" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading your application history...</p>
           </div>
 
-          <ul *ngIf="applications.length > 0" class="list-group application-list">
-            <li *ngFor="let app of applications"
-              class="list-group-item d-flex justify-content-between align-items-center">
-              <div class="app-info">
-                <i [ngClass]="getStatusIcon(app.status)"></i>
+          <!-- Error Message -->
+          <div *ngIf="historyError && !historyLoading" class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ historyError }}
+          </div>
+
+          <!-- No Applications Message -->
+          <div *ngIf="!historyLoading && !historyError && applicationHistory.length === 0" class="no-applications">
+            <i class="bi bi-folder-plus"></i>
+            <p>No applications yet. Start your first loan application today!</p>
+            <button class="btn btn-success mt-3" (click)="startNewApplication()">
+              <i class="bi bi-plus-circle me-2"></i> Apply Now
+            </button>
+          </div>
+
+          <!-- Application History List -->
+          <div *ngIf="!historyLoading && applicationHistory.length > 0" class="application-history">
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Your Recent Applications</h5>
+              <button class="btn btn-success btn-sm" (click)="startNewApplication()">
+                <i class="bi bi-plus-circle me-1"></i> New Application
+              </button>
+            </div>
+
+            <div class="application-cards">
+              <div *ngFor="let app of applicationHistory; let i = index" class="application-card">
+                <div class="app-header">
+                  <div class="app-status">
+                    <i [ngClass]="getHistoryStatusIcon(app.status)"></i>
+                    <span [ngClass]="getHistoryStatusBadgeClass(app.status)">{{ app.status }}</span>
+                  </div>
+                  <div class="app-id">#{{ i + 1 }}</div>
+                </div>
                 <div class="app-details">
-                  <span class="app-type">{{ app.productType }}</span>
-                  <small class="app-date">Applied: {{ app.applicationDate | date }}</small>
+                  <div class="app-amount">
+                    <div class="detail-label">Amount</div>
+                    <div class="detail-value">{{ formatCurrency(app.amount) }}</div>
+                  </div>
+                  <div class="app-date">
+                    <div class="detail-label">Applied</div>
+                    <div class="detail-value">{{ formatDate(app.createdAt) }}</div>
+                  </div>
+                </div>
+                <div class="app-actions">
+                  <button class="btn btn-outline-primary btn-sm">View Details</button>
                 </div>
               </div>
-              <span [ngClass]="getStatusBadgeClass(app.status)">
-                {{ app.status }}
-              </span>
-            </li>
-          </ul>
+            </div>
 
-          <!-- Application Status Chart -->
-          <div *ngIf="applications.length > 0" class="application-stats">
-            <h5>Application Status Overview</h5>
-            <canvas id="applicationChart"></canvas>
+            <!-- Summary Stats -->
+            <div class="stats-summary mt-4">
+              <div class="stat-item">
+                <div class="stat-value">{{ getTotalApplicationsCount() }}</div>
+                <div class="stat-label">Total Applications</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ getApprovedApplicationsCount() }}</div>
+                <div class="stat-label">Approved</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ getDeniedApplicationsCount() }}</div>
+                <div class="stat-label">Denied</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
