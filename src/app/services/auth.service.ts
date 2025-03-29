@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, tap, map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -42,9 +42,18 @@ export class AuthService {
   }
 
   register(user: any): Observable<any> {
-    // Simulate a successful registration response
-    return this.http.post(`${this.apiUrl}/register`, user).pipe(
-      delay(1000)
+    const url = `${this.apiUrl}/register`;
+
+    // Use post method without observe: 'response' for simpler handling
+    return this.http.post(url, user).pipe(
+      catchError((error: HttpErrorResponse) => {
+        // Check if it's actually a success code that's being treated as an error
+        if (error.status === 201 || error.status === 200) {
+          return of({ success: true });
+        }
+
+        return throwError(() => error);
+      })
     );
   }
 

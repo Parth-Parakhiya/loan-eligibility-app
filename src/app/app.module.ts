@@ -22,6 +22,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { ProductDetailsDialogComponent } from './components/product-catalog/product-details-dialog.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,24 +37,31 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     HomeComponent,
     NavbarComponent,
     FooterComponent,
-    ProductDetailsDialogComponent  
+    ProductDetailsDialogComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
-    AppRoutingModule ,
+    AppRoutingModule,
     MatDialogModule,
     MatButtonModule,
     NoopAnimationsModule,
   ],
-  providers: [AuthGuard,,
-    // Add AuthInterceptor to providers
+  providers: [
+    AuthGuard,
+    // Add interceptors to providers
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }],
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

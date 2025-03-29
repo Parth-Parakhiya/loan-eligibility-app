@@ -3,6 +3,8 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { catchError, finalize } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -100,33 +102,49 @@ export class RegisterComponent implements OnInit {
     this.loading = true;
     const user = this.registerForm.value;
 
-    this.authService.register(user).subscribe({
-      next: (response) => {
-        this.loading = false;
-        // Show success message before redirecting
-        this.successMessage = 'Registration successful! Redirecting to login...';
+    // Directly subscribe to the register method
+    this.authService.register(user)
+      .pipe(
+        // Always set loading to false when complete
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          // Set success message
+          this.successMessage = 'Registration successful! Redirecting to login...';
 
-        // Delay redirect to allow user to see success message
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.loading = false;
+          // Clear error message just to be safe
+          this.errorMessage = null;
 
-        if (error.status === 409) {
-          this.errorMessage = 'An account with this email already exists.';
-        } else if (error.status === 400) {
-          this.errorMessage = 'Invalid registration data. Please check your information.';
-        } else if (error.error && error.error.message) {
-          this.errorMessage = error.error.message;
-        } else {
-          this.errorMessage = 'Registration failed. Please try again later.';
+          // Delay redirect to allow user to see success message
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+        },
+        error: (error) => {
+          this.handleError(error);
         }
+      });
+  }
 
-        console.error('Registration failed', error);
+  private handleError(error: any): void {
+    // Handle error based on its type and properties
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 409) {
+        this.errorMessage = 'An account with this email already exists.';
+      } else if (error.status === 400) {
+        this.errorMessage = 'Invalid registration data. Please check your information.';
+      } else if (error.error && error.error.message) {
+        this.errorMessage = error.error.message;
+      } else {
+        this.errorMessage = 'Registration failed. Please try again later.';
       }
-    });
+    } else {
+      // For non-HttpErrorResponse errors
+      this.errorMessage = 'Registration failed. Please try again later.';
+    }
   }
 
   closeErrorMessage(): void {
