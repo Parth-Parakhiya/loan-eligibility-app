@@ -613,7 +613,7 @@
           Previous
         </button>
 
-        <button type="button" class="save-draft-button" (click)="saveAsDraft()">
+        <button type="button" class="save-draft-button" (click)="saveAsDraft()" *ngIf="currentStep !== 4">
           Save as Draft
         </button>
 
