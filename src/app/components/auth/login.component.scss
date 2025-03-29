@@ -14,29 +14,70 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e6e9f0 100%);
+  background: url('/assets/images/loan-background.png') no-repeat center center; /* Replace with your actual image path */
+  background-size: cover;
+  background-attachment: fixed;
+  position: relative;
   padding: 20px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.8) 0%, rgba(27, 94, 32, 0.9) 100%); /* Green gradient overlay */
+    z-index: 1;
+  }
 }
 
 .login-container {
   width: 100%;
   max-width: 450px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
   overflow: hidden;
   animation: fadeIn 0.6s ease-out;
+  position: relative;
+  z-index: 2;
 }
 
 .logo-section {
   display: flex;
   justify-content: center;
-  padding: 20px 0;
-  background-color: #f0f4f8;
+  padding: 30px 0;
+  background-color: #2e7d32; /* Dark green background */
+  
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+    i {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 5px;
+    }
+    
+    h1 {
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+  }
   
   .logo {
     max-width: 150px;
     height: auto;
+  }
+  
+  .icon-email {
+    color: white;
+    font-size: 2rem;
   }
 }
 
@@ -44,14 +85,15 @@
   padding: 30px;
   
   h2 {
-    color: #2c3e50;
+    color: #2e7d32; /* Dark green text */
     text-align: center;
     margin-bottom: 10px;
+    font-weight: 600;
   }
   
   .subtitle {
     text-align: center;
-    color: #7f8c8d;
+    color: #555;
     margin-bottom: 25px;
   }
 }
@@ -62,7 +104,7 @@
   label {
     display: block;
     margin-bottom: 8px;
-    color: #34495e;
+    color: #2e7d32; /* Dark green text */
     font-weight: 500;
   }
   
@@ -77,8 +119,8 @@
       transition: all 0.3s ease;
       
       &:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        border-color: #2e7d32; /* Dark green border */
+        box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
       }
     }
     
@@ -96,7 +138,7 @@
       cursor: pointer;
       
       &.active {
-        color: #3498db;
+        color: #2e7d32; /* Dark green when active */
       }
     }
   }
@@ -113,7 +155,7 @@
   margin-bottom: 20px;
   
   a {
-    color: #3498db;
+    color: #2e7d32; /* Dark green text */
     text-decoration: none;
     
     &:hover {
@@ -125,7 +167,7 @@
 .login-button {
   width: 100%;
   padding: 12px;
-  background-color: #28a745;
+  background-color: #2e7d32; /* Dark green button */
   color: white;
   border: none;
   border-radius: 8px;
@@ -135,12 +177,12 @@
   position: relative;
   
   &:hover {
-    background-color: #27ae60;
+    background-color: #1b5e20; /* Darker green on hover */
     animation: buttonPulse 0.5s;
   }
   
   &:disabled {
-    background-color: #bdc3c7;
+    background-color: #a5d6a7; /* Light green when disabled */
     cursor: not-allowed;
   }
   
@@ -154,7 +196,7 @@
   margin-top: 20px;
   
   a {
-    color: #3498db;
+    color: #2e7d32; /* Dark green text */
     text-decoration: none;
     
     &:hover {
