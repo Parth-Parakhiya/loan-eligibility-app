@@ -1,94 +1,97 @@
 <!-- application-status.component.html -->
 <div class="application-status-container">
-  <h2>Application Results</h2>
-  
-  <div *ngIf="loading" class="loading-spinner">
-    <div class="spinner"></div>
-    <p>Loading your application status...</p>
+  <div class="status-content">
+    <h2>Application Results</h2>
+
+    <div *ngIf="loading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading your application status...</p>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Show this when applications exist in real environment -->
+    <ng-container *ngIf="!loading && !error">
+      <!-- For demo purposes, we'll show the pre-approval layout -->
+      <div *ngIf="preApproved" class="pre-approval-message">
+        <div class="message-header">
+          <h3>Congratulations! You are pre-approved.</h3>
+          <p>Your application for a Car Loan has been pre-approved based on the information provided.</p>
+          <p>A bank representative will contact you within 24 hours to finalize your application.</p>
+        </div>
+      </div>
+
+      <div class="eligibility-details">
+        <h3>Eligibility Details</h3>
+
+        <div class="eligibility-content">
+          <div class="eligibility-score">
+            <h4>Eligibility Score</h4>
+            <div class="score-circle">
+              <span class="score-value">{{ loanDetails.eligibilityScore }}</span>
+              <span class="score-max">Out of 100</span>
+            </div>
+          </div>
+
+          <div class="approved-terms">
+            <h4>Approved Terms</h4>
+            <div class="terms-table">
+              <div class="terms-row">
+                <div class="terms-label">Maximum Eligible Amount:</div>
+                <div class="terms-value">${{ loanDetails.maxAmount.toLocaleString() }}</div>
+              </div>
+              <div class="terms-row">
+                <div class="terms-label">Suggested Interest Rate:</div>
+                <div class="terms-value">{{ loanDetails.interestRate }}% APR</div>
+              </div>
+              <div class="terms-row">
+                <div class="terms-label">Suggested Term:</div>
+                <div class="terms-value">{{ loanDetails.term }} months</div>
+              </div>
+              <div class="terms-row">
+                <div class="terms-label">Estimated Monthly Payment:</div>
+                <div class="terms-value">${{ loanDetails.monthlyPayment }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="decision-factors">
+        <h3>Decision Factors</h3>
+
+        <div class="factors-grid">
+          <div *ngFor="let factor of decisionFactors" class="factor-card"
+            [ngClass]="getDecisionFactorClass(factor.status)">
+            <div class="factor-header">
+              <h4>{{ factor.name }}</h4>
+              <span class="factor-status">{{ factor.status }}</span>
+            </div>
+            <p class="factor-description">{{ factor.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-secondary">Return to Dashboard</button>
+        <button class="btn btn-primary">Continue to Approval</button>
+      </div>
+
+      <!-- Original application list - hidden for demo but kept for functionality -->
+      <div *ngIf="applications.length > 0" style="display: none;">
+        <ul>
+          <li *ngFor="let app of applications" [ngClass]="getStatusClass(app.status)">
+            {{ getProductTypeDisplay(app.productType) }} - {{ getStatusText(app.status) }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Show this when no applications exist in real environment -->
+      <div *ngIf="applications.length === 0 && !preApproved" class="no-applications">
+        <p>No applications found.</p>
+      </div>
+    </ng-container>
   </div>
-  
-  <div *ngIf="error" class="error-message">
-    <p>{{ error }}</p>
-  </div>
-  
-  <!-- Show this when applications exist in real environment -->
-  <ng-container *ngIf="!loading && !error">
-    <!-- For demo purposes, we'll show the pre-approval layout -->
-    <div *ngIf="preApproved" class="pre-approval-message">
-      <div class="message-header">
-        <h3>Congratulations! You are pre-approved.</h3>
-        <p>Your application for a Car Loan has been pre-approved based on the information provided.</p>
-        <p>A bank representative will contact you within 24 hours to finalize your application.</p>
-      </div>
-    </div>
-    
-    <div class="eligibility-details">
-      <h3>Eligibility Details</h3>
-      
-      <div class="eligibility-content">
-        <div class="eligibility-score">
-          <h4>Eligibility Score</h4>
-          <div class="score-circle">
-            <span class="score-value">{{ loanDetails.eligibilityScore }}</span>
-            <span class="score-max">Out of 100</span>
-          </div>
-        </div>
-        
-        <div class="approved-terms">
-          <h4>Approved Terms</h4>
-          <div class="terms-table">
-            <div class="terms-row">
-              <div class="terms-label">Maximum Eligible Amount:</div>
-              <div class="terms-value">${{ loanDetails.maxAmount.toLocaleString() }}</div>
-            </div>
-            <div class="terms-row">
-              <div class="terms-label">Suggested Interest Rate:</div>
-              <div class="terms-value">{{ loanDetails.interestRate }}% APR</div>
-            </div>
-            <div class="terms-row">
-              <div class="terms-label">Suggested Term:</div>
-              <div class="terms-value">{{ loanDetails.term }} months</div>
-            </div>
-            <div class="terms-row">
-              <div class="terms-label">Estimated Monthly Payment:</div>
-              <div class="terms-value">${{ loanDetails.monthlyPayment }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="decision-factors">
-      <h3>Decision Factors</h3>
-      
-      <div class="factors-grid">
-        <div *ngFor="let factor of decisionFactors" class="factor-card" [ngClass]="getDecisionFactorClass(factor.status)">
-          <div class="factor-header">
-            <h4>{{ factor.name }}</h4>
-            <span class="factor-status">{{ factor.status }}</span>
-          </div>
-          <p class="factor-description">{{ factor.description }}</p>
-        </div>
-      </div>
-    </div>
-    
-    <div class="action-buttons">
-      <button class="btn btn-secondary">Return to Dashboard</button>
-      <button class="btn btn-primary">Continue to Approval</button>
-    </div>
-    
-    <!-- Original application list - hidden for demo but kept for functionality -->
-    <div *ngIf="applications.length > 0" style="display: none;">
-      <ul>
-        <li *ngFor="let app of applications" [ngClass]="getStatusClass(app.status)">
-          {{ getProductTypeDisplay(app.productType) }} - {{ getStatusText(app.status) }}
-        </li>
-      </ul>
-    </div>
-    
-    <!-- Show this when no applications exist in real environment -->
-    <div *ngIf="applications.length === 0 && !preApproved" class="no-applications">
-      <p>No applications found.</p>
-    </div>
-  </ng-container>
 </div>

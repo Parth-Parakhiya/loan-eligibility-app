@@ -1,38 +1,40 @@
 <div class="product-catalog-container">
-  <div class="catalog-header">
-    <h2>Explore Our Financial Products</h2>
-    <p class="subtitle">Find the perfect financial solution tailored to your needs</p>
-  </div>
-  
-  <div class="products-grid">
-    <div *ngFor="let product of products" class="product-card" [ngClass]="product.type.toLowerCase()">
-      <div class="card-header">
-        <div class="product-icon">
-          <i [class]="getProductIcon(product.type)"></i>
-        </div>
-        <h3>{{ product.name }}</h3>
-      </div>
-      
-      <div class="card-body">
-        <p class="description">{{ product.description }}</p>
-        
-        <div class="product-details">
-          <div class="detail-item">
-            <span class="detail-label">Interest Rate</span>
-            <span class="detail-value">{{ product.interestRate }}%</span>
+  <div class="catalog-content">
+    <div class="catalog-header">
+      <h2>Explore Our Financial Products</h2>
+      <p class="subtitle">Find the perfect financial solution tailored to your needs</p>
+    </div>
+
+    <div class="products-grid">
+      <div *ngFor="let product of products" class="product-card" [ngClass]="product.type.toLowerCase()">
+        <div class="card-header">
+          <div class="product-icon">
+            <i [class]="getProductIcon(product.type)"></i>
           </div>
-          <div class="detail-item">
-            <span class="detail-label">Maximum Amount</span>
-            <span class="detail-value">{{ product.maximumAmount | currency }}</span>
+          <h3>{{ product.name }}</h3>
+        </div>
+
+        <div class="card-body">
+          <p class="description">{{ product.description }}</p>
+
+          <div class="product-details">
+            <div class="detail-item">
+              <span class="detail-label">Interest Rate</span>
+              <span class="detail-value">{{ product.interestRate }}%</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Maximum Amount</span>
+              <span class="detail-value">{{ product.maximumAmount | currency }}</span>
+            </div>
           </div>
         </div>
-      </div>
-      
-      <div class="card-footer">
-        <button class="apply-button" (click)="applyForProduct(product.type)">
-          Apply Now
-        </button>
-        <a class="learn-more" (click)="showProductDetails(product)">Learn more</a>
+
+        <div class="card-footer">
+          <button class="apply-button" (click)="applyForProduct(product.type)">
+            Apply Now
+          </button>
+          <a class="learn-more" (click)="showProductDetails(product)">Learn more</a>
+        </div>
       </div>
     </div>
   </div>

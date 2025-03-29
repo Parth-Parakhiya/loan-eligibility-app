@@ -8,6 +8,13 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Add a wrapper for the entire page with the green background */
+.loan-application-page {
+  background-color: #E8F5E9;
+  padding: 30px 20px 60px;
+  min-height: 100vh;
+}
+
 .application-header {
   margin-bottom: 30px;
   

@@ -3,7 +3,11 @@
   background-color: #e8f5e9; // Light green background
   padding: 20px;
   padding-bottom: 60px;
-  min-height: 100vh;
+  min-height: calc(100vh - 60px); /* Adjust for navbar height */
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
 
   .dashboard-title {
     color: #1b5e20; // Dark green color
