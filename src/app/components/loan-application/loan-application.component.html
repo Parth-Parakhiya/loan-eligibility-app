@@ -4,6 +4,34 @@
     <h2>New Loan Application</h2>
   </div>
 
+  <!-- Draft Notification Modal -->
+  <div *ngIf="showDraftModal" class="draft-modal-overlay">
+    <div class="draft-modal">
+      <div class="draft-modal-content">
+        <h3>Saved Draft Found</h3>
+        <p>Would you like to continue with your previously saved application?</p>
+        <div class="draft-modal-actions">
+          <button type="button" class="draft-modal-load" (click)="loadDraft()">Load Draft</button>
+          <button type="button" class="draft-modal-cancel" (click)="discardDraft()">Start New</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Success Notification -->
+  <div *ngIf="showSaveSuccessModal" class="save-success-overlay">
+    <div class="save-success-modal">
+      <div class="save-success-content">
+        <div class="save-success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Application Saved</h3>
+        <p>Your application has been saved as a draft</p>
+        <button type="button" class="save-success-dismiss" (click)="dismissSaveSuccess()">OK</button>
+      </div>
+    </div>
+  </div>
+
   <!-- API Response Feedback (when available) -->
   <div *ngIf="apiResponse" class="api-response-feedback" [ngClass]="apiResponse.status.toLowerCase()">
     <div class="response-content">

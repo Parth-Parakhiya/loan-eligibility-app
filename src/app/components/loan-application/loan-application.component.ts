@@ -58,10 +58,13 @@ export class LoanApplicationComponent implements OnInit {
     'Document Upload'
   ];
   apiResponse: any = null;
+  showDraftModal = false;
+  showSaveSuccessModal = false;
+  savedDraft: any = null;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
+    public router: Router,
     private loanService: LoanApplicationService,
     private customerService: CustomerService,
     private authService: AuthService
@@ -77,22 +80,35 @@ export class LoanApplicationComponent implements OnInit {
     }
 
     // Check for saved draft in localStorage
-    this.loadDraftFromLocalStorage();
+    this.checkForSavedDraft();
   }
 
-  loadDraftFromLocalStorage(): void {
+  checkForSavedDraft(): void {
     try {
       const savedDraft = this.loanService.getDraftFromLocalStorage();
       if (savedDraft) {
         console.log('Found saved draft in localStorage:', savedDraft);
-        // Populate the form with saved values
-        this.populateFormFromDraft(savedDraft);
-        // Notify user
-        alert('Your previously saved draft has been loaded.');
+        this.savedDraft = savedDraft;
+        this.showDraftModal = true;
       }
     } catch (error) {
-      console.error('Error loading draft from localStorage:', error);
+      console.error('Error checking for saved draft:', error);
     }
+  }
+
+  loadDraft(): void {
+    if (this.savedDraft) {
+      // Populate the form with saved values
+      this.populateFormFromDraft(this.savedDraft);
+      this.showDraftModal = false;
+    }
+  }
+
+  discardDraft(): void {
+    // Clear the saved draft and close the modal
+    this.loanService.clearDraftFromLocalStorage();
+    this.savedDraft = null;
+    this.showDraftModal = false;
   }
 
   populateFormFromDraft(draft: any): void {
@@ -473,6 +489,10 @@ export class LoanApplicationComponent implements OnInit {
     }
   }
 
+  dismissSaveSuccess(): void {
+    this.showSaveSuccessModal = false;
+  }
+
   saveAsDraft(): void {
     try {
       const formValue = this.applicationForm.value;
@@ -544,8 +564,8 @@ export class LoanApplicationComponent implements OnInit {
       this.loanService.saveDraftToLocalStorage(draftData);
       console.log('Draft saved to localStorage');
 
-      // Show confirmation to user
-      alert('Application saved as draft in your browser.');
+      // Show success modal instead of browser alert
+      this.showSaveSuccessModal = true;
     } catch (error) {
       console.error('Error saving draft:', error);
       alert('There was an error saving your draft. Please try again.');

@@ -1,4 +1,3 @@
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
@@ -32,6 +31,9 @@ $loan-eligibility-frontend-theme: mat.define-light-theme((
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include mat.all-component-themes($loan-eligibility-frontend-theme);
+
+/* Import FontAwesome */
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
 
 /* styles.scss */
 body {
