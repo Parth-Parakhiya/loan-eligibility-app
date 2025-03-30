@@ -14,77 +14,106 @@
 
     <!-- Show this when application result is loaded -->
     <ng-container *ngIf="!loading && !error && applicationResult">
-      <div *ngIf="preApproved" class="pre-approval-message">
-        <div class="message-header">
+      <!-- Futuristic Header with Status -->
+      <div class="status-header" [ngClass]="{'approved': preApproved, 'rejected': !preApproved}">
+        <div class="status-icon">
+          <i class="bi" [ngClass]="preApproved ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+        </div>
+        <div class="status-text">
           <h3>{{ applicationResult.message }}</h3>
-          <p *ngIf="applicationResult.status === 'APPROVED'">Your application has been pre-approved based on the
-            information provided.</p>
-          <p *ngIf="applicationResult.status === 'APPROVED'">A bank representative will contact you within 24 hours to
-            finalize your application.</p>
         </div>
       </div>
 
+      <!-- Eligibility Details Card -->
       <div class="eligibility-details">
         <h3>Eligibility Details</h3>
 
         <div class="eligibility-content">
           <div class="eligibility-score">
-            <h4>Eligibility Score</h4>
-            <div class="score-circle">
-              <span class="score-value">{{ loanDetails.eligibilityScore }}</span>
-              <span class="score-max">Out of 100</span>
+            <div class="score-circle-wrapper">
+              <svg viewBox="0 0 36 36" class="circular-chart">
+                <path class="circle-bg" d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="circle" [attr.stroke-dasharray]="loanDetails.eligibilityScore + ', 100'" d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <text x="18" y="20.35" class="percentage">{{ loanDetails.eligibilityScore }}</text>
+              </svg>
+              <div class="score-label">Eligibility Score</div>
             </div>
           </div>
 
           <div class="approved-terms">
             <h4>Approved Terms</h4>
-            <div class="terms-table">
-              <div class="terms-row">
-                <div class="terms-label">Maximum Eligible Amount:</div>
-                <div class="terms-value">${{ loanDetails.maxAmount.toLocaleString() }}</div>
+            <div class="terms-grid">
+              <div class="term-card">
+                <div class="term-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="term-value">${{ loanDetails.maxAmount.toLocaleString() }}</div>
+                <div class="term-label">Maximum Amount</div>
               </div>
-              <div class="terms-row">
-                <div class="terms-label">Suggested Interest Rate:</div>
-                <div class="terms-value">{{ loanDetails.interestRate }}% APR</div>
+              <div class="term-card">
+                <div class="term-icon"><i class="bi bi-percent"></i></div>
+                <div class="term-value">{{ loanDetails.interestRate }}%</div>
+                <div class="term-label">Interest Rate</div>
               </div>
-              <div class="terms-row">
-                <div class="terms-label">Suggested Term:</div>
-                <div class="terms-value">{{ loanDetails.term }} months</div>
+              <div class="term-card">
+                <div class="term-icon"><i class="bi bi-calendar-month"></i></div>
+                <div class="term-value">{{ loanDetails.term }}</div>
+                <div class="term-label">Months</div>
               </div>
-              <div class="terms-row">
-                <div class="terms-label">Estimated Monthly Payment:</div>
-                <div class="terms-value">${{ loanDetails.monthlyPayment }}</div>
+              <div class="term-card">
+                <div class="term-icon"><i class="bi bi-wallet2"></i></div>
+                <div class="term-value">${{ loanDetails.monthlyPayment }}</div>
+                <div class="term-label">Monthly Payment</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Decision Factors -->
       <div class="decision-factors">
         <h3>Decision Factors</h3>
 
         <div class="factors-grid">
           <div *ngFor="let factor of decisionFactors" class="factor-card"
             [ngClass]="getDecisionFactorClass(factor.status)">
-            <div class="factor-header">
-              <h4>{{ factor.name }}</h4>
-              <span class="factor-status">{{ factor.status }}</span>
+            <div class="factor-icon">
+              <i class="bi"
+                [ngClass]="factor.status === 'POSITIVE' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'"></i>
             </div>
-            <p class="factor-description">{{ factor.description }}</p>
+            <div class="factor-content">
+              <h4>{{ factor.name }}</h4>
+              <div class="factor-badge" [ngClass]="factor.status === 'POSITIVE' ? 'positive' : 'negative'">
+                {{ factor.status }}
+              </div>
+              <p class="factor-description">{{ factor.description }}</p>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="btn btn-secondary" (click)="navigateToDashboard()">Return to Dashboard</button>
-        <button *ngIf="preApproved" class="btn btn-primary">Continue to Approval</button>
+        <button class="btn btn-secondary" (click)="navigateToDashboard()">
+          <i class="bi bi-arrow-left"></i>
+          Return to Dashboard
+        </button>
+        <button *ngIf="preApproved" class="btn btn-primary">
+          Continue to Approval
+          <i class="bi bi-arrow-right"></i>
+        </button>
       </div>
     </ng-container>
 
     <!-- Show this when no application result found -->
     <div *ngIf="!loading && !error && !applicationResult" class="no-applications">
-      <p>No application details found.</p>
-      <button class="btn btn-secondary" (click)="navigateToDashboard()">Return to Dashboard</button>
+      <div class="empty-state">
+        <i class="bi bi-file-earmark-x"></i>
+        <p>No application details found.</p>
+        <button class="btn btn-secondary" (click)="navigateToDashboard()">Return to Dashboard</button>
+      </div>
     </div>
   </div>
 </div>

@@ -38,16 +38,19 @@ export class ApplicationStatusComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Get application ID from route parameters
-    this.route.params.subscribe(params => {
-      this.applicationId = params['id'];
-      if (this.applicationId) {
-        this.loadApplicationResult(this.applicationId);
-      } else {
-        // Fallback to loading all applications if no ID provided
-        this.loadApplications();
-      }
-    });
+    // Add animation delay for loading
+    setTimeout(() => {
+      // Get application ID from route parameters
+      this.route.params.subscribe(params => {
+        this.applicationId = params['id'];
+        if (this.applicationId) {
+          this.loadApplicationResult(this.applicationId);
+        } else {
+          // Fallback to loading all applications if no ID provided
+          this.loadApplications();
+        }
+      });
+    }, 500); // Small delay for better user experience
   }
 
   loadApplicationResult(id: string): void {
