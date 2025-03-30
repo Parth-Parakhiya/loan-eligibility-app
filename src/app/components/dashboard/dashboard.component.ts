@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { LoanApplicationService } from '../../services/loan-application.service';
 import { CustomerService } from '../../services/customer.service';
 import { AuthService } from '../../services/auth.service';
+import { FinancialSummaryService, FinancialSummary, CreditScore } from '../../services/financial-summary.service';
 import { LoanApplication } from '../../models/loan-application.model';
 import { Customer } from '../../models/customer.model';
 import { FinancialProfile } from '../../models/financial-profile.model';
@@ -18,23 +19,27 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   applicationHistory: any[] = [];
   customer: Customer | null = null;
   financialProfile: FinancialProfile | null = null;
+  financialSummary: FinancialSummary | null = null;
   loading = true;
   historyLoading = true;
   error = '';
   historyError = '';
   financialChart: any;
   applicationChart: any;
+  Math = Math; // Make Math available in the template
 
   constructor(
     private loanService: LoanApplicationService,
     private customerService: CustomerService,
     private authService: AuthService,
+    private financialSummaryService: FinancialSummaryService,
     public router: Router
   ) { }
 
   ngOnInit(): void {
     this.loadDashboardData();
     this.loadApplicationHistory();
+    this.loadFinancialSummary();
   }
 
   ngAfterViewInit(): void {
@@ -100,6 +105,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         console.error('Error loading application history', error);
         this.historyError = 'Failed to load application history. Please try again.';
         this.historyLoading = false;
+      }
+    );
+  }
+
+  loadFinancialSummary(): void {
+    this.financialSummaryService.getFinancialSummary().subscribe(
+      data => {
+        this.financialSummary = data;
+        console.log('Financial summary loaded:', data);
+      },
+      error => {
+        console.error('Error loading financial summary', error);
       }
     );
   }
@@ -244,15 +261,89 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   getCreditScorePercentage(): number {
-    if (!this.financialProfile || !this.financialProfile.creditScore) return 0;
+    if (this.financialSummary && this.financialSummary.creditScore) {
+      // Assuming credit scores range from 300 to 850
+      const minScore = 300;
+      const maxScore = 850;
+      const score = this.financialSummary.creditScore.systemGeneratedCreditScore ||
+        this.financialSummary.creditScore.score;
 
-    // Assuming credit scores range from 300 to 850
-    const minScore = 300;
-    const maxScore = 850;
-    const score = this.financialProfile.creditScore;
+      // Convert to percentage (0-100%)
+      return ((score - minScore) / (maxScore - minScore)) * 100;
+    } else if (this.financialProfile && this.financialProfile.creditScore) {
+      // Fallback to the old method if financialSummary is not available
+      const minScore = 300;
+      const maxScore = 850;
+      const score = this.financialProfile.creditScore;
+      return ((score - minScore) / (maxScore - minScore)) * 100;
+    }
+    return 0;
+  }
 
-    // Convert to percentage (0-100%)
-    return ((score - minScore) / (maxScore - minScore)) * 100;
+  getCreditScore(): number {
+    if (this.financialSummary && this.financialSummary.creditScore) {
+      return this.financialSummary.creditScore.systemGeneratedCreditScore ||
+        this.financialSummary.creditScore.score;
+    } else if (this.financialProfile && this.financialProfile.creditScore) {
+      return this.financialProfile.creditScore;
+    }
+    return 0;
+  }
+
+  getCreditScoreRange(): string {
+    if (this.financialSummary && this.financialSummary.creditScore) {
+      return this.financialSummary.creditScore.range;
+    }
+
+    const score = this.getCreditScore();
+
+    if (score >= 800) return 'Excellent';
+    if (score >= 740) return 'Very Good';
+    if (score >= 670) return 'Good';
+    if (score >= 580) return 'Fair';
+    return 'Poor';
+  }
+
+  getCreditScoreLastUpdated(): string {
+    if (this.financialSummary && this.financialSummary.creditScore) {
+      return this.formatDate(this.financialSummary.creditScore.lastUpdated);
+    }
+    return '';
+  }
+
+  getMonthlyIncome(): number {
+    if (this.financialSummary) {
+      return this.financialSummary.monthlyIncome;
+    } else if (this.financialProfile) {
+      return this.financialProfile.monthlyIncome;
+    }
+    return 0;
+  }
+
+  getMonthlyExpenses(): number {
+    if (this.financialSummary) {
+      return this.financialSummary.monthlyExpenses;
+    } else if (this.financialProfile) {
+      return this.financialProfile.monthlyExpenses;
+    }
+    return 0;
+  }
+
+  // Determine the exact left position for the credit score marker
+  getCreditScorePosition(): string {
+    const percentage = this.getCreditScorePercentage();
+    return `${percentage}%`;
+  }
+
+  // Return the appropriate color class based on the credit score
+  getCreditScoreColorClass(): string {
+    const score = this.getCreditScore();
+
+    if (score >= 800) return 'excellent';
+    if (score >= 740) return 'very-good';
+    if (score >= 670) return 'good';
+    if (score >= 580) return 'fair';
+    return 'poor';
   }
 
   // Get the current user's name from local storage

@@ -86,181 +86,359 @@
       }
     }
 
-    // Credit Score Meter
-   /* Credit Score Meter - Refined Design Styles */
-.credit-score-container {
-  margin: 15px 0 25px;
-  padding: 20px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  
-  .credit-score-title {
-    color: #1b5e20;
-    font-weight: 600;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    
-    i {
-      color: #4caf50;
-      margin-right: 8px;
-    }
-  }
-  
-  .credit-score-meter-container {
-    margin-bottom: 15px;
-  }
-  
-  .credit-score-meter {
-    height: 8px;
-    position: relative;
-    margin: 25px 0 5px;
-    
-    .credit-score-segments {
-      display: flex;
-      width: 100%;
-      height: 100%;
+    // Credit Score Meter - Enhanced Design
+    .credit-score-container {
+      margin: 15px 0 25px;
+      padding: 20px;
+      background-color: white;
       border-radius: 10px;
-      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       
-      .segment {
-        height: 100%;
-        flex: 1;
+      .credit-score-title {
+        color: #1b5e20;
+        font-weight: 600;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
         
-        &.poor {
-          background-color: #f44336;
+        i {
+          color: #4caf50;
+          margin-right: 8px;
+        }
+      }
+      
+      .credit-score-meter-container {
+        margin-bottom: 15px;
+      }
+      
+      .credit-score-meter {
+        height: 8px;
+        position: relative;
+        margin: 25px 0 5px;
+        
+        .credit-score-segments {
+          display: flex;
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+          overflow: hidden;
+          
+          .segment {
+            height: 100%;
+            flex: 1;
+            
+            &.poor {
+              background-color: #f44336;
+            }
+            
+            &.fair {
+              background-color: #ff9800;
+            }
+            
+            &.good {
+              background-color: #4caf50;
+            }
+            
+            &.very-good {
+              background-color: #2196f3;
+            }
+            
+            &.excellent {
+              background-color: #673ab7;
+            }
+          }
         }
         
-        &.fair {
-          background-color: #ff9800;
+        .score-marker {
+          position: absolute;
+          bottom: 100%;
+          transform: translateX(-50%);
+          margin-bottom: 5px;
+          transition: left 0.5s ease;
+          
+          .marker-arrow {
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #1b5e20;
+            margin: 0 auto;
+          }
+          
+          .marker-value {
+            background-color: #1b5e20;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            padding: 3px 8px;
+            border-radius: 15px;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 3px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            min-width: 40px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            
+            // Different colors for different score ranges
+            &.poor {
+              background-color: #f44336;
+            }
+            
+            &.fair {
+              background-color: #ff9800;
+            }
+            
+            &.good {
+              background-color: #4caf50;
+            }
+            
+            &.very-good {
+              background-color: #2196f3;
+            }
+            
+            &.excellent {
+              background-color: #673ab7;
+            }
+          }
+        }
+      }
+      
+      .credit-score-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding: 0 2px;
+        
+        .range-label {
+          flex: 1;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          
+          span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+          }
+          
+          small {
+            font-size: 0.65rem;
+            color: #757575;
+          }
+          
+          &:nth-child(1) span { color: #f44336; }
+          &:nth-child(2) span { color: #ff9800; }
+          &:nth-child(3) span { color: #4caf50; }
+          &:nth-child(4) span { color: #2196f3; }
+          &:nth-child(5) span { color: #673ab7; }
+        }
+      }
+      
+      // Score comparison section (System vs. Official)
+      .score-comparison {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.03);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 15px;
+        
+        .score-type {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0 15px;
+          
+          .score-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+          }
+          
+          .score-label {
+            font-size: 0.7rem;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+          
+          &.primary-score .score-value {
+            color: #1b5e20;
+          }
+          
+          &.system-score .score-value {
+            color: #1565c0;
+          }
         }
         
-        &.good {
-          background-color: #4caf50;
+        .score-divider {
+          color: #757575;
+          font-size: 0.8rem;
+          font-weight: 600;
+          padding: 0 10px;
+        }
+      }
+      
+      .score-details {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e0e0e0;
+        
+        .score-status {
+          display: flex;
+          align-items: center;
+          margin-bottom: 12px;
+          
+          i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            
+            &.text-poor { color: #f44336; }
+            &.text-fair { color: #ff9800; }
+            &.text-good { color: #4caf50; }
+            &.text-very-good { color: #2196f3; }
+            &.text-excellent { color: #673ab7; }
+          }
+          
+          div {
+            font-size: 0.9rem;
+            
+            strong {
+              &.text-poor { color: #f44336; }
+              &.text-fair { color: #ff9800; }
+              &.text-good { color: #4caf50; }
+              &.text-very-good { color: #2196f3; }
+              &.text-excellent { color: #673ab7; }
+            }
+          }
         }
         
-        &.very-good {
-          background-color: #2196f3;
-        }
-        
-        &.excellent {
-          background-color: #673ab7;
+        .score-update {
+          display: flex;
+          align-items: center;
+          font-size: 0.85rem;
+          color: #616161;
+          
+          i {
+            margin-right: 10px;
+            color: #2196f3;
+          }
         }
       }
     }
     
-    .score-marker {
-      position: absolute;
-      bottom: 100%;
-      transform: translateX(-50%);
-      margin-bottom: 5px;
+    // Financial Health Gauge
+    .financial-health-gauge {
+      margin: 30px 0 0;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       
-      .marker-arrow {
-        width: 0;
-        height: 0;
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-top: 8px solid #1b5e20;
-        margin: 0 auto;
-      }
-      
-      .marker-value {
-        background-color: #1b5e20;
-        color: white;
-        font-weight: bold;
-        font-size: 0.9rem;
-        padding: 3px 8px;
-        border-radius: 15px;
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        margin-bottom: 3px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        min-width: 40px;
+      .gauge-title {
+        color: #1b5e20;
+        font-weight: 600;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
         text-align: center;
       }
-    }
-  }
-  
-  .credit-score-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    padding: 0 2px;
-    
-    .range-label {
-      flex: 1;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       
-      span {
-        font-size: 0.8rem;
-        font-weight: 600;
-        margin-bottom: 2px;
+      .gauge-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       
-      small {
-        font-size: 0.65rem;
-        color: #757575;
-      }
-      
-      &:nth-child(1) span { color: #f44336; }
-      &:nth-child(2) span { color: #ff9800; }
-      &:nth-child(3) span { color: #4caf50; }
-      &:nth-child(4) span { color: #2196f3; }
-      &:nth-child(5) span { color: #673ab7; }
-    }
-  }
-  
-  .score-details {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #e0e0e0;
-    
-    .score-status {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      
-      i {
-        margin-right: 10px;
-        font-size: 1.1rem;
-      }
-      
-      div {
-        font-size: 0.9rem;
+      .gauge {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        margin-bottom: 20px;
         
-        strong {
-          color: #4caf50;
+        .gauge-value-container {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          z-index: 1;
+          
+          .gauge-percentage {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1b5e20;
+          }
+          
+          .gauge-label {
+            font-size: 0.75rem;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+        }
+        
+        .gauge-svg {
+          transform: rotate(-90deg);
+          
+          .gauge-background {
+            fill: none;
+            stroke: #e0e0e0;
+            stroke-width: 12;
+          }
+          
+          .gauge-progress {
+            fill: none;
+            stroke: #4caf50;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.6s ease;
+          }
+        }
+      }
+      
+      .gauge-summary {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: 8px;
+        padding: 15px;
+        
+        .gauge-summary-item {
+          text-align: center;
+          flex: 1;
+          
+          .summary-label {
+            font-size: 0.75rem;
+            color: #757575;
+            margin-bottom: 5px;
+          }
+          
+          .summary-value {
+            font-weight: 600;
+            font-size: 0.95rem;
+          }
+          
+          &.income .summary-value {
+            color: #4caf50;
+          }
+          
+          &.expenses .summary-value {
+            color: #f44336;
+          }
+          
+          &.savings .summary-value {
+            color: #1565c0;
+          }
         }
       }
     }
-    
-    .score-percentile {
-      padding-left: 25px;
-      font-size: 0.85rem;
-      color: #616161;
-      margin-bottom: 12px;
-    }
-    
-    .score-update {
-      display: flex;
-      align-items: center;
-      font-size: 0.85rem;
-      color: #616161;
-      
-      i {
-        margin-right: 10px;
-        color: #2196f3;
-      }
-    }
   }
-}}
 }
 
 /* Application History Styles */
