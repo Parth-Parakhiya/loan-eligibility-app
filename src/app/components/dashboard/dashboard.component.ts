@@ -472,4 +472,42 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.router.navigate(['/status', applicationId]);
     }
   }
+
+  // Method to navigate to the financial profile page
+  navigateToFinancialProfile(): void {
+    this.router.navigate(['/profile/financial']);
+  }
+
+  // Method to estimate loan amount based on credit score and income
+  getEstimatedLoanAmount(): number {
+    const creditScore = this.getCreditScore();
+    const monthlyIncome = this.getMonthlyIncome();
+
+    // Default value if no data is available
+    if (!creditScore || !monthlyIncome) return 5000;
+
+    // Simple formula: estimated loan amount based on credit score and income
+    // This is a simplified example, actual loan eligibility would be more complex
+    let baseMultiplier = 6; // Default base is 6 months of income
+
+    // Adjust multiplier based on credit score
+    if (creditScore >= 800) {
+      baseMultiplier = 24; // Excellent - up to 24 months income
+    } else if (creditScore >= 740) {
+      baseMultiplier = 18; // Very Good - up to 18 months income
+    } else if (creditScore >= 670) {
+      baseMultiplier = 12; // Good - up to 12 months income
+    } else if (creditScore >= 580) {
+      baseMultiplier = 8; // Fair - up to 8 months income
+    }
+
+    // Calculate estimated amount (monthly income * multiplier)
+    return Math.round(monthlyIncome * baseMultiplier / 1000) * 1000; // Round to nearest thousand
+  }
+
+  // Method to retry loading applications when an error occurs
+  retryLoadingApplications(): void {
+    this.historyError = '';
+    this.loadApplicationHistory();
+  }
 }

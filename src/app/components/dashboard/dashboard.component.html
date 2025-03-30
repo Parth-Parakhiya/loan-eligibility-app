@@ -24,7 +24,19 @@
             <p class="mt-2 text-muted">Loading your financial data...</p>
           </div>
 
-          <div *ngIf="!loading">
+          <!-- Empty state for Financial Summary -->
+          <div *ngIf="!loading && (!getMonthlyIncome() || !getCreditScore())" class="empty-state financial-empty-state">
+            <div class="empty-state-icon">
+              <i class="bi bi-cash-stack"></i>
+            </div>
+            <h4>Get Started with Your First Loan</h4>
+            <p>Complete your financial profile to explore loan options that match your needs.</p>
+            <button class="btn-action-primary btn-full-width" (click)="startNewApplication()">
+              <i class="bi bi-plus-circle me-2"></i>Apply for a Loan
+            </button>
+          </div>
+
+          <div *ngIf="!loading && getMonthlyIncome() && getCreditScore()">
             <!-- Redesigned Financial Stats Cards -->
             <div class="financial-stats-grid">
               <div class="financial-stat-card income">
@@ -172,23 +184,42 @@
             <p class="mt-2 text-muted">Loading your application history...</p>
           </div>
 
-          <!-- Error Message -->
-          <div *ngIf="historyError && !historyLoading" class="alert alert-danger">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            {{ historyError }}
+          <!-- Improved Error Message - Now showing as empty state -->
+          <div *ngIf="historyError && !historyLoading" class="empty-state loan-empty-state">
+            <div class="empty-state-icon">
+              <i class="bi bi-folder-x"></i>
+            </div>
+            <h4>No Loan Applications Found</h4>
+            <p>Your loan applications list is empty. Feel free to apply for a loan when you're ready.</p>
           </div>
 
-          <!-- No Applications Message -->
-          <div *ngIf="!historyLoading && !historyError && applicationHistory.length === 0" class="no-applications">
-            <i class="bi bi-folder-plus"></i>
-            <p>No applications yet. Start your first loan application today!</p>
-            <button class="btn btn-success mt-3" (click)="startNewApplication()">
-              <i class="bi bi-plus-circle me-2"></i> Apply Now
-            </button>
+          <!-- Improved No Applications Message -->
+          <div *ngIf="!historyLoading && !historyError && (!applicationHistory || applicationHistory.length === 0)"
+            class="empty-state loan-empty-state">
+            <div class="empty-state-icon">
+              <i class="bi bi-file-earmark-text"></i>
+            </div>
+            <h4>No Loan Applications Yet</h4>
+            <p>You haven't applied for any loans. Start your financial journey today!</p>
+            <div class="loan-benefits">
+              <div class="benefit-item">
+                <div class="benefit-icon"><i class="bi bi-shield-check"></i></div>
+                <div class="benefit-text">Quick approval process</div>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><i class="bi bi-graph-up"></i></div>
+                <div class="benefit-text">Competitive interest rates</div>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><i class="bi bi-clock"></i></div>
+                <div class="benefit-text">Flexible repayment terms</div>
+              </div>
+            </div>
           </div>
 
           <!-- Application History List -->
-          <div *ngIf="!historyLoading && applicationHistory.length > 0" class="application-history">
+          <div *ngIf="!historyLoading && applicationHistory && applicationHistory.length > 0"
+            class="application-history">
             <div class="applications-header">
               <h5>Your Recent Applications</h5>
               <button class="btn-new-application" (click)="startNewApplication()">
