@@ -189,15 +189,16 @@
 
           <!-- Application History List -->
           <div *ngIf="!historyLoading && applicationHistory.length > 0" class="application-history">
-            <div class="mb-3 d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">Your Recent Applications</h5>
-              <button class="btn btn-success btn-sm" (click)="startNewApplication()">
+            <div class="applications-header">
+              <h5>Your Recent Applications</h5>
+              <button class="btn-new-application" (click)="startNewApplication()">
                 <i class="bi bi-plus-circle me-1"></i> New Application
               </button>
             </div>
 
             <div class="application-cards">
-              <div *ngFor="let app of applicationHistory; let i = index" class="application-card">
+              <div *ngFor="let app of applicationHistory; let i = index" class="application-card"
+                [ngClass]="'status-' + app.status.toLowerCase()">
                 <div class="app-header">
                   <div class="app-status">
                     <i [ngClass]="getHistoryStatusIcon(app.status)"></i>
@@ -216,8 +217,9 @@
                   </div>
                 </div>
                 <div class="app-actions">
-                  <button class="btn btn-outline-primary btn-sm" (click)="viewApplicationDetails(app.id)">View
-                    Details</button>
+                  <button class="btn-view-details" (click)="viewApplicationDetails(app.id)">
+                    <i class="bi bi-eye me-1"></i> View Details
+                  </button>
                 </div>
               </div>
             </div>

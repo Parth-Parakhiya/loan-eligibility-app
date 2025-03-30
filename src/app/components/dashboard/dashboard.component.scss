@@ -506,6 +506,50 @@
 
 /* Application History Styles */
 .application-history {
+  .applications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    
+    h5 {
+      margin: 0;
+      color: #1b5e20;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    
+    .btn-new-application {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 15px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 5px rgba(76, 175, 80, 0.3);
+      
+      i {
+        font-size: 1rem;
+        margin-right: 5px;
+      }
+      
+      &:hover {
+        background-color: #2e7d32;
+        box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
+        transform: translateY(-2px);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+      }
+    }
+  }
+
   .application-cards {
     display: flex;
     flex-direction: column;
@@ -532,14 +576,37 @@
   
   .application-card {
     background-color: white;
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     padding: 16px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    position: relative;
     
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    // Different border colors based on status
+    &.status-approved {
+      border-left-color: #4caf50;
+    }
+    
+    &.status-rejected, &.status-denied {
+      border-left-color: #f44336;
+    }
+    
+    &.status-under-review, &.status-processing {
+      border-left-color: #ff9800;
+    }
+    
+    &.status-submitted, &.status-pending {
+      border-left-color: #2196f3;
+    }
+    
+    &.status-draft {
+      border-left-color: #9e9e9e;
     }
     
     .app-header {
@@ -597,6 +664,39 @@
     
     .app-actions {
       text-align: right;
+
+      .btn-view-details {
+        background-color: white;
+        border: 1px solid #4caf50;
+        color: #4caf50;
+        font-weight: 500;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        
+        i {
+          font-size: 0.9rem;
+          margin-right: 5px;
+        }
+        
+        &:hover {
+          background-color: #4caf50;
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        &:active {
+          transform: translateY(0);
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+      }
     }
   }
   
