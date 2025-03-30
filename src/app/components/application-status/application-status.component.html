@@ -96,13 +96,9 @@
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="btn btn-secondary" (click)="navigateToDashboard()">
+        <button class="btn btn-primary" (click)="navigateToDashboard()">
           <i class="bi bi-arrow-left"></i>
           Return to Dashboard
-        </button>
-        <button *ngIf="preApproved" class="btn btn-primary">
-          Continue to Approval
-          <i class="bi bi-arrow-right"></i>
         </button>
       </div>
     </ng-container>
@@ -112,7 +108,7 @@
       <div class="empty-state">
         <i class="bi bi-file-earmark-x"></i>
         <p>No application details found.</p>
-        <button class="btn btn-secondary" (click)="navigateToDashboard()">Return to Dashboard</button>
+        <button class="btn btn-primary" (click)="navigateToDashboard()">Return to Dashboard</button>
       </div>
     </div>
   </div>
