@@ -374,4 +374,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   getDeniedApplicationsCount(): number {
     return this.getApplicationCountByStatus(['DENIED', 'REJECTED']);
   }
+
+  // View application details
+  viewApplicationDetails(applicationId: string): void {
+    if (applicationId) {
+      this.router.navigate(['/status', applicationId]);
+    }
+  }
 }

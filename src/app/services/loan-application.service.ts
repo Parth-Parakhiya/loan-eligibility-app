@@ -107,4 +107,13 @@ export class LoanApplicationService {
 
     return this.http.get<any[]>(`${environment.apiUrl}/loan-applications-history`, { headers });
   }
+
+  // Get loan application results by ID
+  getApplicationResultsById(id: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.token}`
+    });
+
+    return this.http.get<any>(`${environment.apiUrl}/loan-applications-results/${id}`, { headers });
+  }
 }

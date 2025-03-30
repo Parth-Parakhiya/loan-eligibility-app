@@ -17,6 +17,7 @@ const routes: Routes = [
   { path: 'apply', component: LoanApplicationComponent, canActivate: [AuthGuard] },
   { path: 'results/:applicationId', component: EligibilityResultsComponent, canActivate: [AuthGuard] },
   { path: 'status', component: ApplicationStatusComponent, canActivate: [AuthGuard] },
+  { path: 'status/:id', component: ApplicationStatusComponent, canActivate: [AuthGuard] },
   { path: 'products', component: ProductCatalogComponent, canActivate: [AuthGuard] }
 ];
 
