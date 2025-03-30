@@ -1,59 +1,298 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes buttonPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5; /* Light gray background */
+  position: relative;
+  padding: 20px;
+}
+
 .login-container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  overflow: hidden;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.logo-section {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+  background-color: #2e7d32; /* Dark green background */
   
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-  
-    .form-group {
-      margin-bottom: 15px;
-  
-      label {
-        display: block;
-        margin-bottom: 5px;
-      }
-  
-      input {
-        width: 100%;
-        padding: 8px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-    }
-  
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+    i {
       color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      font-size: 2.5rem;
+      margin-bottom: 5px;
+    }
+    
+    h1 {
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+  }
   
-      &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
+  .logo {
+    max-width: 150px;
+    height: auto;
+  }
+  
+  .icon-email {
+    color: white;
+    font-size: 2rem;
+  }
+}
+
+.login-form {
+  padding: 30px;
+  
+  h2 {
+    color: #2e7d32; /* Dark green text */
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  .subtitle {
+    text-align: center;
+    color: #555;
+    margin-bottom: 25px;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2e7d32; /* Dark green text */
+    font-weight: 500;
+  }
+  
+  .input-wrapper {
+    position: relative;
+    
+    input {
+      width: 100%;
+      padding: 12px 12px 12px 40px;
+      border: 1px solid #d1d8e0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        border-color: #2e7d32; /* Dark green border */
+        box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
       }
     }
-  
-    p {
-      text-align: center;
-      margin-top: 15px;
-  
-      a {
-        color: #007bff;
-        text-decoration: none;
-  
-        &:hover {
-          text-decoration: underline;
-        }
+    
+    .icon-email, .icon-lock, .icon-eye {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a5b1c2;
+    }
+    
+    .icon-email { left: 12px; }
+    .icon-lock { left: 12px; }
+    .icon-eye { 
+      right: 12px; 
+      cursor: pointer;
+      
+      &.active {
+        color: #2e7d32; /* Dark green when active */
       }
     }
   }
+  
+  .error-message {
+    color: #e74c3c;
+    margin-top: 5px;
+    font-size: 0.8em;
+  }
+}
+
+.forgot-password {
+  text-align: right;
+  margin-bottom: 20px;
+  
+  a {
+    color: #2e7d32; /* Dark green text */
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #2e7d32; /* Dark green button */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    background-color: #1b5e20; /* Darker green on hover */
+    animation: buttonPulse 0.5s;
+  }
+  
+  &:disabled {
+    background-color: #a5d6a7; /* Light green when disabled */
+    cursor: not-allowed;
+  }
+  
+  .button-loader {
+    // Add loader styles if needed
+  }
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  
+  a {
+    color: #2e7d32; /* Dark green text */
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+//error message
+// Add these styles to your existing SCSS
+
+// Error Banner Styles
+// Error Banner Styles
+.error-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  &.credentials {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  &.network {
+    background-color: #ffc107;
+    color: #000;
+  }
+
+  &.unknown {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .error-banner-content {
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    position: relative;
+
+    .error-icon {
+      margin-right: 15px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .error-content {
+      flex-grow: 1;
+
+      h4 {
+        margin: 0 0 5px 0;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+    }
+
+    .error-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.2rem;
+      transition: color 0.2s ease;
+      padding: 5px;
+      border-radius: 50%;
+
+      &:hover {
+        color: white;
+        background-color: rgba(255,255,255,0.2);
+      }
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .error-banner-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 15px;
+
+      .error-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      .error-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+    }
+  }
+}

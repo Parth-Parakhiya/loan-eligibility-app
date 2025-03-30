@@ -1,13 +1,115 @@
+<!-- application-status.component.html -->
 <div class="application-status-container">
-    <h2>Application Status</h2>
-    <div *ngIf="applications.length > 0">
-      <ul>
-        <li *ngFor="let app of applications" [ngClass]="getStatusClass(app.status)">
-          {{ app.productType }} - {{ getStatusText(app.status) }}
-        </li>
-      </ul>
+  <div class="status-content">
+    <h2>Application Results</h2>
+
+    <div *ngIf="loading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading your application status...</p>
     </div>
-    <div *ngIf="applications.length === 0">
-      <p>No applications found.</p>
+
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Show this when application result is loaded -->
+    <ng-container *ngIf="!loading && !error && applicationResult">
+      <!-- Futuristic Header with Status -->
+      <div class="status-header" [ngClass]="{'approved': preApproved, 'rejected': !preApproved}">
+        <div class="status-icon">
+          <i class="bi" [ngClass]="preApproved ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+        </div>
+        <div class="status-text">
+          <h3>{{ applicationResult.message }}</h3>
+        </div>
+      </div>
+
+      <!-- Eligibility Details Card -->
+      <div class="eligibility-details">
+        <h3>Eligibility Details</h3>
+
+        <div class="eligibility-content">
+          <div class="eligibility-score">
+            <div class="score-circle-wrapper">
+              <svg viewBox="0 0 36 36" class="circular-chart">
+                <path class="circle-bg" d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="circle" [attr.stroke-dasharray]="loanDetails.eligibilityScore + ', 100'" d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <text x="18" y="20.35" class="percentage">{{ loanDetails.eligibilityScore }}</text>
+              </svg>
+              <div class="score-label">Eligibility Score</div>
+            </div>
+          </div>
+
+          <div class="approved-terms">
+            <h4>Approved Terms</h4>
+            <div class="terms-grid">
+              <div class="term-card">
+                <div class="term-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="term-value">${{ loanDetails.maxAmount.toLocaleString() }}</div>
+                <div class="term-label">Maximum Amount</div>
+              </div>
+              <div class="term-card">
+                <div class="term-icon"><i class="bi bi-percent"></i></div>
+                <div class="term-value">{{ loanDetails.interestRate }}%</div>
+                <div class="term-label">Interest Rate</div>
+              </div>
+              <div class="term-card">
+                <div class="term-icon"><i class="bi bi-calendar-month"></i></div>
+                <div class="term-value">{{ loanDetails.term }}</div>
+                <div class="term-label">Months</div>
+              </div>
+              <div class="term-card">
+                <div class="term-icon"><i class="bi bi-wallet2"></i></div>
+                <div class="term-value">${{ loanDetails.monthlyPayment }}</div>
+                <div class="term-label">Monthly Payment</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decision Factors -->
+      <div class="decision-factors">
+        <h3>Decision Factors</h3>
+
+        <div class="factors-grid">
+          <div *ngFor="let factor of decisionFactors" class="factor-card"
+            [ngClass]="getDecisionFactorClass(factor.status)">
+            <div class="factor-icon">
+              <i class="bi"
+                [ngClass]="factor.status === 'POSITIVE' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'"></i>
+            </div>
+            <div class="factor-content">
+              <h4>{{ factor.name }}</h4>
+              <div class="factor-badge" [ngClass]="factor.status === 'POSITIVE' ? 'positive' : 'negative'">
+                {{ factor.status }}
+              </div>
+              <p class="factor-description">{{ factor.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="navigateToDashboard()">
+          <i class="bi bi-arrow-left"></i>
+          Return to Dashboard
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Show this when no application result found -->
+    <div *ngIf="!loading && !error && !applicationResult" class="no-applications">
+      <div class="empty-state">
+        <i class="bi bi-file-earmark-x"></i>
+        <p>No application details found.</p>
+        <button class="btn btn-primary" (click)="navigateToDashboard()">Return to Dashboard</button>
+      </div>
     </div>
   </div>
+</div>

@@ -1,70 +1,403 @@
 /* dashboard.component.scss */
 .dashboard-container {
-    padding: 20px;
-  }
-  
-  .welcome-section {
-    background-color: #3498db;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .welcome-section h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
-  }
-  
-  .credit-score {
-    font-size: 1.2em;
-    font-weight: bold;
-  }
-  
-  .applications-section, .recommendations-section {
+  background-color: #e8f5e9; // Light green background
+  padding: 20px;
+  padding-bottom: 60px;
+  min-height: calc(100vh - 60px); /* Adjust for navbar height */
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+
+  .dashboard-title {
+    color: #1b5e20; // Dark green color
     margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    
+    i {
+      margin-right: 10px;
+      font-size: 1.5rem;
+      color: #2e7d32; // Medium green color
+    }
+  }
+
+  .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      background-color: #4caf50; // Primary green
+      color: white;
+      border-bottom: none;
+      padding: 15px 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      
+      i {
+        margin-right: 10px;
+        color: #e8f5e9; // Light green
+      }
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+  }
+
+  // Financial Summary Section
+  .financial-summary-card {
+    .financial-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: rgba(76, 175, 80, 0.05);
+      border-radius: 8px;
+
+      i {
+        margin-right: 15px;
+        font-size: 1.4rem;
+        color: #4caf50; // Primary green
+        width: 30px;
+        text-align: center;
+      }
+
+      span {
+        margin-right: 10px;
+        color: #555;
+        font-weight: 500;
+        flex: 1;
+      }
+
+      strong {
+        color: #1b5e20; // Dark green
+        font-size: 1.1rem;
+      }
+    }
+
+    // Credit Score Meter
+   /* Credit Score Meter - Refined Design Styles */
+.credit-score-container {
+  margin: 15px 0 25px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  
+  .credit-score-title {
+    color: #1b5e20;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    
+    i {
+      color: #4caf50;
+      margin-right: 8px;
+    }
   }
   
-  .application-card, .recommendation-card {
+  .credit-score-meter-container {
+    margin-bottom: 15px;
+  }
+  
+  .credit-score-meter {
+    height: 8px;
+    position: relative;
+    margin: 25px 0 5px;
+    
+    .credit-score-segments {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      
+      .segment {
+        height: 100%;
+        flex: 1;
+        
+        &.poor {
+          background-color: #f44336;
+        }
+        
+        &.fair {
+          background-color: #ff9800;
+        }
+        
+        &.good {
+          background-color: #4caf50;
+        }
+        
+        &.very-good {
+          background-color: #2196f3;
+        }
+        
+        &.excellent {
+          background-color: #673ab7;
+        }
+      }
+    }
+    
+    .score-marker {
+      position: absolute;
+      bottom: 100%;
+      transform: translateX(-50%);
+      margin-bottom: 5px;
+      
+      .marker-arrow {
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #1b5e20;
+        margin: 0 auto;
+      }
+      
+      .marker-value {
+        background-color: #1b5e20;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+        padding: 3px 8px;
+        border-radius: 15px;
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 3px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        min-width: 40px;
+        text-align: center;
+      }
+    }
+  }
+  
+  .credit-score-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 0 2px;
+    
+    .range-label {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      span {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      
+      small {
+        font-size: 0.65rem;
+        color: #757575;
+      }
+      
+      &:nth-child(1) span { color: #f44336; }
+      &:nth-child(2) span { color: #ff9800; }
+      &:nth-child(3) span { color: #4caf50; }
+      &:nth-child(4) span { color: #2196f3; }
+      &:nth-child(5) span { color: #673ab7; }
+    }
+  }
+  
+  .score-details {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    
+    .score-status {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      
+      i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+      }
+      
+      div {
+        font-size: 0.9rem;
+        
+        strong {
+          color: #4caf50;
+        }
+      }
+    }
+    
+    .score-percentile {
+      padding-left: 25px;
+      font-size: 0.85rem;
+      color: #616161;
+      margin-bottom: 12px;
+    }
+    
+    .score-update {
+      display: flex;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #616161;
+      
+      i {
+        margin-right: 10px;
+        color: #2196f3;
+      }
+    }
+  }
+}}
+}
+
+/* Application History Styles */
+.application-history {
+  .application-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #4caf50;
+      border-radius: 10px;
+    }
+  }
+  
+  .application-card {
     background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+    
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      align-items: center;
+      
+      .app-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        i {
+          font-size: 1.2rem;
+        }
+      }
+      
+      .app-id {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #4caf50;
+        background-color: rgba(76, 175, 80, 0.1);
+        padding: 3px 8px;
+        border-radius: 4px;
+        min-width: 45px;
+        text-align: center;
+      }
+    }
+    
+    .app-details {
+      display: flex;
+      margin-bottom: 15px;
+      
+      .app-amount, .app-date {
+        flex: 1;
+        
+        .detail-label {
+          font-size: 0.85rem;
+          color: #757575;
+          margin-bottom: 3px;
+        }
+        
+        .detail-value {
+          font-weight: 600;
+          color: #333;
+          font-size: 1.1rem;
+          
+          &.text-success {
+            color: #2e7d32;
+          }
+        }
+      }
+    }
+    
+    .app-actions {
+      text-align: right;
+    }
+  }
+  
+  /* Stats Summary */
+  .stats-summary {
+    display: flex;
+    justify-content: space-around;
     padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(76, 175, 80, 0.1);
+    border-radius: 8px;
+    
+    .stat-item {
+      text-align: center;
+      
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2e7d32;
+      }
+      
+      .stat-label {
+        font-size: 0.85rem;
+        color: #555;
+      }
+    }
+  }
+}
+
+/* No Applications */
+.no-applications {
+  text-align: center;
+  padding: 30px 20px;
+  
+  i {
+    font-size: 2.5rem;
+    color: #4caf50;
+    margin-bottom: 15px;
+    opacity: 0.7;
   }
   
-  .application-card h3, .recommendation-card h3 {
-    margin-top: 0;
-    color: #2c3e50;
+  p {
+    color: #555;
+    margin-bottom: 15px;
   }
-  
-  .status-badge {
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 0.9em;
-    margin-right: 10px;
-  }
-  
-  .status-badge.under-review {
-    background-color: #f1c40f;
-    color: #000;
-  }
-  
-  .status-badge.approved {
-    background-color: #27ae60;
-    color: #fff;
-  }
-  
-  .recommendation-card {
-    background-color: #3498db;
-    color: white;
-  }
-  
-  .recommendation-card h3 {
-    color: white;
-  }
-  
-  .recommendation-card p {
-    margin: 5px 0;
-  }
+}

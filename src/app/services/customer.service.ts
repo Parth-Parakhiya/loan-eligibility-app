@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Customer } from '../models/customer.model';
+import { Customer, EmploymentDetails } from '../models/customer.model';
 import { FinancialProfile } from '../models/financial-profile.model';
 
 @Injectable({
@@ -27,5 +27,13 @@ export class CustomerService {
 
   updateFinancialProfile(customerId: string, profile: FinancialProfile): Observable<FinancialProfile> {
     return this.http.put<FinancialProfile>(`${this.apiUrl}/${customerId}/financial-profile`, profile);
+  }
+
+  updateEmploymentDetails(customerId: string, employmentDetails: EmploymentDetails[]): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${customerId}/employment-details`, { employmentDetails });
+  }
+
+  updateFinancialData(customerId: string, financialData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${customerId}/financial-data`, financialData);
   }
 }

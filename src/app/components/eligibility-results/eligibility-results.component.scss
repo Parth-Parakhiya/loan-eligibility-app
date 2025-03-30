@@ -1,6 +1,17 @@
 /* eligibility-results.component.scss */
 .eligibility-results-container {
     padding: 20px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    background-color: #E8F5E9;
+    min-height: calc(100vh - 60px); /* Adjust for navbar height */
+    box-sizing: border-box;
+  }
+  
+  .results-content {
+    max-width: 900px;
+    margin: 0 auto;
   }
   
   .results-header {
