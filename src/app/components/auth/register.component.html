@@ -1,70 +1,115 @@
-<div class="register-container">
-  <h2>Sign up to continue to Credwise</h2>
+<div class="register-wrapper">
+  <div class="register-container">
+    <div class="logo-section">
+      <i class="fas fa-user-plus icon-register"></i>
+    </div>
 
-  <div *ngIf="errorMessage" class="error-message">
-    <i class="bi bi-exclamation-circle"></i> {{errorMessage}}
-    <button class="close-btn" (click)="closeErrorMessage()">×</button>
+    <div *ngIf="errorMessage" class="error-banner credentials">
+      <div class="error-banner-content">
+        <div class="error-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="error-content">
+          <h4>Registration Error</h4>
+          <p>{{ errorMessage }}</p>
+        </div>
+        <button class="error-close" (click)="closeErrorMessage()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="successMessage" class="success-banner">
+      <div class="success-banner-content">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="success-content">
+          <h4>Success</h4>
+          <p>{{ successMessage }}</p>
+        </div>
+        <button class="success-close" (click)="closeSuccessMessage()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <h2>Create Account</h2>
+      <p class="subtitle">Sign up to continue to Credwise</p>
+
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user icon-input"></i>
+          <input type="text" id="firstName" formControlName="firstName" placeholder="Enter your first name" required>
+        </div>
+        <div *ngIf="submitted && f['firstName'].errors" class="validation-error">
+          <small *ngIf="f['firstName'].errors['required']">First name is required</small>
+          <small *ngIf="f['firstName'].errors['minlength']">First name must be at least 2 characters</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user icon-input"></i>
+          <input type="text" id="lastName" formControlName="lastName" placeholder="Enter your last name" required>
+        </div>
+        <div *ngIf="submitted && f['lastName'].errors" class="validation-error">
+          <small *ngIf="f['lastName'].errors['required']">Last name is required</small>
+          <small *ngIf="f['lastName'].errors['minlength']">Last name must be at least 2 characters</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <div class="input-wrapper">
+          <i class="fas fa-phone icon-input"></i>
+          <input type="tel" id="phoneNumber" formControlName="phoneNumber" placeholder="Enter your phone number"
+            required>
+        </div>
+        <div *ngIf="submitted && f['phoneNumber'].errors" class="validation-error">
+          <small *ngIf="f['phoneNumber'].errors['required']">Phone number is required</small>
+          <small *ngIf="f['phoneNumber'].errors['pattern'] || f['phoneNumber'].errors['invalidFormat']">Please enter a
+            valid phone number</small>
+          <small *ngIf="f['phoneNumber'].errors['invalidLength']">Phone number must be between 10-15 digits</small>
+          <small *ngIf="f['phoneNumber'].errors['invalidPrefix']">Invalid phone number prefix</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope icon-input"></i>
+          <input type="email" id="email" formControlName="email" placeholder="Enter your email" required>
+        </div>
+        <div *ngIf="submitted && f['email'].errors" class="validation-error">
+          <small *ngIf="f['email'].errors['required']">Email is required</small>
+          <small *ngIf="f['email'].errors['email']">Please enter a valid email address</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock icon-input"></i>
+          <input type="password" id="password" formControlName="password" placeholder="Enter your password" required>
+        </div>
+        <div *ngIf="submitted && f['password'].errors" class="validation-error">
+          <small *ngIf="f['password'].errors['required']">Password is required</small>
+          <small *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters</small>
+        </div>
+      </div>
+
+      <button type="submit" class="register-button" [disabled]="loading">
+        <span *ngIf="loading" class="spinner"></span>
+        <span *ngIf="!loading">Register</span>
+      </button>
+
+      <div class="login-link">
+        <p>Already have an account? <a routerLink="/login">Login here</a></p>
+      </div>
+    </form>
   </div>
-
-  <div *ngIf="successMessage" class="success-message">
-    <i class="bi bi-check-circle"></i> {{successMessage}}
-    <button class="close-btn" (click)="closeSuccessMessage()">×</button>
-  </div>
-
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <input type="text" id="firstName" formControlName="firstName" placeholder="First Name" required
-        [ngClass]="{'is-invalid': submitted && f['firstName'].errors}">
-      <div *ngIf="submitted && f['firstName'].errors" class="validation-error">
-        <div *ngIf="f['firstName'].errors['required']">First name is required</div>
-        <div *ngIf="f['firstName'].errors['minlength']">First name must be at least 2 characters</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <input type="text" id="lastName" formControlName="lastName" placeholder="Last Name" required
-        [ngClass]="{'is-invalid': submitted && f['lastName'].errors}">
-      <div *ngIf="submitted && f['lastName'].errors" class="validation-error">
-        <div *ngIf="f['lastName'].errors['required']">Last name is required</div>
-        <div *ngIf="f['lastName'].errors['minlength']">Last name must be at least 2 characters</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <input type="tel" id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" required
-        [ngClass]="{'is-invalid': submitted && f['phoneNumber'].errors}">
-      <div *ngIf="submitted && f['phoneNumber'].errors" class="validation-error">
-        <div *ngIf="f['phoneNumber'].errors['required']">Phone number is required</div>
-        <div *ngIf="f['phoneNumber'].errors['pattern'] || f['phoneNumber'].errors['invalidFormat']">Please enter a valid
-          phone number</div>
-        <div *ngIf="f['phoneNumber'].errors['invalidLength']">Phone number must be between 10-15 digits</div>
-        <div *ngIf="f['phoneNumber'].errors['invalidPrefix']">Invalid phone number prefix</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <input type="email" id="email" formControlName="email" placeholder="Email Address" required
-        [ngClass]="{'is-invalid': submitted && f['email'].errors}">
-      <div *ngIf="submitted && f['email'].errors" class="validation-error">
-        <div *ngIf="f['email'].errors['required']">Email is required</div>
-        <div *ngIf="f['email'].errors['email']">Please enter a valid email address</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <input type="password" id="password" formControlName="password" placeholder="Password" required
-        [ngClass]="{'is-invalid': submitted && f['password'].errors}">
-      <div *ngIf="submitted && f['password'].errors" class="validation-error">
-        <div *ngIf="f['password'].errors['required']">Password is required</div>
-        <div *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters</div>
-      </div>
-    </div>
-
-    <button type="submit" [disabled]="loading">
-      <span *ngIf="loading" class="spinner"></span>
-      <span *ngIf="!loading">Register</span>
-    </button>
-  </form>
-
-  <p class="login-link">Already have an account? <a routerLink="/login">Login here</a></p>
 </div>
