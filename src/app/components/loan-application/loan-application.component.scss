@@ -748,6 +748,27 @@ input[type="date"] {
     font-size: 15px;
     line-height: 1.5;
   }
+  
+  .required-notice {
+    margin-top: 10px;
+    font-weight: 500;
+    color: #d32f2f;
+  }
+}
+
+.no-documents-message {
+  background-color: #fff8e1;
+  border-left: 4px solid #ffc107;
+  padding: 15px;
+  margin-bottom: 25px;
+  border-radius: 4px;
+  
+  p {
+    margin: 0;
+    color: #e65100;
+    font-size: 15px;
+    line-height: 1.5;
+  }
 }
 
 // Error message animation
@@ -970,4 +991,17 @@ input[type="date"] {
   color: #dc3545;
   margin-left: 4px;
   font-weight: bold;
+}
+
+// Remove scrollers from input fields
+input[type="number"] {
+  /* For Firefox */
+  -moz-appearance: textfield;
+  
+  /* For Chrome, Safari, Edge, Opera */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }

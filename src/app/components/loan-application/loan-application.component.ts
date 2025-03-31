@@ -63,6 +63,7 @@ export class LoanApplicationComponent implements OnInit {
   showValidationErrorModal = false;
   missingFieldsList: string[] = [];
   savedDraft: any = null;
+  submissionAttempted: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -83,6 +84,9 @@ export class LoanApplicationComponent implements OnInit {
 
     // Check for saved draft in localStorage
     this.checkForSavedDraft();
+
+    // Add event listeners to prevent mousewheel from changing input values
+    this.preventScrollOnInputs();
   }
 
   checkForSavedDraft(): void {
@@ -417,10 +421,34 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   createDocumentForm(): FormGroup {
-    return this.fb.group({
-      type: ['', Validators.required],
-      file: [null, Validators.required]
+    const group = this.fb.group({
+      type: [''],
+      file: [null]
     });
+
+    // Add conditional validation
+    group.get('type')?.valueChanges.subscribe(value => {
+      const fileControl = group.get('file');
+      if (value) {
+        fileControl?.setValidators(Validators.required);
+      } else {
+        fileControl?.clearValidators();
+      }
+      fileControl?.updateValueAndValidity();
+    });
+
+    // Add validation when file changes
+    group.get('file')?.valueChanges.subscribe(value => {
+      const typeControl = group.get('type');
+      if (value) {
+        typeControl?.setValidators(Validators.required);
+      } else {
+        typeControl?.clearValidators();
+      }
+      typeControl?.updateValueAndValidity();
+    });
+
+    return group;
   }
 
   get employments(): FormArray {
@@ -441,6 +469,8 @@ export class LoanApplicationComponent implements OnInit {
 
   addEmployment(): void {
     this.employments.push(this.createEmploymentForm());
+    // Reapply scroll prevention for new inputs
+    this.preventScrollOnInputs();
   }
 
   removeEmployment(index: number): void {
@@ -449,6 +479,8 @@ export class LoanApplicationComponent implements OnInit {
 
   addDebt(): void {
     this.debts.push(this.createDebtForm());
+    // Reapply scroll prevention for new inputs
+    this.preventScrollOnInputs();
   }
 
   removeDebt(index: number): void {
@@ -457,6 +489,8 @@ export class LoanApplicationComponent implements OnInit {
 
   addAsset(): void {
     this.assets.push(this.createAssetForm());
+    // Reapply scroll prevention for new inputs
+    this.preventScrollOnInputs();
   }
 
   removeAsset(index: number): void {
@@ -465,6 +499,8 @@ export class LoanApplicationComponent implements OnInit {
 
   addDocument(): void {
     this.documents.push(this.createDocumentForm());
+    // Reapply scroll prevention for new inputs
+    this.preventScrollOnInputs();
   }
 
   removeDocument(index: number): void {
@@ -479,11 +515,27 @@ export class LoanApplicationComponent implements OnInit {
     }
   }
 
+  // Prevent mousewheel from changing input values
+  preventScrollOnInputs(): void {
+    // Wait for DOM to be ready
+    setTimeout(() => {
+      const numericInputs = document.querySelectorAll('input[type="number"]');
+      numericInputs.forEach(input => {
+        input.addEventListener('wheel', (e: Event) => {
+          e.preventDefault();
+        });
+      });
+    }, 1000);
+  }
+
+  // When we move between steps, reapply the scroll prevention
   nextStep(): void {
     // Check if the current step is valid before proceeding
     if (this.isCurrentStepValid()) {
       this.currentStep++;
       window.scrollTo(0, 0);
+      // Reapply scroll prevention for new inputs
+      this.preventScrollOnInputs();
     } else {
       // Mark all fields as touched to trigger validation messages
       this.markCurrentStepAsTouched();
@@ -590,6 +642,8 @@ export class LoanApplicationComponent implements OnInit {
     if (this.currentStep > 1) {
       this.currentStep--;
       window.scrollTo(0, 0);
+      // Reapply scroll prevention for new inputs
+      this.preventScrollOnInputs();
     }
   }
 
@@ -677,6 +731,8 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   submitApplication(): void {
+    this.submissionAttempted = true;
+
     if (this.validateForm()) {
       this.uploading = true;
       console.log('Starting application submission...');
@@ -882,6 +938,25 @@ export class LoanApplicationComponent implements OnInit {
           this.applicationForm.get('financialInfo.currentCreditLimit')?.invalid ||
           this.applicationForm.get('financialInfo.creditTotalUsage')?.invalid
         );
+      case 4:
+        // Document Upload Validation
+        const documentsArray = this.documents;
+        if (documentsArray.length === 0) {
+          return false; // Allow empty documents
+        }
+
+        // Check documents that have either type or file
+        for (let i = 0; i < documentsArray.length; i++) {
+          const document = documentsArray.at(i);
+          const hasType = !!document?.get('type')?.value;
+          const hasFile = !!document?.get('file')?.value;
+
+          // Invalid if one is filled but not the other
+          if ((hasType && !hasFile) || (!hasType && hasFile)) {
+            return true;
+          }
+        }
+        return false;
       default:
         return false;
     }
@@ -1013,16 +1088,19 @@ export class LoanApplicationComponent implements OnInit {
         break;
 
       case 4: // Document Upload
-        const documents = this.applicationForm.get('documents') as FormArray;
-        if (documents) {
-          for (let i = 0; i < documents.length; i++) {
-            const doc = documents.at(i) as FormGroup;
-            if (doc.get('type')?.invalid && doc.get('type')?.touched) {
-              missingFields.push(`Document ${i + 1}: Type`);
-            }
-            if (doc.get('file')?.invalid && doc.get('file')?.touched) {
-              missingFields.push(`Document ${i + 1}: File Upload`);
-            }
+        const documentsArray = this.documents;
+
+        for (let i = 0; i < documentsArray.length; i++) {
+          const document = documentsArray.at(i);
+          const hasType = !!document?.get('type')?.value;
+          const hasFile = !!document?.get('file')?.value;
+
+          if (hasType && !hasFile) {
+            missingFields.push(`Document ${i + 1} - File Upload is required when Document Type is selected`);
+          }
+
+          if (!hasType && hasFile) {
+            missingFields.push(`Document ${i + 1} - Document Type is required when a file is uploaded`);
           }
         }
         break;
@@ -1040,8 +1118,41 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   validateForm(): boolean {
-    // Implement your validation logic here
-    return this.isCurrentStepValid();
+    if (this.currentStep === 4) {
+      // Don't mark fields as touched to avoid inline error messages
+
+      // Check if documents are valid before submission
+      if (this.documents.length > 0) {
+        let hasInvalidDocument = false;
+        for (let i = 0; i < this.documents.length; i++) {
+          const doc = this.documents.at(i);
+          const hasType = !!doc?.get('type')?.value;
+          const hasFile = !!doc?.get('file')?.value;
+
+          if ((hasType && !hasFile) || (!hasType && hasFile)) {
+            hasInvalidDocument = true;
+          }
+        }
+
+        if (hasInvalidDocument) {
+          // Get the missing fields to show in validation modal
+          this.missingFieldsList = this.getMissingFieldsList();
+          // Show the validation error modal
+          this.showValidationErrorModal = true;
+          return false;
+        }
+      }
+    }
+
+    if (this.isCurrentStepValid()) {
+      return true;
+    } else {
+      // For other steps, mark fields as touched to show errors
+      this.markCurrentStepAsTouched();
+      this.missingFieldsList = this.getMissingFieldsList();
+      this.showValidationErrorModal = true;
+      return false;
+    }
   }
 
   goToDashboard(): void {
