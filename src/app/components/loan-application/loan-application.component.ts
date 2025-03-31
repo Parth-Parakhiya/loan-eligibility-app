@@ -679,24 +679,184 @@ export class LoanApplicationComponent implements OnInit {
   submitApplication(): void {
     if (this.validateForm()) {
       this.uploading = true;
+      console.log('Starting application submission...');
 
-      // Simulate API call with setTimeout
-      setTimeout(() => {
-        this.uploading = false;
+      // Get form values
+      const formValue = this.applicationForm.value;
+      console.log('Raw form values:', formValue);
 
-        // Set the API response directly instead of using window.alert
-        this.apiResponse = {
-          applicationId: Math.floor(Math.random() * 100) + 80, // Generate random ID between 80-180
-          status: 'APPROVED',
-          message: 'Your application has been processed successfully.'
-        };
+      // Create the request payload matching the exact format from the curl request
+      const applicationData = {
+        loanDetails: {
+          productType: formValue.productType,
+          requestedAmount: parseFloat(formValue.requestedAmount),
+          purposeDescription: formValue.purposeDescription,
+          requestedTermMonths: parseInt(formValue.requestedTermMonths)
+        },
+        personalInformation: {
+          firstName: formValue.personalInfo.firstName,
+          lastName: formValue.personalInfo.lastName,
+          emailAddress: formValue.personalInfo.email,
+          phoneNumber: formValue.personalInfo.phoneNumber,
+          dateOfBirth: formValue.personalInfo.dateOfBirth,
+          currentAddress: {
+            streetAddress: formValue.personalInfo.address.street,
+            city: formValue.personalInfo.address.city,
+            province: formValue.personalInfo.address.province,
+            postalCode: formValue.personalInfo.address.postalCode,
+            country: formValue.personalInfo.address.country,
+            durationAtAddressMonths: parseInt(formValue.personalInfo.address.residenceDuration)
+          }
+        },
+        financialInformation: {
+          employmentDetails: formValue.financialInfo.employmentDetails.map((emp: any) => ({
+            employerName: emp.employerName,
+            position: emp.position,
+            startDate: emp.startDate,
+            endDate: emp.endDate || null,
+            employmentType: this.mapEmploymentType(emp.employmentType), // Convert to match API format
+            employmentDurationMonths: parseInt(emp.employmentDuration)
+          })),
+          monthlyIncome: parseFloat(formValue.financialInfo.monthlyIncome),
+          monthlyExpenses: parseFloat(formValue.financialInfo.monthlyExpenses),
+          estimatedDebts: parseFloat(formValue.financialInfo.estimatedDebts),
+          creditScore: parseInt(formValue.financialInfo.creditScore),
+          currentCreditLimit: parseFloat(formValue.financialInfo.currentCreditLimit),
+          creditTotalUsage: parseFloat(formValue.financialInfo.creditTotalUsage),
+          existingDebts: formValue.financialInfo.existingDebts.map((debt: any) => ({
+            debtType: debt.type,
+            outstandingAmount: parseFloat(debt.outstandingAmount),
+            interestRate: parseFloat(debt.interestRate),
+            monthlyPayment: parseFloat(debt.monthlyPayment),
+            remainingTerm: parseInt(debt.remainingTermMonths),
+            lender: debt.lender,
+            paymentHistory: this.mapPaymentHistory(debt.paymentHistory) // Convert to match API format
+          })),
+          assets: formValue.financialInfo.assets.map((asset: any) => ({
+            assetType: asset.type,
+            description: asset.description,
+            estimatedValue: parseFloat(asset.estimatedValue)
+          }))
+        },
+        documents: []
+      };
 
-        // No window.alert call here
+      // Handle document uploads
+      const documentPromises = formValue.documents.map(async (doc: any) => {
+        if (doc.file instanceof File) {
+          try {
+            const base64String = await this.fileToBase64(doc.file);
+            return {
+              documentType: this.mapDocumentType(doc.type), // Convert to match API format
+              file: base64String
+            };
+          } catch (error) {
+            console.error('Error converting file to base64:', error);
+            return null;
+          }
+        }
+        return null;
+      });
 
-      }, 2000); // Simulate 2 second loading
+      // Wait for all document conversions to complete
+      Promise.all(documentPromises)
+        .then(documents => {
+          // Filter out any null values and add valid documents to the request
+          applicationData.documents = documents.filter(doc => doc !== null);
+          console.log('Final application data being sent:', applicationData);
+          this.sendApplicationToAPI(applicationData);
+        })
+        .catch(error => {
+          console.error('Error processing documents:', error);
+          this.uploading = false;
+          this.apiResponse = {
+            applicationId: 'ERROR',
+            status: 'ERROR',
+            message: 'Error processing documents: ' + error.message
+          };
+        });
     } else {
+      console.log('Form validation failed');
       this.showValidationErrorModal = true;
     }
+  }
+
+  // Helper methods to map enum values to match API format
+  private mapEmploymentType(type: string): string {
+    const mapping: { [key: string]: string } = {
+      'FULL_TIME': 'Full-time',
+      'PART_TIME': 'Part-time',
+      'UNEMPLOYED': 'Unemployed',
+      'STUDENT': 'Student'
+    };
+    return mapping[type] || type;
+  }
+
+  private mapPaymentHistory(history: string): string {
+    const mapping: { [key: string]: string } = {
+      'ON_TIME': 'On-time',
+      'LATE_LESS_30': 'Late <30 Days',
+      'LATE_30_60': 'Late 30-60 Days',
+      'LATE_GREATER_60': 'Late >60 Days'
+    };
+    return mapping[history] || history;
+  }
+
+  private mapDocumentType(type: string): string {
+    const mapping: { [key: string]: string } = {
+      'ID_PROOF': 'ID Proof',
+      'ADDRESS_PROOF': 'Address Proof',
+      'INCOME_PROOF': 'Income Proof',
+      'BANK_STATEMENT': 'Bank Statement',
+      'CREDIT_CARD_STATEMENT': 'Credit Card Statement',
+      'STUDY_PERMIT': 'Study Permit',
+      'PGWP': 'PGWP',
+      'OTHER': 'Other Document'
+    };
+    return mapping[type] || type;
+  }
+
+  // Helper method to convert File to base64
+  private async fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          // Remove the data:*/*;base64, prefix
+          const base64String = reader.result.split(',')[1];
+          resolve(base64String);
+        } else {
+          reject(new Error('Failed to convert file to base64'));
+        }
+      };
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  private sendApplicationToAPI(applicationData: any): void {
+    console.log('Sending application data to API:', applicationData);
+
+    this.loanService.createLoanApplication(applicationData).subscribe(
+      response => {
+        console.log('API Response:', response);
+        this.uploading = false;
+        this.apiResponse = response;
+
+        // Clear the draft from localStorage on successful submission
+        this.loanService.clearDraftFromLocalStorage();
+        localStorage.removeItem('loanApplicationDraft');
+      },
+      error => {
+        console.error('Error submitting application:', error);
+        this.uploading = false;
+        this.apiResponse = {
+          applicationId: 'ERROR',
+          status: 'ERROR',
+          message: 'Error submitting application: ' + (error.message || 'Please try again later.')
+        };
+      }
+    );
   }
 
   // Check if a specific step has invalid controls
@@ -882,40 +1042,6 @@ export class LoanApplicationComponent implements OnInit {
   validateForm(): boolean {
     // Implement your validation logic here
     return this.isCurrentStepValid();
-  }
-
-  private sendApplicationToAPI(applicationData: any): void {
-    console.log('Sending application data to API:', applicationData);
-
-    console.log('Credit values being sent to API:',
-      'Credit Score:', applicationData.financialInformation.creditScore,
-      'Credit Usage:', applicationData.financialInformation.creditTotalUsage,
-      'Credit Limit:', applicationData.financialInformation.currentCreditLimit
-    );
-
-    this.loanService.createLoanApplication(applicationData).subscribe(
-      response => {
-        this.uploading = false;
-        this.apiResponse = response;
-
-        // Clear the draft from localStorage on successful submission
-        this.loanService.clearDraftFromLocalStorage();
-        localStorage.removeItem('loanApplicationDraft'); // Backup clear in case the service method fails
-
-        // Don't show browser alert, use our custom modal via apiResponse
-        // Don't navigate automatically, let user click button in the modal
-      },
-      error => {
-        this.uploading = false;
-        console.error('Error submitting application:', error);
-
-        this.apiResponse = {
-          applicationId: 'ERROR',
-          status: 'ERROR',
-          message: 'Error submitting application. Please try again later.'
-        };
-      }
-    );
   }
 
   goToDashboard(): void {
