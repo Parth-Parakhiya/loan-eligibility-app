@@ -261,23 +261,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   getCreditScorePercentage(): number {
-    if (this.financialSummary && this.financialSummary.creditScore) {
-      // Assuming credit scores range from 300 to 850
-      const minScore = 300;
-      const maxScore = 850;
-      const score = this.financialSummary.creditScore.systemGeneratedCreditScore ||
-        this.financialSummary.creditScore.score;
+    const score = this.getCreditScore();
+    const minScore = 300;
+    const maxScore = 850;
 
-      // Convert to percentage (0-100%)
-      return ((score - minScore) / (maxScore - minScore)) * 100;
-    } else if (this.financialProfile && this.financialProfile.creditScore) {
-      // Fallback to the old method if financialSummary is not available
-      const minScore = 300;
-      const maxScore = 850;
-      const score = this.financialProfile.creditScore;
-      return ((score - minScore) / (maxScore - minScore)) * 100;
-    }
-    return 0;
+    // Calculate the percentage and round to 1 decimal place
+    return Math.round(((score - minScore) / (maxScore - minScore)) * 100 * 10) / 10;
   }
 
   getCreditScore(): number {
@@ -335,15 +324,28 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return `${percentage}%`;
   }
 
-  // Return the appropriate color class based on the credit score
-  getCreditScoreColorClass(): string {
+  // Calculate the circle progress for SVG
+  getCircleProgress(): string {
+    const score = this.getCreditScore();
+    const minScore = 300;
+    const maxScore = 850;
+    const normalizedScore = ((score - minScore) / (maxScore - minScore));
+
+    // Calculate the circumference of the circle
+    const circumference = 2 * Math.PI * 70; // radius is 70
+    const offset = circumference * (1 - normalizedScore);
+
+    return `${circumference} ${offset}`;
+  }
+
+  getCreditScoreColor(): string {
     const score = this.getCreditScore();
 
-    if (score >= 800) return 'excellent';
-    if (score >= 740) return 'very-good';
-    if (score >= 670) return 'good';
-    if (score >= 580) return 'fair';
-    return 'poor';
+    if (score >= 800) return '#673ab7'; // Excellent - Purple
+    if (score >= 740) return '#2196f3'; // Very Good - Blue
+    if (score >= 670) return '#4caf50'; // Good - Green
+    if (score >= 580) return '#ff9800'; // Fair - Orange
+    return '#f44336';                   // Poor - Red
   }
 
   // Get the current user's name from local storage
@@ -509,5 +511,126 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   retryLoadingApplications(): void {
     this.historyError = '';
     this.loadApplicationHistory();
+  }
+
+  // Calculate the angle for range markers
+  getRangeMarkerAngle(thresholdScore: number): number {
+    const minScore = 300;
+    const maxScore = 850;
+    const normalizedThreshold = (thresholdScore - minScore) / (maxScore - minScore);
+
+    // Convert to degrees (0 to 360)
+    return normalizedThreshold * 360;
+  }
+
+  // Calculate the angle for the current score indicator
+  getScoreIndicatorAngle(): number {
+    const minScore = 300;
+    const maxScore = 850;
+    const score = this.getCreditScore();
+    const normalizedScore = (score - minScore) / (maxScore - minScore);
+
+    // Convert to degrees (0 to 360)
+    return normalizedScore * 360;
+  }
+
+  // Get the difference between official and system-generated scores
+  getScoreDifference(): string {
+    if (!this.financialSummary?.creditScore?.systemGeneratedCreditScore) {
+      return '';
+    }
+
+    const officialScore = this.financialSummary.creditScore.score;
+    const systemScore = this.financialSummary.creditScore.systemGeneratedCreditScore;
+    const difference = systemScore - officialScore;
+
+    if (difference === 0) return 'Match';
+    return difference > 0 ? `+${difference}` : `${difference}`;
+  }
+
+  // Get appropriate class for score comparison badge
+  getScoreComparisonClass(): string {
+    if (!this.financialSummary?.creditScore?.systemGeneratedCreditScore) {
+      return '';
+    }
+
+    const officialScore = this.financialSummary.creditScore.score;
+    const systemScore = this.financialSummary.creditScore.systemGeneratedCreditScore;
+    const difference = systemScore - officialScore;
+
+    if (difference === 0) return 'match';
+    if (difference > 0) return 'higher';
+    return 'lower';
+  }
+
+  // Get appropriate icon for score comparison
+  getScoreComparisonIcon(): string {
+    if (!this.financialSummary?.creditScore?.systemGeneratedCreditScore) {
+      return '';
+    }
+
+    const officialScore = this.financialSummary.creditScore.score;
+    const systemScore = this.financialSummary.creditScore.systemGeneratedCreditScore;
+    const difference = systemScore - officialScore;
+
+    if (difference === 0) return 'bi-check-circle-fill';
+    if (difference > 0) return 'bi-arrow-up-circle-fill';
+    return 'bi-arrow-down-circle-fill';
+  }
+
+  // Get the system-generated credit score
+  getSystemGeneratedScore(): number {
+    if (this.financialSummary?.creditScore?.systemGeneratedCreditScore) {
+      return this.financialSummary.creditScore.systemGeneratedCreditScore;
+    }
+    return this.getCreditScore(); // Fallback to regular score if system score is not available
+  }
+
+  // Get the range for system-generated score
+  getSystemScoreRange(): string {
+    const systemScore = this.getSystemGeneratedScore();
+
+    if (systemScore >= 800) return 'Excellent';
+    if (systemScore >= 740) return 'Very Good';
+    if (systemScore >= 670) return 'Good';
+    if (systemScore >= 580) return 'Fair';
+    return 'Poor';
+  }
+
+  // Calculate percentage for system-generated score
+  getSystemScorePercentage(): number {
+    const systemScore = this.getSystemGeneratedScore();
+    const minScore = 300;
+    const maxScore = 850;
+
+    // Calculate the percentage and round to 1 decimal place
+    return Math.round(((systemScore - minScore) / (maxScore - minScore)) * 100 * 10) / 10;
+  }
+
+  // Get color based on system-generated score
+  getSystemScoreColor(): string {
+    const systemScore = this.getSystemGeneratedScore();
+
+    if (systemScore >= 800) return '#673ab7'; // Excellent - Purple
+    if (systemScore >= 740) return '#2196f3'; // Very Good - Blue
+    if (systemScore >= 670) return '#4caf50'; // Good - Green
+    if (systemScore >= 580) return '#ff9800'; // Fair - Orange
+    return '#f44336';                         // Poor - Red
+  }
+
+  // Determine if a category should be highlighted
+  getCategoryHighlight(category: string): string {
+    if (this.getSystemScoreRange() === category) {
+      return 'active';
+    }
+    return '';
+  }
+
+  // Determine if a segment should be highlighted
+  getSegmentHighlight(category: string): string {
+    if (this.getSystemScoreRange() === category) {
+      return 'active';
+    }
+    return '';
   }
 }

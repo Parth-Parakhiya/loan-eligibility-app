@@ -70,78 +70,90 @@
               </div>
             </div>
 
-            <!-- Credit Score Meter - Enhanced Dynamic Design -->
+            <!-- Credit Score Display - Simplified Design -->
             <div class="credit-score-container">
               <h5 class="credit-score-title">
-                <i class="bi bi-graph-up"></i> Credit Score: {{ getCreditScore() }}
+                <i class="bi bi-speedometer2"></i> Credit Score Overview
               </h5>
 
-              <div class="credit-score-meter-container">
-                <!-- Main Score Bar -->
-                <div class="credit-score-meter">
-                  <div class="credit-score-segments">
-                    <div class="segment poor"></div>
-                    <div class="segment fair"></div>
-                    <div class="segment good"></div>
-                    <div class="segment very-good"></div>
-                    <div class="segment excellent"></div>
+              <div class="credit-score-content">
+                <!-- Circle Progress with Score -->
+                <div class="score-circle-container">
+                  <div class="score-comparison-badge" *ngIf="financialSummary?.creditScore?.systemGeneratedCreditScore">
+                    <div class="comparison-icon" [ngClass]="getScoreComparisonClass()">
+                      <i class="bi" [ngClass]="getScoreComparisonIcon()"></i>
+                    </div>
+                    <div class="comparison-text">{{ getScoreDifference() }}</div>
                   </div>
 
-                  <!-- Score Marker - Dynamic Position -->
-                  <div class="score-marker" [style.left]="getCreditScorePosition()">
-                    <div class="marker-arrow"></div>
-                    <div class="marker-value" [ngClass]="getCreditScoreColorClass()">{{ getCreditScore() }}</div>
+                  <div class="progress-circle">
+                    <div class="circle-fill" [style.--fill-percentage]="getSystemScorePercentage()"
+                      [style.--fill-color]="getSystemScoreColor()"></div>
+                    <div class="score-value">
+                      <div class="current-score" [style.color]="getSystemScoreColor()">{{ getSystemGeneratedScore() }}
+                      </div>
+                      <div class="score-label">{{ getSystemScoreRange() }}</div>
+                      <div class="score-type">CREDIT SCORE</div>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Score Range Labels -->
-                <div class="credit-score-labels">
-                  <div class="range-label">
-                    <span>Poor</span>
-                    <small>300-579</small>
+                <!-- Score Comparison & Categories -->
+                <div class="score-details">
+                  <!-- Score Comparison Pills -->
+                  <div class="scores-comparison" *ngIf="financialSummary?.creditScore?.systemGeneratedCreditScore">
+                    <div class="score-pill official">
+                      <div class="pill-label">OFFICIAL</div>
+                      <div class="pill-value">{{ financialSummary.creditScore.score }}</div>
+                    </div>
+                    <div class="score-divider">VS</div>
+                    <div class="score-pill system">
+                      <div class="pill-label">SYSTEM</div>
+                      <div class="pill-value">{{ financialSummary.creditScore.systemGeneratedCreditScore }}</div>
+                    </div>
                   </div>
-                  <div class="range-label">
-                    <span>Fair</span>
-                    <small>580-669</small>
-                  </div>
-                  <div class="range-label">
-                    <span>Good</span>
-                    <small>670-739</small>
-                  </div>
-                  <div class="range-label">
-                    <span>Very Good</span>
-                    <small>740-799</small>
-                  </div>
-                  <div class="range-label">
-                    <span>Excellent</span>
-                    <small>800-850</small>
+
+                  <!-- Score Categories Bar -->
+                  <div class="score-bar-container">
+                    <div class="score-bar">
+                      <div class="segment poor" [ngClass]="getSegmentHighlight('Poor')"></div>
+                      <div class="segment fair" [ngClass]="getSegmentHighlight('Fair')"></div>
+                      <div class="segment good" [ngClass]="getSegmentHighlight('Good')"></div>
+                      <div class="segment very-good" [ngClass]="getSegmentHighlight('Very Good')"></div>
+                      <div class="segment excellent" [ngClass]="getSegmentHighlight('Excellent')"></div>
+                    </div>
+
+                    <div class="score-categories-simple">
+                      <div class="category" [ngClass]="getCategoryHighlight('Poor')">
+                        <span>Poor</span>
+                        <small>300-579</small>
+                      </div>
+                      <div class="category" [ngClass]="getCategoryHighlight('Fair')">
+                        <span>Fair</span>
+                        <small>580-669</small>
+                      </div>
+                      <div class="category" [ngClass]="getCategoryHighlight('Good')">
+                        <span>Good</span>
+                        <small>670-739</small>
+                      </div>
+                      <div class="category" [ngClass]="getCategoryHighlight('Very Good')">
+                        <span>Very Good</span>
+                        <small>740-799</small>
+                      </div>
+                      <div class="category" [ngClass]="getCategoryHighlight('Excellent')">
+                        <span>Excellent</span>
+                        <small>800-850</small>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Score Details -->
-              <div class="score-details">
-                <!-- System-generated score vs official score -->
-                <div *ngIf="financialSummary?.creditScore?.systemGeneratedCreditScore" class="score-comparison">
-                  <div class="score-type primary-score">
-                    <span class="score-value">{{ financialSummary.creditScore.score }}</span>
-                    <span class="score-label">Official Score</span>
-                  </div>
-                  <div class="score-divider">vs</div>
-                  <div class="score-type system-score">
-                    <span class="score-value">{{ financialSummary.creditScore.systemGeneratedCreditScore }}</span>
-                    <span class="score-label">System Generated</span>
-                  </div>
-                </div>
-
-                <div class="score-status">
-                  <i class="bi bi-check-circle-fill" [ngClass]="'text-' + getCreditScoreColorClass()"></i>
-                  <div>Your score is in the <strong [ngClass]="'text-' + getCreditScoreColorClass()">{{
-                      getCreditScoreRange() }}</strong> range</div>
-                </div>
-                <div class="score-update">
-                  <i class="bi bi-calendar-check"></i>
-                  <span>Last updated on <strong>{{ getCreditScoreLastUpdated() || 'March 14, 2025' }}</strong></span>
+              <!-- Footer with Date -->
+              <div class="score-footer">
+                <div class="last-updated">
+                  <i class="bi bi-clock-history"></i>
+                  <span>Last updated: {{ getCreditScoreLastUpdated() }}</span>
                 </div>
               </div>
             </div>

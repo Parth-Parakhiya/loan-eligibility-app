@@ -186,252 +186,349 @@
       }
     }
 
-    // Credit Score Meter - Enhanced Design
+    // Credit Score Container - Simplified Design
     .credit-score-container {
-      margin: 25px 0;
-      padding: 20px;
       background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      margin: 30px 0;
       
       .credit-score-title {
         color: #1b5e20;
+        font-size: 1.2rem;
         font-weight: 600;
-        margin-bottom: 15px;
-        font-size: 1.1rem;
+        margin-bottom: 20px;
         display: flex;
         align-items: center;
         
         i {
-          color: #4caf50;
-          margin-right: 8px;
+          color: #1b5e20;
+          font-size: 1.4rem;
+          margin-right: 10px;
         }
       }
       
-      .credit-score-meter-container {
-        margin-bottom: 15px;
-      }
-      
-      .credit-score-meter {
-        height: 8px;
-        position: relative;
-        margin: 25px 0 5px;
+      .credit-score-content {
+        display: flex;
+        flex-direction: column;
         
-        .credit-score-segments {
-          display: flex;
-          width: 100%;
-          height: 100%;
-          border-radius: 10px;
-          overflow: hidden;
-          
-          .segment {
-            height: 100%;
-            flex: 1;
-            
-            &.poor {
-              background-color: #f44336;
-            }
-            
-            &.fair {
-              background-color: #ff9800;
-            }
-            
-            &.good {
-              background-color: #4caf50;
-            }
-            
-            &.very-good {
-              background-color: #2196f3;
-            }
-            
-            &.excellent {
-              background-color: #673ab7;
-            }
-          }
+        @media (min-width: 768px) {
+          flex-direction: row;
         }
         
-        .score-marker {
-          position: absolute;
-          bottom: 100%;
-          transform: translateX(-50%);
-          margin-bottom: 5px;
-          transition: left 0.5s ease;
+        .score-circle-container {
+          position: relative;
+          width: 220px;
+          height: 220px;
+          margin: 0 auto 30px;
           
-          .marker-arrow {
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid #1b5e20;
-            margin: 0 auto;
+          @media (min-width: 768px) {
+            margin: 0 30px 0 0;
           }
           
-          .marker-value {
-            background-color: #1b5e20;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
-            padding: 3px 8px;
-            border-radius: 15px;
+          .score-comparison-badge {
             position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-bottom: 3px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            min-width: 40px;
-            text-align: center;
-            transition: background-color 0.3s ease;
+            top: 15px;
+            right: 10px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
             
-            // Different colors for different score ranges
-            &.poor {
-              background-color: #f44336;
+            .comparison-icon {
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              
+              i {
+                font-size: 1rem;
+                color: white;
+              }
+              
+              &.lower {
+                background-color: #f44336;
+              }
+              
+              &.higher {
+                background-color: #4caf50;
+              }
+              
+              &.match {
+                background-color: #2196f3;
+              }
             }
             
-            &.fair {
-              background-color: #ff9800;
+            .comparison-text {
+              font-weight: 600;
+              font-size: 0.95rem;
+              color: #333;
+            }
+          }
+          
+          .progress-circle {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            .circle-fill {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+              background: conic-gradient(
+                var(--fill-color, #4caf50) 0% calc(var(--fill-percentage) * 1%),
+                #f5f5f5 calc(var(--fill-percentage) * 1%) 100%
+              );
+              transform: rotate(-90deg);
             }
             
-            &.good {
-              background-color: #4caf50;
-            }
-            
-            &.very-good {
-              background-color: #2196f3;
-            }
-            
-            &.excellent {
-              background-color: #673ab7;
+            .score-value {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              text-align: center;
+              background-color: white;
+              border-radius: 50%;
+              width: 75%;
+              height: 75%;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              
+              .current-score {
+                font-size: 2.8rem;
+                font-weight: 700;
+                line-height: 1;
+                color: #4caf50;
+              }
+              
+              .score-label {
+                font-size: 1.2rem;
+                font-weight: 500;
+                color: #555;
+                margin: 3px 0;
+              }
+              
+              .score-type {
+                font-size: 0.65rem;
+                color: #777;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
             }
           }
         }
-      }
-      
-      .credit-score-labels {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 10px;
-        padding: 0 2px;
         
-        .range-label {
+        .score-details {
           flex: 1;
-          text-align: center;
           display: flex;
           flex-direction: column;
-          align-items: center;
           
-          span {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 2px;
-          }
-          
-          small {
-            font-size: 0.65rem;
-            color: #757575;
-          }
-          
-          &:nth-child(1) span { color: #f44336; }
-          &:nth-child(2) span { color: #ff9800; }
-          &:nth-child(3) span { color: #4caf50; }
-          &:nth-child(4) span { color: #2196f3; }
-          &:nth-child(5) span { color: #673ab7; }
-        }
-      }
-      
-      // Score comparison section (System vs. Official)
-      .score-comparison {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(0, 0, 0, 0.03);
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 15px;
-        
-        .score-type {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 0 15px;
-          
-          .score-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-          }
-          
-          .score-label {
-            font-size: 0.7rem;
-            color: #757575;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          }
-          
-          &.primary-score .score-value {
-            color: #1b5e20;
-          }
-          
-          &.system-score .score-value {
-            color: #1565c0;
-          }
-        }
-        
-        .score-divider {
-          color: #757575;
-          font-size: 0.8rem;
-          font-weight: 600;
-          padding: 0 10px;
-        }
-      }
-      
-      .score-details {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #e0e0e0;
-        
-        .score-status {
-          display: flex;
-          align-items: center;
-          margin-bottom: 12px;
-          
-          i {
-            margin-right: 10px;
-            font-size: 1.1rem;
+          .scores-comparison {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
             
-            &.text-poor { color: #f44336; }
-            &.text-fair { color: #ff9800; }
-            &.text-good { color: #4caf50; }
-            &.text-very-good { color: #2196f3; }
-            &.text-excellent { color: #673ab7; }
+            .score-pill {
+              flex: 1;
+              text-align: center;
+              background-color: white;
+              padding: 15px;
+              border-radius: 25px;
+              box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+              
+              .pill-label {
+                font-size: 0.7rem;
+                color: #777;
+                letter-spacing: 0.5px;
+                margin-bottom: 5px;
+              }
+              
+              .pill-value {
+                font-size: 1.8rem;
+                font-weight: 700;
+              }
+              
+              &.official .pill-value {
+                color: #1b5e20;
+              }
+              
+              &.system .pill-value {
+                color: #0d47a1;
+              }
+            }
+            
+            .score-divider {
+              font-weight: 700;
+              color: #777;
+              font-size: 1rem;
+            }
           }
           
-          div {
-            font-size: 0.9rem;
+          .score-bar-container {
+            margin-top: 20px;
+          
+            .score-bar {
+              position: relative;
+              height: 10px;
+              display: flex;
+              width: 100%;
+              border-radius: 6px;
+              overflow: hidden;
+              margin-bottom: 15px;
+              
+              .segment {
+                height: 100%;
+                flex: 1;
+                transition: all 0.3s ease;
+                position: relative;
+                
+                &.poor { background-color: #f44336; }
+                &.fair { background-color: #ff9800; }
+                &.good { background-color: #4caf50; }
+                &.very-good { background-color: #2196f3; }
+                &.excellent { background-color: #673ab7; }
+                
+                &.active {
+                  height: 14px;
+                  transform: scaleY(1.4);
+                  z-index: 2;
+                  
+                  &.poor { box-shadow: 0 0 8px rgba(244, 67, 54, 0.6); }
+                  &.fair { box-shadow: 0 0 8px rgba(255, 152, 0, 0.6); }
+                  &.good { box-shadow: 0 0 8px rgba(76, 175, 80, 0.6); }
+                  &.very-good { box-shadow: 0 0 8px rgba(33, 150, 243, 0.6); }
+                  &.excellent { box-shadow: 0 0 8px rgba(103, 58, 183, 0.6); }
+                }
+              }
+            }
             
-            strong {
-              &.text-poor { color: #f44336; }
-              &.text-fair { color: #ff9800; }
-              &.text-good { color: #4caf50; }
-              &.text-very-good { color: #2196f3; }
-              &.text-excellent { color: #673ab7; }
+            .score-categories-simple {
+              display: flex;
+              justify-content: space-between;
+              margin-top: 10px;
+              
+              .category {
+                flex: 1;
+                text-align: center;
+                padding: 5px;
+                border-radius: 8px;
+                display: flex;
+                flex-direction: column;
+                transition: all 0.3s ease;
+                
+                span {
+                  font-size: 0.8rem;
+                  font-weight: 500;
+                  color: #555;
+                }
+                
+                small {
+                  font-size: 0.7rem;
+                  color: #777;
+                }
+                
+                &.active {
+                  background-color: rgba(0, 0, 0, 0.05);
+                  transform: translateY(-4px);
+                  position: relative;
+                  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+                  
+                  &::before {
+                    content: '';
+                    position: absolute;
+                    bottom: -5px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 40%;
+                    height: 3px;
+                    border-radius: 3px;
+                  }
+                  
+                  span {
+                    font-weight: 700;
+                    font-size: 0.9rem;
+                  }
+                  
+                  small {
+                    font-weight: 600;
+                  }
+                  
+                  &:nth-child(1) {
+                    span { color: #f44336; }
+                    &::before { background-color: #f44336; }
+                  }
+                  
+                  &:nth-child(2) {
+                    span { color: #ff9800; }
+                    &::before { background-color: #ff9800; }
+                  }
+                  
+                  &:nth-child(3) {
+                    span { color: #4caf50; }
+                    &::before { background-color: #4caf50; }
+                  }
+                  
+                  &:nth-child(4) {
+                    span { color: #2196f3; }
+                    &::before { background-color: #2196f3; }
+                  }
+                  
+                  &:nth-child(5) {
+                    span { color: #673ab7; }
+                    &::before { background-color: #673ab7; }
+                  }
+                }
+              }
             }
           }
         }
+      }
+      
+      .score-footer {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
         
-        .score-update {
+        .last-updated {
           display: flex;
           align-items: center;
+          gap: 8px;
+          color: #777;
           font-size: 0.85rem;
-          color: #616161;
           
           i {
-            margin-right: 10px;
             color: #2196f3;
+            font-size: 1rem;
           }
         }
       }
     }
     
+    @keyframes progress {
+      0% {
+        stroke-dasharray: 0 100;
+      }
+    }
+
     // Financial Health Gauge
     .financial-health-gauge {
       margin: 30px 0 0;
