@@ -878,11 +878,16 @@
     background-color: rgba(76, 175, 80, 0.1);
     box-shadow: 0 6px 12px rgba(76, 175, 80, 0.15);
     animation: float 3s ease-in-out infinite;
+    position: relative;
     
     i {
       font-size: 2.8rem;
       color: #4caf50;
       transition: transform 0.3s ease;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
     
     &.error-icon {
@@ -1040,11 +1045,12 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        font-size: 2.5rem;
       }
     }
     
     &:hover .empty-state-icon i {
-      transform: scale(1.1);
+      transform: translate(-50%, -50%) scale(1.1);
     }
   }
   
@@ -1057,6 +1063,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        font-size: 2.5rem;
       }
     }
     
@@ -1118,7 +1125,7 @@
     }
     
     &:hover .empty-state-icon i {
-      transform: scale(1.1) rotate(10deg);
+      transform: translate(-50%, -50%) scale(1.1) rotate(10deg);
     }
   }
 }

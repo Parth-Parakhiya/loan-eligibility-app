@@ -27,7 +27,7 @@
           <!-- Empty state for Financial Summary -->
           <div *ngIf="!loading && (!getMonthlyIncome() || !getCreditScore())" class="empty-state financial-empty-state">
             <div class="empty-state-icon">
-              <i class="bi bi-cash-stack"></i>
+              <i class="bi bi-cash"></i>
             </div>
             <h4>Get Started with Your First Loan</h4>
             <p>Complete your financial profile to explore loan options that match your needs.</p>
@@ -199,7 +199,7 @@
           <!-- Improved Error Message - Now showing as empty state -->
           <div *ngIf="historyError && !historyLoading" class="empty-state loan-empty-state">
             <div class="empty-state-icon">
-              <i class="bi bi-folder-x"></i>
+              <i class="bi bi-file-x"></i>
             </div>
             <h4>No Loan Applications Found</h4>
             <p>Your loan applications list is empty. Feel free to apply for a loan when you're ready.</p>
@@ -209,7 +209,7 @@
           <div *ngIf="!historyLoading && !historyError && (!applicationHistory || applicationHistory.length === 0)"
             class="empty-state loan-empty-state">
             <div class="empty-state-icon">
-              <i class="bi bi-file-earmark-text"></i>
+              <i class="bi bi-file-earmark-x"></i>
             </div>
             <h4>No Loan Applications Yet</h4>
             <p>You haven't applied for any loans. Start your financial journey today!</p>
