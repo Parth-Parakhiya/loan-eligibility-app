@@ -963,3 +963,11 @@ input[type="date"] {
     opacity: 1;
   }
 }
+
+// Required field asterisk style
+.required-field::after {
+  content: '*';
+  color: #dc3545;
+  margin-left: 4px;
+  font-weight: bold;
+}
