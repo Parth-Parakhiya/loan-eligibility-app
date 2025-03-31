@@ -34,18 +34,19 @@
     </div>
 
     <!-- API Response Feedback (when available) -->
-    <div *ngIf="apiResponse" class="api-response-feedback" [ngClass]="apiResponse.status.toLowerCase()">
-      <div class="response-content">
-        <h3>Application Status</h3>
-        <div class="response-details">
-          <p><strong>Application ID:</strong> {{apiResponse.applicationId}}</p>
-          <p><strong>Status:</strong> {{apiResponse.status}}</p>
-          <p><strong>Message:</strong> {{apiResponse.message}}</p>
-        </div>
-        <div class="response-actions">
-          <button type="button" (click)="dismissResponse()" class="dismiss-button">Dismiss</button>
-          <button type="button" (click)="router.navigate(['/dashboard'])" class="goto-dashboard-button">Go to
-            Dashboard</button>
+    <div *ngIf="apiResponse" class="api-response-overlay">
+      <div class="api-response-modal">
+        <div class="api-response-content">
+          <div class="response-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h3>Application Submitted</h3>
+          <div class="application-id">Application ID: <span>#{{apiResponse.applicationId}}</span></div>
+          <p class="response-message">Your application has been submitted successfully. You can check your application
+            status in the dashboard.</p>
+          <div class="response-actions">
+            <button type="button" class="goto-dashboard-button" (click)="goToDashboard()">Go to Dashboard</button>
+          </div>
         </div>
       </div>
     </div>

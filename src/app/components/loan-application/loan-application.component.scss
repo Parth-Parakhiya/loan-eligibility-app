@@ -857,3 +857,109 @@ input[type="date"] {
     }
   }
 }
+
+// API Response Modal Styles
+.api-response-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.api-response-modal {
+  background-color: white;
+  border-radius: 12px;
+  padding: 35px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+}
+
+.api-response-content {
+  text-align: center;
+
+  .response-icon {
+    margin-bottom: 20px;
+
+    i {
+      font-size: 4.5rem;
+      color: #2e7d32;
+    }
+  }
+
+  h3 {
+    color: #2e7d32;
+    font-size: 1.75rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .application-id {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: #666;
+    
+    span {
+      font-weight: 600;
+      color: #2e7d32;
+    }
+  }
+
+  .response-message {
+    color: #555;
+    margin: 0 0 25px;
+    line-height: 1.5;
+    font-size: 1.1rem;
+  }
+
+  .response-actions {
+    .goto-dashboard-button {
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      
+      &:hover {
+        background-color: #1b5e20;
+        transform: translateY(-1px);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

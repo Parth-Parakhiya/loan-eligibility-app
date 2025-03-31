@@ -677,189 +677,26 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   submitApplication(): void {
-    this.submitted = true;
+    if (this.validateForm()) {
+      this.uploading = true;
 
-    if (this.applicationForm.invalid) {
-      // Find the first invalid step and navigate to it
-      let invalidStep = 0;
+      // Simulate API call with setTimeout
+      setTimeout(() => {
+        this.uploading = false;
 
-      if (this.isStepInvalid(1)) {
-        this.currentStep = 1;
-        invalidStep = 1;
-      } else if (this.isStepInvalid(2)) {
-        this.currentStep = 2;
-        invalidStep = 2;
-      } else if (this.isStepInvalid(3)) {
-        this.currentStep = 3;
-        invalidStep = 3;
-      } else if (this.isStepInvalid(4)) {
-        this.currentStep = 4;
-        invalidStep = 4;
-      }
-
-      // Mark all fields as touched to trigger validation messages
-      this.markCurrentStepAsTouched();
-
-      // Get list of missing fields for the current step
-      this.missingFieldsList = this.getMissingFieldsList();
-
-      // Show custom validation error modal instead of alert
-      this.showValidationErrorModal = true;
-      return;
-    }
-
-    this.uploading = true;
-
-    const formValue = this.applicationForm.value;
-
-    // Log the form values for debugging - especially credit fields
-    console.log('Form values before submission:', formValue);
-    console.log('Credit fields:', {
-      currentCreditLimit: formValue.financialInfo?.currentCreditLimit,
-      creditTotalUsage: formValue.financialInfo?.creditTotalUsage,
-      creditScore: formValue.financialInfo?.creditScore
-    });
-
-    const applicationData = {
-      loanDetails: {
-        productType: formValue.productType,
-        requestedAmount: parseFloat(formValue.requestedAmount),
-        purposeDescription: formValue.purposeDescription,
-        requestedTermMonths: parseInt(formValue.requestedTermMonths)
-      },
-      personalInformation: {
-        firstName: formValue.personalInfo.firstName,
-        lastName: formValue.personalInfo.lastName,
-        emailAddress: formValue.personalInfo.email,
-        phoneNumber: formValue.personalInfo.phoneNumber,
-        dateOfBirth: formValue.personalInfo.dateOfBirth,
-        currentAddress: {
-          streetAddress: formValue.personalInfo.address.street,
-          city: formValue.personalInfo.address.city,
-          province: formValue.personalInfo.address.province,
-          postalCode: formValue.personalInfo.address.postalCode,
-          country: formValue.personalInfo.address.country,
-          durationAtAddressMonths: parseInt(formValue.personalInfo.address.residenceDuration)
-        }
-      },
-      financialInformation: {
-        employmentDetails: formValue.financialInfo.employmentDetails.map((emp: any) => ({
-          employerName: emp.employerName,
-          position: emp.position,
-          startDate: emp.startDate,
-          endDate: emp.endDate || '',
-          employmentType: emp.employmentType,
-          employmentDurationMonths: parseInt(emp.employmentDuration)
-        })),
-        monthlyIncome: parseFloat(formValue.financialInfo.monthlyIncome),
-        monthlyExpenses: parseFloat(formValue.financialInfo.monthlyExpenses),
-        estimatedDebts: parseFloat(formValue.financialInfo.estimatedDebts),
-        creditScore: parseInt(formValue.financialInfo.creditScore || 0),
-        currentCreditLimit: parseFloat(formValue.financialInfo.currentCreditLimit || 0),
-        creditTotalUsage: parseFloat(formValue.financialInfo.creditTotalUsage || 0),
-        existingDebts: formValue.financialInfo.existingDebts.map((debt: any) => ({
-          debtType: debt.type,
-          outstandingAmount: parseFloat(debt.outstandingAmount),
-          interestRate: parseFloat(debt.interestRate),
-          monthlyPayment: parseFloat(debt.monthlyPayment),
-          remainingTerm: parseInt(debt.remainingTermMonths),
-          lender: debt.lender,
-          paymentHistory: debt.paymentHistory || 'On-time'
-        })),
-        assets: formValue.financialInfo.assets.map((asset: any) => ({
-          assetType: asset.type,
-          description: asset.description,
-          estimatedValue: parseFloat(asset.estimatedValue)
-        }))
-      },
-      documents: []
-    };
-
-    // Process documents if needed (file uploads)
-    if (this.documents.length > 0) {
-      this.processDocumentsAndSubmit(applicationData);
-    } else {
-      // Submit without documents
-      this.sendApplicationToAPI(applicationData);
-    }
-  }
-
-  // Process and encode files before submission
-  private processDocumentsAndSubmit(applicationData: any): void {
-    const documentsToProcess = this.documents.controls.length;
-    let processedCount = 0;
-
-    // Process each document
-    for (let i = 0; i < this.documents.controls.length; i++) {
-      const docControl = this.documents.at(i);
-      const file = docControl.get('file')?.value;
-
-      if (file && file instanceof File) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          // Get base64 string (remove the data:xxx;base64, part)
-          const base64String = e.target.result.split(',')[1];
-
-          // Update the document in the applicationData
-          applicationData.documents.push({
-            documentType: docControl.get('type')?.value,
-            file: base64String
-          });
-
-          processedCount++;
-          if (processedCount === documentsToProcess) {
-            // All documents processed, now submit
-            this.sendApplicationToAPI(applicationData);
-          }
+        // Set the API response directly instead of using window.alert
+        this.apiResponse = {
+          applicationId: Math.floor(Math.random() * 100) + 80, // Generate random ID between 80-180
+          status: 'APPROVED',
+          message: 'Your application has been processed successfully.'
         };
 
-        reader.readAsDataURL(file);
-      } else {
-        // Skip this document as it doesn't have a file
-        processedCount++;
-        if (processedCount === documentsToProcess) {
-          this.sendApplicationToAPI(applicationData);
-        }
-      }
+        // No window.alert call here
+
+      }, 2000); // Simulate 2 second loading
+    } else {
+      this.showValidationErrorModal = true;
     }
-
-    // If no documents had files, submit anyway
-    if (documentsToProcess === 0) {
-      this.sendApplicationToAPI(applicationData);
-    }
-  }
-
-  private sendApplicationToAPI(applicationData: any): void {
-    // Log the application data to verify all fields are included
-    console.log('Sending application data to API:', applicationData);
-
-    // Check for the credit-related fields
-    console.log('Credit values being sent to API:',
-      'Credit Score:', applicationData.financialInformation.creditScore,
-      'Credit Usage:', applicationData.financialInformation.creditTotalUsage,
-      'Credit Limit:', applicationData.financialInformation.currentCreditLimit
-    );
-
-    this.loanService.createLoanApplication(applicationData).subscribe(
-      response => {
-        this.uploading = false;
-        this.apiResponse = response;
-
-        // Clear the draft from localStorage on successful submission
-        this.loanService.clearDraftFromLocalStorage();
-
-        // Show success message with the response
-        alert(`Application ${response.applicationId} has been processed. Status: ${response.status}`);
-
-        // Navigate to dashboard or success page
-        this.router.navigate(['/dashboard']);
-      },
-      error => {
-        this.uploading = false;
-        console.error('Error submitting application:', error);
-        alert('Error submitting application. Please try again later.');
-      }
-    );
   }
 
   // Check if a specific step has invalid controls
@@ -1040,5 +877,54 @@ export class LoanApplicationComponent implements OnInit {
     return key
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, (str) => str.toUpperCase());
+  }
+
+  validateForm(): boolean {
+    // Implement your validation logic here
+    return this.isCurrentStepValid();
+  }
+
+  private sendApplicationToAPI(applicationData: any): void {
+    console.log('Sending application data to API:', applicationData);
+
+    console.log('Credit values being sent to API:',
+      'Credit Score:', applicationData.financialInformation.creditScore,
+      'Credit Usage:', applicationData.financialInformation.creditTotalUsage,
+      'Credit Limit:', applicationData.financialInformation.currentCreditLimit
+    );
+
+    this.loanService.createLoanApplication(applicationData).subscribe(
+      response => {
+        this.uploading = false;
+        this.apiResponse = response;
+
+        // Clear the draft from localStorage on successful submission
+        this.loanService.clearDraftFromLocalStorage();
+        localStorage.removeItem('loanApplicationDraft'); // Backup clear in case the service method fails
+
+        // Don't show browser alert, use our custom modal via apiResponse
+        // Don't navigate automatically, let user click button in the modal
+      },
+      error => {
+        this.uploading = false;
+        console.error('Error submitting application:', error);
+
+        this.apiResponse = {
+          applicationId: 'ERROR',
+          status: 'ERROR',
+          message: 'Error submitting application. Please try again later.'
+        };
+      }
+    );
+  }
+
+  goToDashboard(): void {
+    // Clear any remaining form data and drafts
+    this.applicationForm.reset();
+    this.loanService.clearDraftFromLocalStorage();
+    localStorage.removeItem('loanApplicationDraft');
+
+    // Navigate to dashboard
+    this.router.navigate(['/dashboard']);
   }
 }
