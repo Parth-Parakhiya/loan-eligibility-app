@@ -1,0 +1,8 @@
+<h3>Application {{apiResponse.applicationId}} Submitted</h3>
+<p>Status: <span class="status-text" [ngClass]="{
+      'status-approved': apiResponse.status === 'APPROVED' || !apiResponse.status,
+      'status-rejected': apiResponse.status === 'REJECTED',
+      'status-review': apiResponse.status === 'UNDER_REVIEW'
+    }">{{apiResponse.status || 'APPROVED'}}</span></p>
+<p>{{apiResponse.message || 'Your application has been successfully processed. You can check the status in your
+    dashboard.'}}</p>

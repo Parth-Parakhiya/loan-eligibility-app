@@ -63,6 +63,7 @@ export class LoanApplicationComponent implements OnInit {
   showValidationErrorModal = false;
   missingFieldsList: string[] = [];
   savedDraft: any = null;
+  submissionAttempted: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -83,6 +84,9 @@ export class LoanApplicationComponent implements OnInit {
 
     // Check for saved draft in localStorage
     this.checkForSavedDraft();
+
+    // Add event listeners to prevent mousewheel from changing input values
+    this.preventScrollOnInputs();
   }
 
   checkForSavedDraft(): void {
@@ -417,10 +421,34 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   createDocumentForm(): FormGroup {
-    return this.fb.group({
-      type: ['', Validators.required],
-      file: [null, Validators.required]
+    const group = this.fb.group({
+      type: [''],
+      file: [null]
     });
+
+    // Add conditional validation
+    group.get('type')?.valueChanges.subscribe(value => {
+      const fileControl = group.get('file');
+      if (value) {
+        fileControl?.setValidators(Validators.required);
+      } else {
+        fileControl?.clearValidators();
+      }
+      fileControl?.updateValueAndValidity();
+    });
+
+    // Add validation when file changes
+    group.get('file')?.valueChanges.subscribe(value => {
+      const typeControl = group.get('type');
+      if (value) {
+        typeControl?.setValidators(Validators.required);
+      } else {
+        typeControl?.clearValidators();
+      }
+      typeControl?.updateValueAndValidity();
+    });
+
+    return group;
   }
 
   get employments(): FormArray {
@@ -441,6 +469,8 @@ export class LoanApplicationComponent implements OnInit {
 
   addEmployment(): void {
     this.employments.push(this.createEmploymentForm());
+    // Reapply scroll prevention for new inputs
+    this.preventScrollOnInputs();
   }
 
   removeEmployment(index: number): void {
@@ -449,6 +479,8 @@ export class LoanApplicationComponent implements OnInit {
 
   addDebt(): void {
     this.debts.push(this.createDebtForm());
+    // Reapply scroll prevention for new inputs
+    this.preventScrollOnInputs();
   }
 
   removeDebt(index: number): void {
@@ -457,6 +489,8 @@ export class LoanApplicationComponent implements OnInit {
 
   addAsset(): void {
     this.assets.push(this.createAssetForm());
+    // Reapply scroll prevention for new inputs
+    this.preventScrollOnInputs();
   }
 
   removeAsset(index: number): void {
@@ -465,6 +499,8 @@ export class LoanApplicationComponent implements OnInit {
 
   addDocument(): void {
     this.documents.push(this.createDocumentForm());
+    // Reapply scroll prevention for new inputs
+    this.preventScrollOnInputs();
   }
 
   removeDocument(index: number): void {
@@ -479,11 +515,27 @@ export class LoanApplicationComponent implements OnInit {
     }
   }
 
+  // Prevent mousewheel from changing input values
+  preventScrollOnInputs(): void {
+    // Wait for DOM to be ready
+    setTimeout(() => {
+      const numericInputs = document.querySelectorAll('input[type="number"]');
+      numericInputs.forEach(input => {
+        input.addEventListener('wheel', (e: Event) => {
+          e.preventDefault();
+        });
+      });
+    }, 1000);
+  }
+
+  // When we move between steps, reapply the scroll prevention
   nextStep(): void {
     // Check if the current step is valid before proceeding
     if (this.isCurrentStepValid()) {
       this.currentStep++;
       window.scrollTo(0, 0);
+      // Reapply scroll prevention for new inputs
+      this.preventScrollOnInputs();
     } else {
       // Mark all fields as touched to trigger validation messages
       this.markCurrentStepAsTouched();
@@ -590,6 +642,8 @@ export class LoanApplicationComponent implements OnInit {
     if (this.currentStep > 1) {
       this.currentStep--;
       window.scrollTo(0, 0);
+      // Reapply scroll prevention for new inputs
+      this.preventScrollOnInputs();
     }
   }
 
@@ -677,187 +731,186 @@ export class LoanApplicationComponent implements OnInit {
   }
 
   submitApplication(): void {
-    this.submitted = true;
+    this.submissionAttempted = true;
 
-    if (this.applicationForm.invalid) {
-      // Find the first invalid step and navigate to it
-      let invalidStep = 0;
+    if (this.validateForm()) {
+      this.uploading = true;
+      console.log('Starting application submission...');
 
-      if (this.isStepInvalid(1)) {
-        this.currentStep = 1;
-        invalidStep = 1;
-      } else if (this.isStepInvalid(2)) {
-        this.currentStep = 2;
-        invalidStep = 2;
-      } else if (this.isStepInvalid(3)) {
-        this.currentStep = 3;
-        invalidStep = 3;
-      } else if (this.isStepInvalid(4)) {
-        this.currentStep = 4;
-        invalidStep = 4;
-      }
+      // Get form values
+      const formValue = this.applicationForm.value;
+      console.log('Raw form values:', formValue);
 
-      // Mark all fields as touched to trigger validation messages
-      this.markCurrentStepAsTouched();
+      // Create the request payload matching the exact format from the curl request
+      const applicationData = {
+        loanDetails: {
+          productType: formValue.productType,
+          requestedAmount: parseFloat(formValue.requestedAmount),
+          purposeDescription: formValue.purposeDescription,
+          requestedTermMonths: parseInt(formValue.requestedTermMonths)
+        },
+        personalInformation: {
+          firstName: formValue.personalInfo.firstName,
+          lastName: formValue.personalInfo.lastName,
+          emailAddress: formValue.personalInfo.email,
+          phoneNumber: formValue.personalInfo.phoneNumber,
+          dateOfBirth: formValue.personalInfo.dateOfBirth,
+          currentAddress: {
+            streetAddress: formValue.personalInfo.address.street,
+            city: formValue.personalInfo.address.city,
+            province: formValue.personalInfo.address.province,
+            postalCode: formValue.personalInfo.address.postalCode,
+            country: formValue.personalInfo.address.country,
+            durationAtAddressMonths: parseInt(formValue.personalInfo.address.residenceDuration)
+          }
+        },
+        financialInformation: {
+          employmentDetails: formValue.financialInfo.employmentDetails.map((emp: any) => ({
+            employerName: emp.employerName,
+            position: emp.position,
+            startDate: emp.startDate,
+            endDate: emp.endDate || null,
+            employmentType: this.mapEmploymentType(emp.employmentType), // Convert to match API format
+            employmentDurationMonths: parseInt(emp.employmentDuration)
+          })),
+          monthlyIncome: parseFloat(formValue.financialInfo.monthlyIncome),
+          monthlyExpenses: parseFloat(formValue.financialInfo.monthlyExpenses),
+          estimatedDebts: parseFloat(formValue.financialInfo.estimatedDebts),
+          creditScore: parseInt(formValue.financialInfo.creditScore),
+          currentCreditLimit: parseFloat(formValue.financialInfo.currentCreditLimit),
+          creditTotalUsage: parseFloat(formValue.financialInfo.creditTotalUsage),
+          existingDebts: formValue.financialInfo.existingDebts.map((debt: any) => ({
+            debtType: debt.type,
+            outstandingAmount: parseFloat(debt.outstandingAmount),
+            interestRate: parseFloat(debt.interestRate),
+            monthlyPayment: parseFloat(debt.monthlyPayment),
+            remainingTerm: parseInt(debt.remainingTermMonths),
+            lender: debt.lender,
+            paymentHistory: this.mapPaymentHistory(debt.paymentHistory) // Convert to match API format
+          })),
+          assets: formValue.financialInfo.assets.map((asset: any) => ({
+            assetType: asset.type,
+            description: asset.description,
+            estimatedValue: parseFloat(asset.estimatedValue)
+          }))
+        },
+        documents: []
+      };
 
-      // Get list of missing fields for the current step
-      this.missingFieldsList = this.getMissingFieldsList();
-
-      // Show custom validation error modal instead of alert
-      this.showValidationErrorModal = true;
-      return;
-    }
-
-    this.uploading = true;
-
-    const formValue = this.applicationForm.value;
-
-    // Log the form values for debugging - especially credit fields
-    console.log('Form values before submission:', formValue);
-    console.log('Credit fields:', {
-      currentCreditLimit: formValue.financialInfo?.currentCreditLimit,
-      creditTotalUsage: formValue.financialInfo?.creditTotalUsage,
-      creditScore: formValue.financialInfo?.creditScore
-    });
-
-    const applicationData = {
-      loanDetails: {
-        productType: formValue.productType,
-        requestedAmount: parseFloat(formValue.requestedAmount),
-        purposeDescription: formValue.purposeDescription,
-        requestedTermMonths: parseInt(formValue.requestedTermMonths)
-      },
-      personalInformation: {
-        firstName: formValue.personalInfo.firstName,
-        lastName: formValue.personalInfo.lastName,
-        emailAddress: formValue.personalInfo.email,
-        phoneNumber: formValue.personalInfo.phoneNumber,
-        dateOfBirth: formValue.personalInfo.dateOfBirth,
-        currentAddress: {
-          streetAddress: formValue.personalInfo.address.street,
-          city: formValue.personalInfo.address.city,
-          province: formValue.personalInfo.address.province,
-          postalCode: formValue.personalInfo.address.postalCode,
-          country: formValue.personalInfo.address.country,
-          durationAtAddressMonths: parseInt(formValue.personalInfo.address.residenceDuration)
+      // Handle document uploads
+      const documentPromises = formValue.documents.map(async (doc: any) => {
+        if (doc.file instanceof File) {
+          try {
+            const base64String = await this.fileToBase64(doc.file);
+            return {
+              documentType: this.mapDocumentType(doc.type), // Convert to match API format
+              file: base64String
+            };
+          } catch (error) {
+            console.error('Error converting file to base64:', error);
+            return null;
+          }
         }
-      },
-      financialInformation: {
-        employmentDetails: formValue.financialInfo.employmentDetails.map((emp: any) => ({
-          employerName: emp.employerName,
-          position: emp.position,
-          startDate: emp.startDate,
-          endDate: emp.endDate || '',
-          employmentType: emp.employmentType,
-          employmentDurationMonths: parseInt(emp.employmentDuration)
-        })),
-        monthlyIncome: parseFloat(formValue.financialInfo.monthlyIncome),
-        monthlyExpenses: parseFloat(formValue.financialInfo.monthlyExpenses),
-        estimatedDebts: parseFloat(formValue.financialInfo.estimatedDebts),
-        creditScore: parseInt(formValue.financialInfo.creditScore || 0),
-        currentCreditLimit: parseFloat(formValue.financialInfo.currentCreditLimit || 0),
-        creditTotalUsage: parseFloat(formValue.financialInfo.creditTotalUsage || 0),
-        existingDebts: formValue.financialInfo.existingDebts.map((debt: any) => ({
-          debtType: debt.type,
-          outstandingAmount: parseFloat(debt.outstandingAmount),
-          interestRate: parseFloat(debt.interestRate),
-          monthlyPayment: parseFloat(debt.monthlyPayment),
-          remainingTerm: parseInt(debt.remainingTermMonths),
-          lender: debt.lender,
-          paymentHistory: debt.paymentHistory || 'On-time'
-        })),
-        assets: formValue.financialInfo.assets.map((asset: any) => ({
-          assetType: asset.type,
-          description: asset.description,
-          estimatedValue: parseFloat(asset.estimatedValue)
-        }))
-      },
-      documents: []
-    };
+        return null;
+      });
 
-    // Process documents if needed (file uploads)
-    if (this.documents.length > 0) {
-      this.processDocumentsAndSubmit(applicationData);
+      // Wait for all document conversions to complete
+      Promise.all(documentPromises)
+        .then(documents => {
+          // Filter out any null values and add valid documents to the request
+          applicationData.documents = documents.filter(doc => doc !== null);
+          console.log('Final application data being sent:', applicationData);
+          this.sendApplicationToAPI(applicationData);
+        })
+        .catch(error => {
+          console.error('Error processing documents:', error);
+          this.uploading = false;
+          this.apiResponse = {
+            applicationId: 'ERROR',
+            status: 'ERROR',
+            message: 'Error processing documents: ' + error.message
+          };
+        });
     } else {
-      // Submit without documents
-      this.sendApplicationToAPI(applicationData);
+      console.log('Form validation failed');
+      this.showValidationErrorModal = true;
     }
   }
 
-  // Process and encode files before submission
-  private processDocumentsAndSubmit(applicationData: any): void {
-    const documentsToProcess = this.documents.controls.length;
-    let processedCount = 0;
+  // Helper methods to map enum values to match API format
+  private mapEmploymentType(type: string): string {
+    const mapping: { [key: string]: string } = {
+      'FULL_TIME': 'Full-time',
+      'PART_TIME': 'Part-time',
+      'UNEMPLOYED': 'Unemployed',
+      'STUDENT': 'Student'
+    };
+    return mapping[type] || type;
+  }
 
-    // Process each document
-    for (let i = 0; i < this.documents.controls.length; i++) {
-      const docControl = this.documents.at(i);
-      const file = docControl.get('file')?.value;
+  private mapPaymentHistory(history: string): string {
+    const mapping: { [key: string]: string } = {
+      'ON_TIME': 'On-time',
+      'LATE_LESS_30': 'Late <30 Days',
+      'LATE_30_60': 'Late 30-60 Days',
+      'LATE_GREATER_60': 'Late >60 Days'
+    };
+    return mapping[history] || history;
+  }
 
-      if (file && file instanceof File) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          // Get base64 string (remove the data:xxx;base64, part)
-          const base64String = e.target.result.split(',')[1];
+  private mapDocumentType(type: string): string {
+    const mapping: { [key: string]: string } = {
+      'ID_PROOF': 'ID Proof',
+      'ADDRESS_PROOF': 'Address Proof',
+      'INCOME_PROOF': 'Income Proof',
+      'BANK_STATEMENT': 'Bank Statement',
+      'CREDIT_CARD_STATEMENT': 'Credit Card Statement',
+      'STUDY_PERMIT': 'Study Permit',
+      'PGWP': 'PGWP',
+      'OTHER': 'Other Document'
+    };
+    return mapping[type] || type;
+  }
 
-          // Update the document in the applicationData
-          applicationData.documents.push({
-            documentType: docControl.get('type')?.value,
-            file: base64String
-          });
-
-          processedCount++;
-          if (processedCount === documentsToProcess) {
-            // All documents processed, now submit
-            this.sendApplicationToAPI(applicationData);
-          }
-        };
-
-        reader.readAsDataURL(file);
-      } else {
-        // Skip this document as it doesn't have a file
-        processedCount++;
-        if (processedCount === documentsToProcess) {
-          this.sendApplicationToAPI(applicationData);
+  // Helper method to convert File to base64
+  private async fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          // Remove the data:*/*;base64, prefix
+          const base64String = reader.result.split(',')[1];
+          resolve(base64String);
+        } else {
+          reject(new Error('Failed to convert file to base64'));
         }
-      }
-    }
-
-    // If no documents had files, submit anyway
-    if (documentsToProcess === 0) {
-      this.sendApplicationToAPI(applicationData);
-    }
+      };
+      reader.onerror = error => reject(error);
+    });
   }
 
   private sendApplicationToAPI(applicationData: any): void {
-    // Log the application data to verify all fields are included
     console.log('Sending application data to API:', applicationData);
-
-    // Check for the credit-related fields
-    console.log('Credit values being sent to API:',
-      'Credit Score:', applicationData.financialInformation.creditScore,
-      'Credit Usage:', applicationData.financialInformation.creditTotalUsage,
-      'Credit Limit:', applicationData.financialInformation.currentCreditLimit
-    );
 
     this.loanService.createLoanApplication(applicationData).subscribe(
       response => {
+        console.log('API Response:', response);
         this.uploading = false;
         this.apiResponse = response;
 
         // Clear the draft from localStorage on successful submission
         this.loanService.clearDraftFromLocalStorage();
-
-        // Show success message with the response
-        alert(`Application ${response.applicationId} has been processed. Status: ${response.status}`);
-
-        // Navigate to dashboard or success page
-        this.router.navigate(['/dashboard']);
+        localStorage.removeItem('loanApplicationDraft');
       },
       error => {
-        this.uploading = false;
         console.error('Error submitting application:', error);
-        alert('Error submitting application. Please try again later.');
+        this.uploading = false;
+        this.apiResponse = {
+          applicationId: 'ERROR',
+          status: 'ERROR',
+          message: 'Error submitting application: ' + (error.message || 'Please try again later.')
+        };
       }
     );
   }
@@ -885,6 +938,25 @@ export class LoanApplicationComponent implements OnInit {
           this.applicationForm.get('financialInfo.currentCreditLimit')?.invalid ||
           this.applicationForm.get('financialInfo.creditTotalUsage')?.invalid
         );
+      case 4:
+        // Document Upload Validation
+        const documentsArray = this.documents;
+        if (documentsArray.length === 0) {
+          return false; // Allow empty documents
+        }
+
+        // Check documents that have either type or file
+        for (let i = 0; i < documentsArray.length; i++) {
+          const document = documentsArray.at(i);
+          const hasType = !!document?.get('type')?.value;
+          const hasFile = !!document?.get('file')?.value;
+
+          // Invalid if one is filled but not the other
+          if ((hasType && !hasFile) || (!hasType && hasFile)) {
+            return true;
+          }
+        }
+        return false;
       default:
         return false;
     }
@@ -1016,16 +1088,19 @@ export class LoanApplicationComponent implements OnInit {
         break;
 
       case 4: // Document Upload
-        const documents = this.applicationForm.get('documents') as FormArray;
-        if (documents) {
-          for (let i = 0; i < documents.length; i++) {
-            const doc = documents.at(i) as FormGroup;
-            if (doc.get('type')?.invalid && doc.get('type')?.touched) {
-              missingFields.push(`Document ${i + 1}: Type`);
-            }
-            if (doc.get('file')?.invalid && doc.get('file')?.touched) {
-              missingFields.push(`Document ${i + 1}: File Upload`);
-            }
+        const documentsArray = this.documents;
+
+        for (let i = 0; i < documentsArray.length; i++) {
+          const document = documentsArray.at(i);
+          const hasType = !!document?.get('type')?.value;
+          const hasFile = !!document?.get('file')?.value;
+
+          if (hasType && !hasFile) {
+            missingFields.push(`Document ${i + 1} - File Upload is required when Document Type is selected`);
+          }
+
+          if (!hasType && hasFile) {
+            missingFields.push(`Document ${i + 1} - Document Type is required when a file is uploaded`);
           }
         }
         break;
@@ -1040,5 +1115,53 @@ export class LoanApplicationComponent implements OnInit {
     return key
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, (str) => str.toUpperCase());
+  }
+
+  validateForm(): boolean {
+    if (this.currentStep === 4) {
+      // Don't mark fields as touched to avoid inline error messages
+
+      // Check if documents are valid before submission
+      if (this.documents.length > 0) {
+        let hasInvalidDocument = false;
+        for (let i = 0; i < this.documents.length; i++) {
+          const doc = this.documents.at(i);
+          const hasType = !!doc?.get('type')?.value;
+          const hasFile = !!doc?.get('file')?.value;
+
+          if ((hasType && !hasFile) || (!hasType && hasFile)) {
+            hasInvalidDocument = true;
+          }
+        }
+
+        if (hasInvalidDocument) {
+          // Get the missing fields to show in validation modal
+          this.missingFieldsList = this.getMissingFieldsList();
+          // Show the validation error modal
+          this.showValidationErrorModal = true;
+          return false;
+        }
+      }
+    }
+
+    if (this.isCurrentStepValid()) {
+      return true;
+    } else {
+      // For other steps, mark fields as touched to show errors
+      this.markCurrentStepAsTouched();
+      this.missingFieldsList = this.getMissingFieldsList();
+      this.showValidationErrorModal = true;
+      return false;
+    }
+  }
+
+  goToDashboard(): void {
+    // Clear any remaining form data and drafts
+    this.applicationForm.reset();
+    this.loanService.clearDraftFromLocalStorage();
+    localStorage.removeItem('loanApplicationDraft');
+
+    // Navigate to dashboard
+    this.router.navigate(['/dashboard']);
   }
 }

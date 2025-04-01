@@ -42,8 +42,7 @@ export class RegisterComponent implements OnInit {
       password: ['', [
         Validators.required,
         Validators.minLength(8),
-        // Optional: Add more complex password validation
-        // Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)
       ]]
     });
   }

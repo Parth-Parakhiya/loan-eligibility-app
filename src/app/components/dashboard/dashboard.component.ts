@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { LoanApplicationService } from '../../services/loan-application.service';
 import { CustomerService } from '../../services/customer.service';
 import { AuthService } from '../../services/auth.service';
+import { FinancialSummaryService, FinancialSummary, CreditScore } from '../../services/financial-summary.service';
 import { LoanApplication } from '../../models/loan-application.model';
 import { Customer } from '../../models/customer.model';
 import { FinancialProfile } from '../../models/financial-profile.model';
@@ -18,23 +19,27 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   applicationHistory: any[] = [];
   customer: Customer | null = null;
   financialProfile: FinancialProfile | null = null;
+  financialSummary: FinancialSummary | null = null;
   loading = true;
   historyLoading = true;
   error = '';
   historyError = '';
   financialChart: any;
   applicationChart: any;
+  Math = Math; // Make Math available in the template
 
   constructor(
     private loanService: LoanApplicationService,
     private customerService: CustomerService,
     private authService: AuthService,
+    private financialSummaryService: FinancialSummaryService,
     public router: Router
   ) { }
 
   ngOnInit(): void {
     this.loadDashboardData();
     this.loadApplicationHistory();
+    this.loadFinancialSummary();
   }
 
   ngAfterViewInit(): void {
@@ -100,6 +105,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         console.error('Error loading application history', error);
         this.historyError = 'Failed to load application history. Please try again.';
         this.historyLoading = false;
+      }
+    );
+  }
+
+  loadFinancialSummary(): void {
+    this.financialSummaryService.getFinancialSummary().subscribe(
+      data => {
+        this.financialSummary = data;
+        console.log('Financial summary loaded:', data);
+      },
+      error => {
+        console.error('Error loading financial summary', error);
       }
     );
   }
@@ -244,15 +261,91 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   getCreditScorePercentage(): number {
-    if (!this.financialProfile || !this.financialProfile.creditScore) return 0;
-
-    // Assuming credit scores range from 300 to 850
+    const score = this.getCreditScore();
     const minScore = 300;
     const maxScore = 850;
-    const score = this.financialProfile.creditScore;
 
-    // Convert to percentage (0-100%)
-    return ((score - minScore) / (maxScore - minScore)) * 100;
+    // Calculate the percentage and round to 1 decimal place
+    return Math.round(((score - minScore) / (maxScore - minScore)) * 100 * 10) / 10;
+  }
+
+  getCreditScore(): number {
+    if (this.financialSummary && this.financialSummary.creditScore) {
+      return this.financialSummary.creditScore.systemGeneratedCreditScore ||
+        this.financialSummary.creditScore.score;
+    } else if (this.financialProfile && this.financialProfile.creditScore) {
+      return this.financialProfile.creditScore;
+    }
+    return 0;
+  }
+
+  getCreditScoreRange(): string {
+    if (this.financialSummary && this.financialSummary.creditScore) {
+      return this.financialSummary.creditScore.range;
+    }
+
+    const score = this.getCreditScore();
+
+    if (score >= 800) return 'Excellent';
+    if (score >= 740) return 'Very Good';
+    if (score >= 670) return 'Good';
+    if (score >= 580) return 'Fair';
+    return 'Poor';
+  }
+
+  getCreditScoreLastUpdated(): string {
+    if (this.financialSummary && this.financialSummary.creditScore) {
+      return this.formatDate(this.financialSummary.creditScore.lastUpdated);
+    }
+    return '';
+  }
+
+  getMonthlyIncome(): number {
+    if (this.financialSummary) {
+      return this.financialSummary.monthlyIncome;
+    } else if (this.financialProfile) {
+      return this.financialProfile.monthlyIncome;
+    }
+    return 0;
+  }
+
+  getMonthlyExpenses(): number {
+    if (this.financialSummary) {
+      return this.financialSummary.monthlyExpenses;
+    } else if (this.financialProfile) {
+      return this.financialProfile.monthlyExpenses;
+    }
+    return 0;
+  }
+
+  // Determine the exact left position for the credit score marker
+  getCreditScorePosition(): string {
+    const percentage = this.getCreditScorePercentage();
+    return `${percentage}%`;
+  }
+
+  // Calculate the circle progress for SVG
+  getCircleProgress(): string {
+    const score = this.getCreditScore();
+    const minScore = 300;
+    const maxScore = 850;
+    const normalizedScore = ((score - minScore) / (maxScore - minScore));
+
+    // Calculate the circumference of the circle
+    const circumference = 2 * Math.PI * 70; // radius is 70
+    const offset = circumference * (1 - normalizedScore);
+
+    return `${circumference} ${offset}`;
+  }
+
+  getCreditScoreColor(): string {
+    const score = this.getCreditScore();
+
+    if (score >= 800) return '#673ab7'; // Excellent - Purple
+    if (score >= 740) return '#2196f3'; // Very Good - Blue
+    if (score >= 670) return '#4caf50'; // Good - Green
+    if (score >= 580) return '#ff9800'; // Fair - Orange
+    return '#f44336';                   // Poor - Red
   }
 
   // Get the current user's name from local storage
@@ -380,5 +473,164 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     if (applicationId) {
       this.router.navigate(['/status', applicationId]);
     }
+  }
+
+  // Method to navigate to the financial profile page
+  navigateToFinancialProfile(): void {
+    this.router.navigate(['/profile/financial']);
+  }
+
+  // Method to estimate loan amount based on credit score and income
+  getEstimatedLoanAmount(): number {
+    const creditScore = this.getCreditScore();
+    const monthlyIncome = this.getMonthlyIncome();
+
+    // Default value if no data is available
+    if (!creditScore || !monthlyIncome) return 5000;
+
+    // Simple formula: estimated loan amount based on credit score and income
+    // This is a simplified example, actual loan eligibility would be more complex
+    let baseMultiplier = 6; // Default base is 6 months of income
+
+    // Adjust multiplier based on credit score
+    if (creditScore >= 800) {
+      baseMultiplier = 24; // Excellent - up to 24 months income
+    } else if (creditScore >= 740) {
+      baseMultiplier = 18; // Very Good - up to 18 months income
+    } else if (creditScore >= 670) {
+      baseMultiplier = 12; // Good - up to 12 months income
+    } else if (creditScore >= 580) {
+      baseMultiplier = 8; // Fair - up to 8 months income
+    }
+
+    // Calculate estimated amount (monthly income * multiplier)
+    return Math.round(monthlyIncome * baseMultiplier / 1000) * 1000; // Round to nearest thousand
+  }
+
+  // Method to retry loading applications when an error occurs
+  retryLoadingApplications(): void {
+    this.historyError = '';
+    this.loadApplicationHistory();
+  }
+
+  // Calculate the angle for range markers
+  getRangeMarkerAngle(thresholdScore: number): number {
+    const minScore = 300;
+    const maxScore = 850;
+    const normalizedThreshold = (thresholdScore - minScore) / (maxScore - minScore);
+
+    // Convert to degrees (0 to 360)
+    return normalizedThreshold * 360;
+  }
+
+  // Calculate the angle for the current score indicator
+  getScoreIndicatorAngle(): number {
+    const minScore = 300;
+    const maxScore = 850;
+    const score = this.getCreditScore();
+    const normalizedScore = (score - minScore) / (maxScore - minScore);
+
+    // Convert to degrees (0 to 360)
+    return normalizedScore * 360;
+  }
+
+  // Get the difference between official and system-generated scores
+  getScoreDifference(): string {
+    if (!this.financialSummary?.creditScore?.systemGeneratedCreditScore) {
+      return '';
+    }
+
+    const officialScore = this.financialSummary.creditScore.score;
+    const systemScore = this.financialSummary.creditScore.systemGeneratedCreditScore;
+    const difference = systemScore - officialScore;
+
+    if (difference === 0) return 'Match';
+    return difference > 0 ? `+${difference}` : `${difference}`;
+  }
+
+  // Get appropriate class for score comparison badge
+  getScoreComparisonClass(): string {
+    if (!this.financialSummary?.creditScore?.systemGeneratedCreditScore) {
+      return '';
+    }
+
+    const officialScore = this.financialSummary.creditScore.score;
+    const systemScore = this.financialSummary.creditScore.systemGeneratedCreditScore;
+    const difference = systemScore - officialScore;
+
+    if (difference === 0) return 'match';
+    if (difference > 0) return 'higher';
+    return 'lower';
+  }
+
+  // Get appropriate icon for score comparison
+  getScoreComparisonIcon(): string {
+    if (!this.financialSummary?.creditScore?.systemGeneratedCreditScore) {
+      return '';
+    }
+
+    const officialScore = this.financialSummary.creditScore.score;
+    const systemScore = this.financialSummary.creditScore.systemGeneratedCreditScore;
+    const difference = systemScore - officialScore;
+
+    if (difference === 0) return 'bi-check-circle-fill';
+    if (difference > 0) return 'bi-arrow-up-circle-fill';
+    return 'bi-arrow-down-circle-fill';
+  }
+
+  // Get the system-generated credit score
+  getSystemGeneratedScore(): number {
+    if (this.financialSummary?.creditScore?.systemGeneratedCreditScore) {
+      return this.financialSummary.creditScore.systemGeneratedCreditScore;
+    }
+    return this.getCreditScore(); // Fallback to regular score if system score is not available
+  }
+
+  // Get the range for system-generated score
+  getSystemScoreRange(): string {
+    const systemScore = this.getSystemGeneratedScore();
+
+    if (systemScore >= 800) return 'Excellent';
+    if (systemScore >= 740) return 'Very Good';
+    if (systemScore >= 670) return 'Good';
+    if (systemScore >= 580) return 'Fair';
+    return 'Poor';
+  }
+
+  // Calculate percentage for system-generated score
+  getSystemScorePercentage(): number {
+    const systemScore = this.getSystemGeneratedScore();
+    const minScore = 300;
+    const maxScore = 850;
+
+    // Calculate the percentage and round to 1 decimal place
+    return Math.round(((systemScore - minScore) / (maxScore - minScore)) * 100 * 10) / 10;
+  }
+
+  // Get color based on system-generated score
+  getSystemScoreColor(): string {
+    const systemScore = this.getSystemGeneratedScore();
+
+    if (systemScore >= 800) return '#673ab7'; // Excellent - Purple
+    if (systemScore >= 740) return '#2196f3'; // Very Good - Blue
+    if (systemScore >= 670) return '#4caf50'; // Good - Green
+    if (systemScore >= 580) return '#ff9800'; // Fair - Orange
+    return '#f44336';                         // Poor - Red
+  }
+
+  // Determine if a category should be highlighted
+  getCategoryHighlight(category: string): string {
+    if (this.getSystemScoreRange() === category) {
+      return 'active';
+    }
+    return '';
+  }
+
+  // Determine if a segment should be highlighted
+  getSegmentHighlight(category: string): string {
+    if (this.getSystemScoreRange() === category) {
+      return 'active';
+    }
+    return '';
   }
 }

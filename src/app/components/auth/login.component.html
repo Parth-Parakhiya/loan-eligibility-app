@@ -20,18 +20,23 @@
   </div>
 </div>
 <div class="login-wrapper">
+  <!-- Add animated background bubbles -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
   <div class="login-container">
     <div class="logo-section">
       <i class="fas fa-envelope icon-email"></i>
     </div>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <h2>Welcome Back</h2>
-      <p class="subtitle">Sign in to continue to Credwise</p>
+      <p class="subtitle">Sign in to continue to Crediwise</p>
 
       <div class="form-group">
         <label for="email">Email Address</label>
         <div class="input-wrapper">
-          <i class="icon-email"></i>
+          <i class="fas fa-envelope icon-email"></i>
           <input type="email" id="email" formControlName="email" placeholder="Enter your email" required>
         </div>
         <div *ngIf="loginForm.get('email').invalid && (loginForm.get('email').dirty || loginForm.get('email').touched)"
@@ -44,10 +49,11 @@
       <div class="form-group">
         <label for="password">Password</label>
         <div class="input-wrapper">
-          <i class="icon-lock"></i>
+          <i class="fas fa-lock icon-lock"></i>
           <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
             placeholder="Enter your password" required>
-          <i class="icon-eye" (click)="togglePasswordVisibility()" [class.active]="showPassword"></i>
+          <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword" class="icon-eye"
+            (click)="togglePasswordVisibility()" [class.active]="showPassword"></i>
         </div>
         <div
           *ngIf="loginForm.get('password').invalid && (loginForm.get('password').dirty || loginForm.get('password').touched)"
@@ -60,9 +66,9 @@
         <a href="/forgot-password">Forgot Password?</a>
       </div>
 
-      <button type="submit" [disabled]="loginForm.invalid" class="login-button">
-        <span>Sign In</span>
-        <div class="button-loader" *ngIf="isLoading"></div>
+      <button type="submit" [disabled]="loginForm.invalid || isLoading" class="login-button">
+        <span *ngIf="isLoading" class="button-loader"></span>
+        <span *ngIf="!isLoading">Sign In</span>
       </button>
 
       <div class="register-link">
