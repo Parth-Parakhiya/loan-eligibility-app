@@ -101,9 +101,13 @@
           <i class="fas fa-lock icon-input"></i>
           <input type="password" id="password" formControlName="password" placeholder="Enter your password" required>
         </div>
+        <small class="password-hint">Must contain at least 8 characters, one letter, one number, and one special
+          character (@$!%*#?&)</small>
         <div *ngIf="submitted && f['password'].errors" class="validation-error">
           <small *ngIf="f['password'].errors['required']">Password is required</small>
           <small *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters</small>
+          <small *ngIf="f['password'].errors['pattern']">Password must include at least 8 characters, one letter, one
+            number, and one special character (@$!%*#?&)</small>
         </div>
       </div>
 
